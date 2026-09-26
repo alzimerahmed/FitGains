@@ -113,3 +113,122 @@ textarea:focus-visible,
 #theme-toggle:focus-visible {
     color: #ffffff;
 }
+
+/*
+ * Mobile-first layer (G9).
+ *
+ * Spacing scale from docs/design/design-system.md — templates use these
+ * instead of one-off rem values. Touch targets are at least 44px on
+ * coarse pointers (WCAG 2.5.8 / design system floor).
+ */
+:root {
+    --fg-space-1: 4px;
+    --fg-space-2: 8px;
+    --fg-space-3: 12px;
+    --fg-space-4: 16px;
+    --fg-space-6: 24px;
+    --fg-space-8: 32px;
+    --fg-touch: 44px;
+    --fg-nav-height: 56px;
+}
+
+/* Room for the fixed bottom tab bar on phones */
+@media (max-width: 767.98px) {
+    body.has-bottom-nav #main {
+        padding-bottom: calc(var(--fg-nav-height) + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* One-handed form controls: comfortable height, no zoom-on-focus */
+    body.has-bottom-nav .form-control,
+    body.has-bottom-nav .form-select {
+        min-height: var(--fg-touch);
+        font-size: 1rem;
+    }
+
+    body.has-bottom-nav .btn {
+        min-height: var(--fg-touch);
+    }
+
+    body.has-bottom-nav .navbar {
+        --bs-navbar-padding-y: var(--fg-space-2);
+    }
+
+    /* Collapsed navbar + dropdown entries: finger-sized, not mouse-sized */
+    .navbar .nav-link,
+    .navbar .dropdown-item,
+    .navbar .dropdown-toggle {
+        min-height: var(--fg-touch);
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar .dropdown-menu {
+        width: 100%;
+    }
+}
+
+/* Bottom tab bar — phones only, desktop keeps the navbar dropdowns */
+.bottom-nav {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+        height: calc(var(--fg-nav-height) + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        background-color: var(--fg-card);
+        border-top: 1px solid var(--fg-border);
+    }
+
+    .bottom-nav .nav-link,
+    .bottom-nav .btn {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: var(--fg-nav-height);
+        padding: var(--fg-space-1) var(--fg-space-2);
+        color: var(--fg-muted);
+        font-size: 0.6875rem;
+        border: none;
+        background: transparent;
+    }
+
+    .bottom-nav .nav-link .fa,
+    .bottom-nav .nav-link .fas,
+    .bottom-nav .nav-link .far {
+        font-size: 1.25rem;
+    }
+
+    .bottom-nav .nav-link.active {
+        color: var(--fg-accent);
+    }
+}
+
+/* Stat tiles: number-first, label-below, tabular numerals (design system) */
+.stat-tile {
+    background-color: var(--fg-card);
+    border: 1px solid var(--fg-border);
+    border-radius: var(--fg-radius);
+    padding: var(--fg-space-4);
+}
+
+.stat-tile .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.stat-tile .stat-label {
+    color: var(--fg-muted);
+    font-size: 0.8125rem;
+}

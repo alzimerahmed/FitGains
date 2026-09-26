@@ -1,0 +1,33 @@
+{% load i18n wger_extras %}
+{# Mobile bottom tab bar (G9). Phones only — hidden by CSS on md+. #}
+<nav class="bottom-nav nav" aria-label="{% translate 'Primary mobile navigation' %}">
+
+    <a class="nav-link {% if active_tab == 'workout' %}active{% endif %}"
+       href="{% url 'manager:routine:overview' %}" rel="nofollow">
+        <span class="{% fa_class 'dumbbell' %}" aria-hidden="true"></span>
+        {% translate "Training" %}
+    </a>
+
+    <a class="nav-link {% if active_tab == 'nutrition' %}active{% endif %}"
+       href="{% url 'nutrition:plan:overview' %}" rel="nofollow">
+        <span class="{% fa_class 'apple-alt' %}" aria-hidden="true"></span>
+        {% translate "Nutrition" %}
+    </a>
+
+    <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}"
+       href="{% url 'weight:overview' %}" rel="nofollow">
+        <span class="{% fa_class 'weight' %}" aria-hidden="true"></span>
+        {% translate "Weight" %}
+    </a>
+
+    <button class="btn"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#main-navbar-navigation"
+            aria-controls="main-navbar-navigation"
+            aria-expanded="false">
+        <span class="{% fa_class 'ellipsis-h' %}" aria-hidden="true"></span>
+        {% translate "More" %}
+    </button>
+
+</nav>

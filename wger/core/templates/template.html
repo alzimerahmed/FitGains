@@ -74,7 +74,7 @@
 
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body class="{% if user.is_authenticated %}has-bottom-nav{% endif %}">
 
 {#            #}
 {# Navigation #}
@@ -137,6 +137,13 @@
         {% block template %}{% endblock %}
     </div>
 </div>
+
+{#                      #}
+{# Mobile bottom nav    #}
+{#                      #}
+{% if user.is_authenticated %}
+    {% include 'navigation-mobile.html' %}
+{% endif %}
 
 
 <footer id="main-footer" class="border-top">
