@@ -77,7 +77,7 @@ class ListEndpointQueryCountTestCase(WgerTestCase):
                     routine=routine,
                     slot_entry=slot_entry,
                     exercise_id=1,
-                    repetition_unit_id=1,
+                    repetitions_unit_id=1,
                     weight_unit_id=1,
                     repetitions=5,
                     weight=80,

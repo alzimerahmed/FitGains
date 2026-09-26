@@ -196,7 +196,14 @@ def estimate_one_rm(
     reps up — those sets return None instead of a negative or infinite
     estimate. A set without weight or reps has no estimate either.
     """
-    if weight is None or repetitions is None or weight <= 0 or repetitions <= 0:
+    if weight is None or repetitions is None:
+        return None
+
+    # Callers hand in whatever the ORM or an int literal produced; ints go
+    # through float math on `repetitions / 30` otherwise
+    weight = Decimal(str(weight))
+    repetitions = Decimal(str(repetitions))
+    if weight <= 0 or repetitions <= 0:
         return None
 
     if formula == 'epley':

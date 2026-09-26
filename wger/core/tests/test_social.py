@@ -160,8 +160,10 @@ class SocialFeedTestCase(WgerTestCase):
         self.assertEqual(response.data['count'], 0)
 
     def test_feed_requires_authentication(self):
+        # The feed is personal (follow graph); anonymous requests are
+        # rejected, not served an empty public list
         response = self.client.get(reverse('social-feed-list'))
-        self.assertEqual(response.data['count'], 0)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_feed_includes_username(self):
         follower = User.objects.get(username='test')

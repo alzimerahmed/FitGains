@@ -206,6 +206,9 @@ class AnalyticsApiTestCase(WgerTestCase):
 
     def setUp(self):
         super().setUp()
+        # The base fixtures ship workout logs; the series under test assumes
+        # a clean slate so bucket counts are exact
+        WorkoutLog.objects.all().delete()
         self.user_login('admin')
         self.user_id = get_user_model().objects.get(username='admin').pk
         make_log(self.user_id, 1, 100, 5, datetime.datetime(2024, 2, 1), iteration=1).save()
@@ -222,14 +225,15 @@ class AnalyticsApiTestCase(WgerTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         row = next(r for r in response.data if r['exercise'] == 1)
-        self.assertEqual(row['group'], 1)
+        # group is a CharField on the wire, so iterations serialize as strings
+        self.assertEqual(row['group'], '1')
 
     def test_one_rm_endpoint(self):
         response = self.client.get(
             reverse('workoutlog-analytics-one-rm'), data={'formula': 'epley'}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(r['est_1rm'] == '500.00' for r in response.data))
+        self.assertTrue(any(r['est_1rm'] == '116.67' for r in response.data))
 
     def test_invalid_group_by_rejected(self):
         response = self.client.get(

@@ -152,8 +152,9 @@ def import_user_data(user, payload: dict) -> dict:
 
                 related_label = field.related_model._meta.label
                 if related_label not in by_label:
-                    # Catalogue model (exercise, units, ...): keep as-is
-                    new_fields[name] = value
+                    # Catalogue model (exercise, units, ...): keep the raw pk;
+                    # assign via the concrete column so the ORM accepts an int
+                    new_fields[f'{name}_id'] = value
                 elif value is None:
                     new_fields[name] = None
                 elif related_label == label:

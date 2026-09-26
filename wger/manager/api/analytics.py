@@ -91,7 +91,11 @@ def parse_filters(params) -> tuple[dict, str | None]:
         filters['routine'] = int(routine)
     for name in ('start', 'end'):
         if value := params.get(name):
-            parsed = parse_date(value)
+            try:
+                parsed = parse_date(value)
+            except ValueError:
+                # e.g. 2024-13-01 passes the regex but is not a real date
+                parsed = None
             if parsed is None:
                 return {}, f'{name} must be an ISO date (YYYY-MM-DD)'
             filters[name] = parsed
