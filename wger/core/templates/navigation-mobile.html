@@ -3,20 +3,23 @@
 <nav class="bottom-nav nav" aria-label="{% translate 'Primary mobile navigation' %}">
 
     <a class="nav-link {% if active_tab == 'workout' %}active{% endif %}"
+       {% if active_tab == 'workout' %}aria-current="page"{% endif %}
        href="{% url 'manager:routine:overview' %}" rel="nofollow">
         <span class="{% fa_class 'dumbbell' %}" aria-hidden="true"></span>
         {% translate "Training" %}
     </a>
 
     <a class="nav-link {% if active_tab == 'nutrition' %}active{% endif %}"
+       {% if active_tab == 'nutrition' %}aria-current="page"{% endif %}
        href="{% url 'nutrition:plan:overview' %}" rel="nofollow">
-        <span class="{% fa_class 'apple-alt' %}" aria-hidden="true"></span>
+        <span class="{% fa_class 'apple-whole' %}" aria-hidden="true"></span>
         {% translate "Nutrition" %}
     </a>
 
     <a class="nav-link {% if active_tab == 'weight' %}active{% endif %}"
+       {% if active_tab == 'weight' %}aria-current="page"{% endif %}
        href="{% url 'weight:overview' %}" rel="nofollow">
-        <span class="{% fa_class 'weight' %}" aria-hidden="true"></span>
+        <span class="{% fa_class 'weight-scale' %}" aria-hidden="true"></span>
         {% translate "Weight" %}
     </a>
 
@@ -26,7 +29,7 @@
             data-bs-target="#main-navbar-navigation"
             aria-controls="main-navbar-navigation"
             aria-expanded="false">
-        <span class="{% fa_class 'ellipsis-h' %}" aria-hidden="true"></span>
+        <span class="{% fa_class 'ellipsis' %}" aria-hidden="true"></span>
         {% translate "More" %}
     </button>
 

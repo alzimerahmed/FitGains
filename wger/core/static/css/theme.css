@@ -132,15 +132,18 @@ textarea:focus-visible,
     --fg-nav-height: 56px;
 }
 
-/* Room for the fixed bottom tab bar on phones */
+/* Room for the fixed bottom tab bar: main content AND the footer
+   (the footer sits outside #main and would otherwise be covered) */
 @media (max-width: 767.98px) {
-    body.has-bottom-nav #main {
+    body.has-bottom-nav #main,
+    body.has-bottom-nav #main-footer {
         padding-bottom: calc(var(--fg-nav-height) + env(safe-area-inset-bottom, 0px));
     }
 
-    /* One-handed form controls: comfortable height, no zoom-on-focus */
-    body.has-bottom-nav .form-control,
-    body.has-bottom-nav .form-select {
+    /* Comfortable input height, no iOS zoom-on-focus — applies to
+       anonymous users too (login form), so not scoped to has-bottom-nav */
+    .form-control,
+    .form-select {
         min-height: var(--fg-touch);
         font-size: 1rem;
     }
@@ -153,7 +156,8 @@ textarea:focus-visible,
         --bs-navbar-padding-y: var(--fg-space-2);
     }
 
-    /* Collapsed navbar + dropdown entries: finger-sized, not mouse-sized */
+    /* Collapsed navbar + dropdown entries: finger-sized, not mouse-sized.
+       Unscoped (anonymous users get the collapsed navbar too). */
     .navbar .nav-link,
     .navbar .dropdown-item,
     .navbar .dropdown-toggle {
@@ -196,8 +200,8 @@ textarea:focus-visible,
         gap: 2px;
         min-height: var(--fg-nav-height);
         padding: var(--fg-space-1) var(--fg-space-2);
-        color: var(--fg-muted);
-        font-size: 0.6875rem;
+        color: var(--fg-text);
+        font-size: 0.75rem;
         border: none;
         background: transparent;
     }
@@ -210,6 +214,7 @@ textarea:focus-visible,
 
     .bottom-nav .nav-link.active {
         color: var(--fg-accent);
+        font-weight: 600;
     }
 }
 
