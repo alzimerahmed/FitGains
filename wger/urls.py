@@ -40,6 +40,7 @@ from rest_framework_simplejwt.views import (
 
 # wger
 from wger.core.api import views as core_api_views
+from wger.core.views import pwa
 from wger.exercises.api import views as exercises_api_views
 from wger.exercises.sitemap import ExercisesSitemap
 from wger.gallery.api import views as gallery_api_views
@@ -323,6 +324,11 @@ urlpatterns = i18n_patterns(
 urlpatterns += [
     path('i18n/', include('django.conf.urls.i18n')),
     path('robots.txt', TextTemplateView.as_view(template_name='robots.txt'), name='robots'),
+    # PWA: these three must live at the site root (manifest scope defaults to
+    # its URL path, and the service worker only controls URLs under its path)
+    path('manifest.webmanifest', pwa.manifest, name='pwa-manifest'),
+    path('sw.js', pwa.service_worker, name='pwa-service-worker'),
+    path('.well-known/assetlinks.json', pwa.assetlinks, name='pwa-assetlinks'),
     # allauth account pages are mounted without a language prefix: the OAuth
     # callback's redirect_uri has to be stable
     path('account/', include('allauth.urls')),

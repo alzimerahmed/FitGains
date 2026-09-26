@@ -99,11 +99,38 @@ or dismiss. Everything is also available programmatically:
 curl -H "Authorization: Token <your-token>" http://localhost:8000/api/v2/workoutlog-analytics/<routine-id>/
 ```
 
+## Install as an App (PWA)
+
+FitGains is a Progressive Web App — no app store needed:
+
+- **Android (Chrome)**: open your instance → browser menu → *Add to Home screen* / *Install app*
+- **iOS (Safari)**: Share → *Add to Home Screen*
+- **Desktop (Chrome/Edge)**: install icon in the address bar
+
+### Build a real APK (optional)
+
+Self-hosters can wrap their own instance as a Trusted Web Activity with
+[Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap):
+
+```bash
+bubblewrap init --manifest https://<your-domain>/manifest.webmanifest
+bubblewrap build
+```
+
+Then configure the Digital Asset Links verification by adding to your `.env`:
+
+```bash
+ANDROID_APP_PACKAGE=com.yourname.fitgains
+ANDROID_APP_SHA256_FINGERPRINTS=AA:BB:CC:...   # from `bubblewrap fingerprint`
+```
+
+The server will serve it at `/.well-known/assetlinks.json`.
+
 ## FAQ / Troubleshooting
 
 **Is this wger?** FitGains is a hard fork of [wger](https://github.com/wger-project/wger) (AGPL-3.0). It is developed independently and does not track upstream. All credit for the original codebase belongs to the wger contributors.
 
-**Can I use the mobile apps?** Yes — the official wger Flutter apps speak the same `/api/v2/` API and work against a FitGains instance.
+**Can I use the mobile apps?** Yes — FitGains is installable as a PWA from the browser (see above). The official wger Flutter apps also speak the same `/api/v2/` API and work against a FitGains instance.
 
 ## Contributing
 
