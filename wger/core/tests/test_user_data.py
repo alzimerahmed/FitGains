@@ -46,8 +46,8 @@ class UserDataExportImportTestCase(WgerTestCase):
 
         counts = import_user_data(target, payload)
 
-        self.assertEqual(counts['manager.routine'], before_routines)
-        self.assertEqual(counts['manager.workoutlog'], before_logs)
+        self.assertEqual(counts['manager.Routine'], before_routines)
+        self.assertEqual(counts['manager.WorkoutLog'], before_logs)
 
         # All imported routines belong to the target user
         imported = Routine.objects.filter(user=target).order_by('pk')
