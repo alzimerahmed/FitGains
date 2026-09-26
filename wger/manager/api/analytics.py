@@ -52,7 +52,7 @@ from wger.manager.services.analytics import (
 class VolumeRowSerializer(serializers.Serializer):
     """One tonnage row: an exercise's volume in a bucket"""
 
-    group = serializers.DateField()
+    group = serializers.CharField()
     exercise = serializers.IntegerField()
     weight_unit = serializers.IntegerField(allow_null=True)
     volume = serializers.DecimalField(max_digits=12, decimal_places=2)
@@ -64,7 +64,7 @@ class VolumeRowSerializer(serializers.Serializer):
 class OneRmRowSerializer(serializers.Serializer):
     """One 1RM row: an exercise's best estimated 1RM in a bucket"""
 
-    group = serializers.DateField()
+    group = serializers.CharField()
     exercise = serializers.IntegerField()
     weight_unit = serializers.IntegerField(allow_null=True)
     est_1rm = serializers.DecimalField(max_digits=8, decimal_places=2)
@@ -107,6 +107,10 @@ class WorkoutLogAnalyticsViewSet(viewsets.ViewSet):
     the series, `start`/`end` bound it by log date. Rows never mix weight
     units — convert per row through the unit id.
     """
+
+    # Owner-scoped: anonymous requests must be rejected, not served an
+    # (empty) public series
+    is_private = True
 
     def _group_by(self, request) -> str | None:
         group_by = request.query_params.get('group_by', 'day')

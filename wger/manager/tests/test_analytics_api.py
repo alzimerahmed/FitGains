@@ -119,8 +119,8 @@ class VolumeServiceTestCase(WgerTestCase):
 
     def test_daily_volume(self):
         rows = volume_rows(1, {}, 'day')
-        feb1 = [r for r in rows if r['group'] == datetime.date(2024, 2, 1)]
-        feb4 = [r for r in rows if r['group'] == datetime.date(2024, 2, 4)]
+        feb1 = [r for r in rows if r['group'] == '2024-02-01']
+        feb4 = [r for r in rows if r['group'] == '2024-02-04']
 
         self.assertEqual(len(feb1), 1)
         self.assertEqual(feb1[0]['volume'], 50)
@@ -184,6 +184,16 @@ class OneRmServiceTestCase(WgerTestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['est_1rm'], Decimal('116.67'))
 
+    def test_weekly_buckets_use_the_truncated_week(self):
+        # Feb 1 2024 is a Thursday: its week bucket is Monday Jan 29, and the
+        # Feb 10 log lands in the following week's bucket
+        rows = [r for r in one_rm_rows(1, {}, 'week', 'epley') if r['exercise'] == 1]
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]['group'], '2024-01-29')
+        self.assertEqual(rows[0]['est_1rm'], Decimal('116.67'))
+        self.assertEqual(rows[1]['group'], '2024-02-05')
+        self.assertEqual(rows[1]['est_1rm'], Decimal('99.00'))
+
 
 class AnalyticsApiTestCase(WgerTestCase):
     """Test the analytics endpoints"""
@@ -199,6 +209,14 @@ class AnalyticsApiTestCase(WgerTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         row = next(r for r in response.data if r['exercise'] == 1)
         self.assertEqual(row['volume'], '500.00')
+
+    def test_volume_endpoint_iteration_grouping(self):
+        response = self.client.get(
+            reverse('workoutlog-analytics-list'), data={'group_by': 'iteration'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        row = next(r for r in response.data if r['exercise'] == 1)
+        self.assertEqual(row['group'], 1)
 
     def test_one_rm_endpoint(self):
         response = self.client.get(

@@ -193,6 +193,9 @@ def reset_routine_cache(instance: Routine, structure: bool = True):
     cache.delete(CacheKeyMapper.routine_api_date_sequence_gym_key(instance.id, instance.user_id))
     cache.delete(CacheKeyMapper.routine_api_logs(instance.id, instance.user_id))
     cache.delete(CacheKeyMapper.routine_api_stats(instance.id, instance.user_id))
+    cache.delete(
+        CacheKeyMapper.routine_api_progression_suggestions(instance.id, instance.user_id)
+    )
 
     if structure:
         cache.delete(CacheKeyMapper.routine_api_structure_key(instance.id, instance.user_id))

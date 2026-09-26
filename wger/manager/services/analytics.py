@@ -79,12 +79,23 @@ def _bucket_expression(unit: str):
     return _TRUNC[unit]('date')
 
 
-def _bucket_key(unit: str, row) -> datetime.date | int | None:
+def _bucket_key(unit: str, row) -> str | int | None:
     """The python-side value of a row's bucket"""
     if unit == 'iteration':
         return row['iteration']
     value = row['bucket']
     return value.date() if isinstance(value, datetime.datetime) else value
+
+
+def _group_out(value) -> str | int | None:
+    """
+    The wire form of a bucket key: ISO date strings for calendar buckets,
+    plain ints for iteration numbers — one shape per `group_by`, never a
+    datetime the client would have to guess the timezone of.
+    """
+    if isinstance(value, datetime.date):
+        return value.isoformat()
+    return value
 
 
 def _scoped_logs(user, filters: dict):
@@ -120,14 +131,7 @@ def volume_rows(user, filters: dict, group_by: str = 'day') -> list[dict]:
 
     qs = _scoped_logs(user, filters)
     if group_by == 'iteration':
-        qs = qs.values('iteration', 'exercise_id', 'weight_unit_id')
-    else:
-        qs = qs.annotate(bucket=_TRUNC[group_by]('date')).values(
-            'bucket', 'exercise_id', 'weight_unit_id'
-        )
-
-    rows = (
-        qs.annotate(
+        rows_qs = qs.values('iteration', 'exercise_id', 'weight_unit_id').annotate(
             volume=Coalesce(
                 Sum(
                     F('weight') * F('repetitions'),
@@ -139,13 +143,30 @@ def volume_rows(user, filters: dict, group_by: str = 'day') -> list[dict]:
             sets=Count('id'),
             sessions=Count('session', distinct=True),
             best_weight=Max('weight'),
+        ).order_by('iteration', 'exercise_id', 'weight_unit_id')
+    else:
+        rows_qs = (
+            qs.annotate(bucket=_TRUNC[group_by]('date'))
+            .values('bucket', 'exercise_id', 'weight_unit_id')
+            .annotate(
+                volume=Coalesce(
+                    Sum(
+                        F('weight') * F('repetitions'),
+                        filter=Q(weight__isnull=False, repetitions__isnull=False),
+                    ),
+                    Decimal(0),
+                    output_field=DecimalField(max_digits=12, decimal_places=2),
+                ),
+                sets=Count('id'),
+                sessions=Count('session', distinct=True),
+                best_weight=Max('weight'),
+            )
+            .order_by('bucket', 'exercise_id', 'weight_unit_id')
         )
-        .order_by('bucket', 'iteration', 'exercise_id', 'weight_unit_id')
-    )
 
     return [
         {
-            'group': _bucket_key(group_by, row),
+            'group': _group_out(_bucket_key(group_by, row)),
             'exercise': row['exercise_id'],
             'weight_unit': row['weight_unit_id'],
             'volume': row['volume'],
@@ -153,7 +174,7 @@ def volume_rows(user, filters: dict, group_by: str = 'day') -> list[dict]:
             'sessions': row['sessions'],
             'best_weight': row['best_weight'],
         }
-        for row in rows
+        for row in rows_qs
     ]
 
 
@@ -211,15 +232,23 @@ def one_rm_rows(user, filters: dict, group_by: str = 'day', formula: str = 'eple
         if estimate is None:
             continue
 
-        key = (
-            _bucket_key(group_by, {'bucket': log.date, 'iteration': log.iteration}),
-            log.exercise_id,
-            log.weight_unit_id,
-        )
+        # The annotated bucket, not the raw timestamp: two logs of the same
+        # week must land in the same week bucket
+        if group_by == 'iteration':
+            bucket = log.iteration
+        else:
+            bucket_value = log.bucket
+            bucket = (
+                bucket_value.date()
+                if isinstance(bucket_value, datetime.datetime)
+                else bucket_value
+            )
+
+        key = (bucket, log.exercise_id, log.weight_unit_id)
         current = best.get(key)
         if current is None or estimate > current['est_1rm']:
             best[key] = {
-                'group': key[0],
+                'group': _group_out(bucket),
                 'exercise': log.exercise_id,
                 'weight_unit': log.weight_unit_id,
                 'est_1rm': estimate,

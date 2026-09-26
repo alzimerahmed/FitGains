@@ -83,7 +83,7 @@ def evaluate_slot_entry(slot_entry, iteration: int, logs) -> dict:
         'suggested': None,
     }
 
-    if config.weight is None or config.repetitions is None:
+    if config.weight is None or config.repetitions is None or config.sets is None:
         return {
             **base,
             'rule': 'no-prescription',

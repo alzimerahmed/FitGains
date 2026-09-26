@@ -37,7 +37,9 @@ from rest_framework.response import Response
 # wger
 from wger.manager.api.consts import BASE_CONFIG_FILTER_FIELDS
 from wger.manager.api.plate_calculator import calculate_plates
-from wger.manager.services.progression_suggestions import progression_suggestions
+from wger.manager.services.progression_suggestions import (
+    progression_suggestions as build_progression_suggestions,
+)
 from wger.manager.api.filtersets import (
     WorkoutLogFilterSet,
     WorkoutSessionFilterSet,
@@ -234,7 +236,7 @@ class RoutineViewSet(viewsets.ModelViewSet):
             request,
             CacheKeyMapper.routine_api_progression_suggestions(pk, request.user.id),
             lambda: ProgressionSuggestionSerializer(
-                progression_suggestions(self.get_object()), many=True
+                build_progression_suggestions(self.get_object()), many=True
             ).data,
         )
 
