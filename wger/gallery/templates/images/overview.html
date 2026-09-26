@@ -10,11 +10,11 @@
 
     {% for image in images %}
         <div class="modal fade" id="modalImage{{ image.id }}" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel" aria-hidden="true">
+             aria-labelledby="modalImageLabel{{ image.id }}" aria-modal="true" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{ image.date }}</h5>
+                        <h5 class="modal-title" id="modalImageLabel{{ image.id }}">{{ image.date }}</h5>
                         <button type="button" class="close" data-bs-dismiss="modal"
                                 aria-label="Close">
                             <span aria-hidden="true">&times;</span>

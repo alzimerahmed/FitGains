@@ -15,6 +15,7 @@
 # Standard Library
 import logging
 import random
+import smtplib
 
 # Django
 from django.contrib.sessions.backends.db import SessionStore
@@ -26,6 +27,7 @@ from django.db.models import (
 )
 
 # Third Party
+import requests
 from celery.schedules import crontab
 
 # wger
@@ -41,7 +43,9 @@ logger = logging.getLogger(__name__)
 
 
 @app.task(
-    autoretry_for=(Exception,),
+    # Retry only transient delivery errors: a malformed payload or a 4xx from
+    # the receiver will never succeed on retry
+    autoretry_for=(smtplib.SMTPException, OSError),
     retry_backoff=True,
     retry_kwargs={'max_retries': 5},
 )
@@ -55,7 +59,9 @@ def send_email_task(payload: dict):
 
 
 @app.task(
-    autoretry_for=(Exception,),
+    # Same: only network-level failures are transient; a rejected 4xx
+    # delivery is logged by deliver_webhook and must not be retried
+    autoretry_for=(requests.RequestException,),
     retry_backoff=True,
     retry_kwargs={'max_retries': 5},
 )
@@ -63,6 +69,7 @@ def deliver_webhook_task(webhook_id, event: str, payload: dict):
     """
     Deliver one signed webhook payload, see wger.core.services.webhooks
     """
+    # wger
     from wger.core.services.webhooks import deliver_webhook
 
     deliver_webhook(webhook_id, event, payload)

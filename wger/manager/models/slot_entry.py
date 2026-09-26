@@ -31,14 +31,14 @@ from wger.core.models import (
     WeightUnit,
 )
 from wger.exercises.models import Exercise
-from wger.manager.consts import (
-    REP_UNIT_REPETITIONS,
-    WEIGHT_UNIT_KG,
-)
 from wger.manager.config_calculations.default import (
     PROGRESSION_FIELDS,
     DefaultSetCalculations,
     _WalkState,
+)
+from wger.manager.consts import (
+    REP_UNIT_REPETITIONS,
+    WEIGHT_UNIT_KG,
 )
 from wger.manager.dataclasses import SetConfigData
 from wger.manager.models.abstract_config import (

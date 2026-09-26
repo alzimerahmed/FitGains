@@ -93,3 +93,9 @@ class WgerOwnerObjectModelViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         self._check_owner_permission(request)
         return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        # PATCH must run the same FK-ownership check as PUT: partial payloads
+        # can still repoint owner-object FKs (e.g. {"session": <other user's pk>})
+        self._check_owner_permission(request)
+        return super().partial_update(request, *args, **kwargs)

@@ -33,23 +33,19 @@ from rest_framework import (
 )
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # wger
 from wger.core.models import UserFollow
 from wger.manager.api.consts import BASE_CONFIG_FILTER_FIELDS
-from wger.manager.api.plate_calculator import calculate_plates
-from wger.manager.services.copy_routine import copy_routine
-from wger.manager.services.progression_suggestions import (
-    progression_suggestions as build_progression_suggestions,
-)
 from wger.manager.api.filtersets import (
     WorkoutLogFilterSet,
     WorkoutSessionFilterSet,
 )
 from wger.manager.api.permissions import RoutinePermission
+from wger.manager.api.plate_calculator import calculate_plates
 from wger.manager.api.serializers import (
     DaySerializer,
     LogDisplaySerializer,
@@ -95,6 +91,10 @@ from wger.manager.models import (
     WeightConfig,
     WorkoutLog,
     WorkoutSession,
+)
+from wger.manager.services.copy_routine import copy_routine
+from wger.manager.services.progression_suggestions import (
+    progression_suggestions as build_progression_suggestions,
 )
 from wger.utils.cache import CacheKeyMapper
 from wger.utils.viewsets import WgerOwnerObjectModelViewSet
@@ -171,10 +171,12 @@ class RoutineViewSet(viewsets.ModelViewSet):
         return cached_routine_response(
             request,
             CacheKeyMapper.routine_api_date_sequence_display_key(pk, request.user.id),
-            lambda: WorkoutDayDataDisplayModeSerializer(
-                self.get_object().date_sequence,
-                many=True,
-            ).data,
+            lambda: (
+                WorkoutDayDataDisplayModeSerializer(
+                    self.get_object().date_sequence,
+                    many=True,
+                ).data
+            ),
         )
 
     @extend_schema(responses={200: WorkoutDayDataGymModeSerializer(many=True)})
@@ -186,9 +188,9 @@ class RoutineViewSet(viewsets.ModelViewSet):
         return cached_routine_response(
             request,
             CacheKeyMapper.routine_api_date_sequence_gym_key(pk, request.user.id),
-            lambda: WorkoutDayDataGymModeSerializer(
-                self.get_object().date_sequence, many=True
-            ).data,
+            lambda: (
+                WorkoutDayDataGymModeSerializer(self.get_object().date_sequence, many=True).data
+            ),
         )
 
     @extend_schema(responses={200: RoutineStructureSerializer})
@@ -200,7 +202,7 @@ class RoutineViewSet(viewsets.ModelViewSet):
         return cached_routine_response(
             request,
             CacheKeyMapper.routine_api_structure_key(pk, request.user.id),
-            lambda: RoutineStructureSerializer(self.get_object()).data,
+            lambda: RoutineStructureSerializer(Routine.with_structure_prefetch().get(pk=pk)).data,
         )
 
     @extend_schema(responses={200: LogDisplaySerializer(many=True)})
@@ -243,13 +245,15 @@ class RoutineViewSet(viewsets.ModelViewSet):
         return cached_routine_response(
             request,
             CacheKeyMapper.routine_api_progression_suggestions(pk, request.user.id),
-            lambda: ProgressionSuggestionSerializer(
-                build_progression_suggestions(self.get_object()), many=True
-            ).data,
+            lambda: (
+                ProgressionSuggestionSerializer(
+                    build_progression_suggestions(self.get_object()), many=True
+                ).data
+            ),
         )
 
     @extend_schema(
-        summary='Copy the routine into the requesting user\'s routines',
+        summary="Copy the routine into the requesting user's routines",
         responses={201: RoutineSerializer},
     )
     @action(detail=True, methods=['post'], pagination_class=None)
@@ -262,6 +266,7 @@ class RoutineViewSet(viewsets.ModelViewSet):
         permission would reject non-owner writes, but copying a public
         template is an allowed write for the copier, like the web view.
         """
+        # Django
         from django.shortcuts import get_object_or_404
 
         routine = get_object_or_404(Routine, pk=pk)
@@ -765,6 +770,11 @@ class PlateCalculatorViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         raw_available = request.query_params.get('available', '25,20,15,10,5,2.5,1.25')
+        if raw_available.count(',') > 64:
+            return Response(
+                {'detail': '"available" accepts at most 65 plate weights.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         available = [
             value
             for value in (to_decimal(v.strip()) for v in raw_available.split(','))
@@ -839,7 +849,10 @@ class RoutineShareResolveView(APIView):
         if share_token is None or not share_token.is_valid():
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response(RoutineStructureSerializer(share_token.routine).data)
+        # Public unauthenticated endpoint: prefetch the whole structure tree,
+        # a deep N+1 here would be a per-request DoS surface
+        routine = Routine.with_structure_prefetch().get(pk=share_token.routine_id)
+        return Response(RoutineStructureSerializer(routine).data)
 
 
 class SocialFeedViewSet(viewsets.ReadOnlyModelViewSet):
@@ -853,7 +866,9 @@ class SocialFeedViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = SocialFeedSessionSerializer
-    permission_classes = [AllowAny]
+    # The feed is personal (follow graph) — require auth like UserFollowViewSet
+    # instead of answering 200 [] to anonymous probes
+    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
         if getattr(self, 'swagger_fake_view', False):
@@ -863,9 +878,6 @@ class SocialFeedViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         # REST API generation
         if getattr(self, 'swagger_fake_view', False):
-            return WorkoutSession.objects.none()
-
-        if not self.request.user.is_authenticated:
             return WorkoutSession.objects.none()
 
         followed_ids = UserFollow.objects.filter(follower=self.request.user).values_list(

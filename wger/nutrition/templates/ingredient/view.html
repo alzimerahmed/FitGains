@@ -202,9 +202,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>{% translate "Nutri-Score" %}</td>
             <td class="text-end">
                 {% if ingredient.nutriscore %}
-                <span class="nutriscore-bar">
+                <span class="nutriscore-bar" role="img" aria-label="{% blocktranslate with score=ingredient.nutriscore %}Nutri-Score {{ score }}{% endblocktranslate %}">
                     {% for score, label in ingredient.NUTRISCORE_CHOICES %}
-                        <span class="nutriscore-badge nutriscore-{{ score }}{% if score == ingredient.nutriscore %} active{% endif %}">{{ label }}</span>
+                        <span class="nutriscore-badge nutriscore-{{ score }}{% if score == ingredient.nutriscore %} active{% endif %}" aria-hidden="true">{{ label }}</span>
                     {% endfor %}
                 </span>
                 {% else %}
@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {% if image %}
     <a href="{{ ingredient.off_link }}">
-        <img src="{{ image.image.url }}" class="img-fluid">
+        <img src="{{ image.image.url }}" class="img-fluid" alt="{{ ingredient.name }}">
     </a>
     <p>
     <small>

@@ -47,6 +47,7 @@ from wger.manager.models.abstract_config import (
     StepChoices,
 )
 
+
 if TYPE_CHECKING:
     # wger
     from wger.manager.models import (

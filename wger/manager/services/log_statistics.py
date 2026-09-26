@@ -35,6 +35,7 @@ from wger.manager.dataclasses import (
     RoutineLogData,
 )
 from wger.manager.helpers import brzycki_intensity
+from wger.manager.models import WorkoutLog
 
 
 if TYPE_CHECKING:
@@ -111,14 +112,29 @@ def calculate_log_statistics(routine: 'Routine') -> RoutineLogData:
             for key in res_group:
                 avg_log_data(res_group[key], cnt_group[key])
 
-    # Iterate over each workout session associated with the routine
+    # One grouped fetch instead of per-session / per-log queries: all logs of
+    # the routine with exercise + muscles prefetched, grouped by session in Python
     tz = routine.user.userprofile.zone_info
-    for session in routine.sessions.all():
+    sessions = {s.id: s for s in routine.sessions.all()}
+    logs = (
+        WorkoutLog.objects.filter(session_id__in=sessions.keys())
+        .kg()
+        .reps()
+        .select_related('exercise')
+        .prefetch_related('exercise__muscles')
+    )
+
+    logs_by_session: dict[int, list] = {session_id: [] for session_id in sessions}
+    for log in logs:
+        logs_by_session[log.session_id].append(log)
+
+    for session_id, session_logs in logs_by_session.items():
+        session = sessions[session_id]
         session_date = session.local_day_in(tz)
         week_number = session_date.isocalendar().week
 
         # TODO: filter for lb
-        for log in session.logs.kg().reps():
+        for log in session_logs:
             iteration = log.iteration
             exercise = log.exercise
             weight = log.weight

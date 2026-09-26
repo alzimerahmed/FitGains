@@ -172,7 +172,11 @@ class WorkoutSession(models.Model):
         ordering = [
             'datetime_start',
         ]
-        indexes = [models.Index(fields=['routine', 'datetime_start'])]
+        indexes = [
+            models.Index(fields=['routine', 'datetime_start']),
+            # Serves the social feed filter (user + is_public) ordered by recency
+            models.Index(fields=['user', 'is_public', 'datetime_start']),
+        ]
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(datetime_end__isnull=True)

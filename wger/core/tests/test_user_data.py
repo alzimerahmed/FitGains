@@ -61,6 +61,7 @@ class UserDataExportImportTestCase(WgerTestCase):
             self.assertNotIn(routine.pk, source_pks)
 
         # FK remapping: imported days point at the new routines, not the source's
+        # wger
         from wger.manager.models import Day
 
         imported_day_routine_pks = set(

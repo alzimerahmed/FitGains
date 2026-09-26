@@ -81,18 +81,21 @@
 {#            #}
 {% include 'navigation.html' %}
 
+<a class="visually-hidden-focusable" href="#main">{% translate "Skip to content" %}</a>
 
 {#              #}
 {# Main content #}
 {#              #}
-<div id="main">
+<main id="main">
     <div class="container pt-2">
-        <div class="modal fade" id="wger-ajax-info" tabindex="-1" role="dialog">
+        <div class="modal fade" id="wger-ajax-info" tabindex="-1" role="dialog" aria-modal="true"
+             aria-labelledby="wger-ajax-info-title">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <h2 class="modal-title visually-hidden" id="wger-ajax-info-title">{% translate "Information" %}</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="{% translate 'Close' %}"></button>
                     </div>
                     <div class="modal-body" id="ajax-info-content">
                     </div>
@@ -136,7 +139,7 @@
         {% endif %}
         {% block template %}{% endblock %}
     </div>
-</div>
+</main>
 
 {#                      #}
 {# Mobile bottom nav    #}
@@ -194,38 +197,40 @@
                     <div class="btn-group dropup">
                         <button class="btn btn-light dropdown-toggle"
                                 type="button"
+                                id="btnGroupLanguages"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                            <span class="{% fa_class 'globe' %}"></span>
+                            <span class="{% fa_class 'globe' %}" aria-hidden="true"></span>
                             {% translate i18n_language.name %}
-                            <span class="caret"></span>
                         </button>
 
                         <ul class="dropdown-menu language-menu" aria-labelledby="btnGroupLanguages">
                             <li>
                                 <a class="dropdown-item" href="{% url 'core:language:browser_language' %}?next={{ request.path }}">
-                                    <span class="{% fa_class 'globe' %}"></span>
+                                    <span class="{% fa_class 'globe' %}" aria-hidden="true"></span>
                                     <span>{% translate "Browser language" %}</span>
                                 </a>
                             </li>
 
-                            <form id="language-form" action="{% url 'set_language' %}" method="post">
-                                {% csrf_token %}
-                                <input name="next" type="hidden" value="{{ redirect_to }}">
-                                <input type="hidden" name="language" id="language-input">
-                                {% for language in languages %}
-                                    {% language_select language %}
-                                {% endfor %}
-                            </form>
+                            <li>
+                                <form id="language-form" action="{% url 'set_language' %}" method="post">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                                    <input type="hidden" name="language" id="language-input">
+                                    {% for language in languages %}
+                                        {% language_select language %}
+                                    {% endfor %}
+                                </form>
+                            </li>
 
                             <li>
-                                <hr class="dropdown-divider"></hr>
+                                <hr class="dropdown-divider">
                             </li>
                             <li>
                                 <a href="https://hosted.weblate.org/engage/wger/"
                                    class="dropdown-item"
                                    target="_blank">
-                                    <span class="{% fa_class 'plus' %}"></span>
+                                    <span class="{% fa_class 'plus' %}" aria-hidden="true"></span>
                                     {% translate "Translate" %}
                                 </a>
                             </li>

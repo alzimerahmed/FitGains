@@ -25,11 +25,11 @@ from wger.core.models import (
     Language,
     License,
     RepetitionUnit,
-    UserProfile,
     UserFollow,
-    WeightUnit,
+    UserProfile,
     Webhook,
     WebhookEvent,
+    WeightUnit,
 )
 
 
@@ -237,6 +237,7 @@ class WebhookSerializer(serializers.ModelSerializer):
         return data
 
     def validate_url(self, value):
+        # wger
         from wger.core.services.webhooks import WebhookUrlError, validate_webhook_url
 
         try:

@@ -69,7 +69,7 @@ def users(request, gym_pk):
             _('Phone'),
         ]
     )
-    for user in Gym.objects.get_members(gym_pk):
+    for user in Gym.objects.get_members(gym_pk).select_related('userprofile'):
         address = user.userprofile.address
         writer.writerow(
             [

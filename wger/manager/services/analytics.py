@@ -111,9 +111,11 @@ def _scoped_logs(user, filters: dict):
     if routine_id := filters.get('routine'):
         qs = qs.filter(routine_id=routine_id)
     if start := filters.get('start'):
-        qs = qs.filter(date__date__gte=start)
+        # Range on the raw timestamp (not a ::date cast) so the (user, date)
+        # index stays usable
+        qs = qs.filter(date__gte=start)
     if end := filters.get('end'):
-        qs = qs.filter(date__date__lte=end)
+        qs = qs.filter(date__lt=end + datetime.timedelta(days=1))
     return qs
 
 
@@ -131,19 +133,23 @@ def volume_rows(user, filters: dict, group_by: str = 'day') -> list[dict]:
 
     qs = _scoped_logs(user, filters)
     if group_by == 'iteration':
-        rows_qs = qs.values('iteration', 'exercise_id', 'weight_unit_id').annotate(
-            volume=Coalesce(
-                Sum(
-                    F('weight') * F('repetitions'),
-                    filter=Q(weight__isnull=False, repetitions__isnull=False),
+        rows_qs = (
+            qs.values('iteration', 'exercise_id', 'weight_unit_id')
+            .annotate(
+                volume=Coalesce(
+                    Sum(
+                        F('weight') * F('repetitions'),
+                        filter=Q(weight__isnull=False, repetitions__isnull=False),
+                    ),
+                    Decimal(0),
+                    output_field=DecimalField(max_digits=12, decimal_places=2),
                 ),
-                Decimal(0),
-                output_field=DecimalField(max_digits=12, decimal_places=2),
-            ),
-            sets=Count('id'),
-            sessions=Count('session', distinct=True),
-            best_weight=Max('weight'),
-        ).order_by('iteration', 'exercise_id', 'weight_unit_id')
+                sets=Count('id'),
+                sessions=Count('session', distinct=True),
+                best_weight=Max('weight'),
+            )
+            .order_by('iteration', 'exercise_id', 'weight_unit_id')
+        )
     else:
         rows_qs = (
             qs.annotate(bucket=_TRUNC[group_by]('date'))
@@ -239,9 +245,7 @@ def one_rm_rows(user, filters: dict, group_by: str = 'day', formula: str = 'eple
         else:
             bucket_value = log.bucket
             bucket = (
-                bucket_value.date()
-                if isinstance(bucket_value, datetime.datetime)
-                else bucket_value
+                bucket_value.date() if isinstance(bucket_value, datetime.datetime) else bucket_value
             )
 
         key = (bucket, log.exercise_id, log.weight_unit_id)

@@ -64,6 +64,7 @@ class UserFollow(models.Model):
         ]
 
     def clean(self):
+        # Django
         from django.core.exceptions import ValidationError
 
         if self.follower_id and self.followee_id and self.follower_id == self.followee_id:

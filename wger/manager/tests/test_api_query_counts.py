@@ -23,9 +23,9 @@ numbers, only that serialization issues a constant number of queries.
 """
 
 # Django
+from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
-from django.db import connection
 
 # wger
 from wger.core.tests.base_testcase import WgerTestCase
@@ -63,8 +63,7 @@ class ListEndpointQueryCountTestCase(WgerTestCase):
         self.assertEqual(
             scaled,
             baseline,
-            f'Query count grew with row count ({baseline} -> {scaled}); '
-            'this is an N+1 regression',
+            f'Query count grew with row count ({baseline} -> {scaled}); this is an N+1 regression',
         )
 
     def test_workoutlog_list_no_n_plus_one(self):
@@ -104,9 +103,7 @@ class ListEndpointQueryCountTestCase(WgerTestCase):
         day = Day.objects.filter(routine_id=1).first()
 
         def make_rows(n):
-            Slot.objects.bulk_create(
-                Slot(day=day, order=100 + i) for i in range(n)
-            )
+            Slot.objects.bulk_create(Slot(day=day, order=100 + i) for i in range(n))
 
         self._assert_constant_queries(reverse('slot-list'), make_rows)
 

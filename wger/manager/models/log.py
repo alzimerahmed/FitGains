@@ -230,6 +230,12 @@ class WorkoutLog(models.Model):
     # Metaclass to set some other properties
     class Meta:
         ordering = ['date', 'repetitions', 'weight']
+        indexes = [
+            # Analytics and progression suggestions scope logs by user + date
+            # and group by routine + iteration
+            models.Index(fields=['user', 'date']),
+            models.Index(fields=['routine', 'iteration']),
+        ]
 
     def __str__(self):
         """

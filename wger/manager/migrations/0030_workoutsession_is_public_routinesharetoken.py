@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('manager', '0029_alter_workoutsession_options_and_more'),
     ]
@@ -16,17 +15,53 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workoutsession',
             name='is_public',
-            field=models.BooleanField(default=False, help_text='If set, users who follow you and have social features enabled can see this workout session.', verbose_name='Shared with followers'),
+            field=models.BooleanField(
+                default=False,
+                help_text='If set, users who follow you and have social features enabled can see this workout session.',
+                verbose_name='Shared with followers',
+            ),
         ),
         migrations.CreateModel(
             name='RoutineShareToken',
             fields=[
-                ('id', models.UUIDField(default=wger.utils.uuid.uuid7, primary_key=True, serialize=False)),
-                ('token', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='Token')),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=wger.utils.uuid.uuid7, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    'token',
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, unique=True, verbose_name='Token'
+                    ),
+                ),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Creation date')),
-                ('expires_at', models.DateTimeField(blank=True, help_text='After this point the link stops resolving. Empty means it never expires.', null=True, verbose_name='Expiry date')),
-                ('revoked', models.BooleanField(default=False, help_text='Revoked links stop resolving but are kept for auditing.', verbose_name='Revoked')),
-                ('routine', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='share_tokens', to='manager.routine')),
+                (
+                    'expires_at',
+                    models.DateTimeField(
+                        blank=True,
+                        help_text='After this point the link stops resolving. Empty means it never expires.',
+                        null=True,
+                        verbose_name='Expiry date',
+                    ),
+                ),
+                (
+                    'revoked',
+                    models.BooleanField(
+                        default=False,
+                        help_text='Revoked links stop resolving but are kept for auditing.',
+                        verbose_name='Revoked',
+                    ),
+                ),
+                (
+                    'routine',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='share_tokens',
+                        to='manager.routine',
+                    ),
+                ),
             ],
         ),
     ]

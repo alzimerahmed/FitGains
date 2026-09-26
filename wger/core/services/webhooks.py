@@ -106,6 +106,7 @@ def dispatch_event(user_id: int, event: str, payload: dict):
     (``.delay``) can be down, and webhook problems must never break the
     write that triggered the event.
     """
+    # wger
     from wger.core.tasks import deliver_webhook_task
 
     if event not in WebhookEvent.values:
@@ -128,6 +129,7 @@ def deliver_webhook(webhook_id, event: str, payload: dict):
     Deliver one signed payload to one webhook. Raises on failure so the
     Celery retry policy can kick in.
     """
+    # Third Party
     import requests
 
     try:

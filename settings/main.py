@@ -148,10 +148,20 @@ STATIC_URL = env.str('STATIC_URL', '/static/')
 
 LOGIN_REDIRECT_URL = env.str('LOGIN_REDIRECT_URL', '/')
 
-# Allow all hosts to access the application. Change if used in production.
-ALLOWED_HOSTS = [
-    '*',
-]
+# Hosts allowed to serve the application. Set via env in production —
+# a wildcard accepts any Host header (host-header/cache poisoning).
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['localhost', '127.0.0.1', '[::1]', 'testserver'])
+
+# Cookie / TLS hardening. Off by default so plain-HTTP self-hosted instances
+# (localhost, LAN) keep working; enable behind TLS.
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', False)
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', False)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', False)
+SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_HSTS_PRELOAD = env.bool('SECURE_HSTS_PRELOAD', False)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
@@ -176,7 +186,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_FROM_ADDRESS = DEFAULT_FROM_EMAIL
 
 # Management
-WGER_SETTINGS['ALLOW_GUEST_USERS'] = env.bool('ALLOW_GUEST_USERS', True)
+WGER_SETTINGS['ALLOW_GUEST_USERS'] = env.bool('ALLOW_GUEST_USERS', False)
 WGER_SETTINGS['ALLOW_REGISTRATION'] = env.bool('ALLOW_REGISTRATION', True)
 WGER_SETTINGS['ALLOW_UPLOAD_VIDEOS'] = env.bool('ALLOW_UPLOAD_VIDEOS', True)
 WGER_SETTINGS['DOWNLOAD_INGREDIENTS_FROM'] = env.str('DOWNLOAD_INGREDIENTS_FROM', 'WGER')

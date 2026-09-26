@@ -17,7 +17,7 @@
 {% for trophy in trophy_list %}
     <div class="col">
         <div class="card h-100" style="min-width: 12rem;">
-            <img src="{% static trophy.image_rel_path %}" class="card-img-top" alt="..." style="padding: 1rem;">
+            <img src="{% static trophy.image_rel_path %}" class="card-img-top" alt="{{ trophy.name }}" style="padding: 1rem;">
             <div class="card-body">
                 <h5 class="card-title">
                     {%  if not trophy.is_active %}<s>{% endif %}

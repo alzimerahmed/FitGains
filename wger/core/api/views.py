@@ -91,8 +91,8 @@ from wger.core.models import (
     RepetitionUnit,
     UserFollow,
     UserProfile,
-    WeightUnit,
     Webhook,
+    WeightUnit,
 )
 from wger.utils.powersync import REGISTRY as POWERSYNC_REGISTRY
 from wger.version import (

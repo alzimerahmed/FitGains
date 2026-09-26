@@ -33,11 +33,11 @@ from .rir_config import (
 )
 from .routine import Routine
 from .session import WorkoutSession
-from .share_token import RoutineShareToken
 from .sets_config import (
     MaxSetsConfig,
     SetsConfig,
 )
+from .share_token import RoutineShareToken
 from .slot import Slot
 from .slot_entry import SlotEntry
 from .weight_config import (

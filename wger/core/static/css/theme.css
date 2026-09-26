@@ -17,6 +17,7 @@
     --fg-text: #1a1a1a;
     --fg-muted: #6b7280;
     --fg-border: #e2e2e8;
+    --fg-on-accent: #ffffff;
     --fg-radius: 12px;
 }
 
@@ -29,6 +30,7 @@
     --fg-text: #f2f2f2;
     --fg-muted: #9ca3af;
     --fg-border: #3a3a3e;
+    --fg-on-accent: #ffffff;
 }
 
 body {
@@ -89,6 +91,12 @@ textarea:focus-visible,
     outline-offset: 2px;
 }
 
+/* The accent ring disappears on the primary navbar — use the on-accent
+   foreground there (WCAG 1.4.11 non-text contrast) */
+.navbar :focus-visible {
+    outline-color: var(--fg-on-accent);
+}
+
 /* Reduced motion: transitions collapse to instant */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -100,9 +108,10 @@ textarea:focus-visible,
     }
 }
 
-/* Theme toggle button in the navbar */
+/* Theme toggle button in the navbar — sits on bg-primary in both themes */
 #theme-toggle {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--fg-on-accent);
+    opacity: 0.85;
     background: transparent;
     border: none;
     padding: 0.25rem 0.5rem;
@@ -111,7 +120,7 @@ textarea:focus-visible,
 
 #theme-toggle:hover,
 #theme-toggle:focus-visible {
-    color: #ffffff;
+    opacity: 1;
 }
 
 /*
@@ -166,6 +175,12 @@ textarea:focus-visible,
         align-items: center;
     }
 
+    /* The theme toggle is not a .btn/.nav-link — size it explicitly */
+    #theme-toggle {
+        min-height: var(--fg-touch);
+        min-width: var(--fg-touch);
+    }
+
     .navbar .dropdown-menu {
         width: 100%;
     }
@@ -197,7 +212,7 @@ textarea:focus-visible,
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
+        gap: var(--fg-space-1);
         min-height: var(--fg-nav-height);
         padding: var(--fg-space-1) var(--fg-space-2);
         color: var(--fg-text);

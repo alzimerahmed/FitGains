@@ -109,9 +109,7 @@ def export_user_data(user) -> dict:
     payload = {'version': 1, 'user': user.username, 'models': {}}
     for spec in EXPORT_SPEC:
         qs = spec.model.objects.filter(**{spec.owner_lookup: user}).order_by('pk')
-        payload['models'][spec.model._meta.label] = list(
-            serializers.serialize('python', qs)
-        )
+        payload['models'][spec.model._meta.label] = list(serializers.serialize('python', qs))
     return payload
 
 
@@ -166,8 +164,7 @@ def import_user_data(user, payload: dict) -> dict:
                     target_map = pk_map.get(related_label, {})
                     if value not in target_map:
                         raise ValueError(
-                            f'Missing mapping for {related_label}:{value} '
-                            f'(referenced by {label})'
+                            f'Missing mapping for {related_label}:{value} (referenced by {label})'
                         )
                     new_fields[name] = target_map[value]
 
@@ -193,8 +190,7 @@ def import_user_data(user, payload: dict) -> dict:
 
     # Pass two: self-FKs
     rows_by_label = {
-        label: {row['pk']: row for row in payload['models'].get(label, [])}
-        for label in by_label
+        label: {row['pk']: row for row in payload['models'].get(label, [])} for label in by_label
     }
     for label, old_pk, field_name in deferred:
         row = rows_by_label[label][old_pk]
@@ -207,6 +203,7 @@ def import_user_data(user, payload: dict) -> dict:
 
 
 def export_to_json(user) -> str:
+    # Django
     from django.core.serializers.json import DjangoJSONEncoder
 
     return json.dumps(export_user_data(user), cls=DjangoJSONEncoder)

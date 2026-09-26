@@ -122,9 +122,7 @@ class SuggestionLogicTestCase(WgerTestCase):
         for rir in (3, 2, 4):
             log(self.entry, 1, 80, 5, rir=rir)
 
-        suggestion = evaluate_slot_entry(
-            self.entry, 1, list(self.entry.workoutlog_set.all())
-        )
+        suggestion = evaluate_slot_entry(self.entry, 1, list(self.entry.workoutlog_set.all()))
         self.assertEqual(suggestion['rule'], 'targets-beaten')
         self.assertEqual(suggestion['action'], 'increase-weight')
         self.assertEqual(suggestion['suggested']['weight'], Decimal('82.5'))
@@ -137,9 +135,7 @@ class SuggestionLogicTestCase(WgerTestCase):
         for rir in (1, 0, 1):
             log(self.entry, 1, 80, 5, rir=rir)
 
-        suggestion = evaluate_slot_entry(
-            self.entry, 1, list(self.entry.workoutlog_set.all())
-        )
+        suggestion = evaluate_slot_entry(self.entry, 1, list(self.entry.workoutlog_set.all()))
         self.assertEqual(suggestion['rule'], 'low-reserve')
         self.assertEqual(suggestion['action'], 'hold')
         self.assertIsNone(suggestion['suggested'])
@@ -149,9 +145,7 @@ class SuggestionLogicTestCase(WgerTestCase):
         log(self.entry, 1, 80, 3, rir=2)
         log(self.entry, 1, 75, 5, rir=2)
 
-        suggestion = evaluate_slot_entry(
-            self.entry, 1, list(self.entry.workoutlog_set.all())
-        )
+        suggestion = evaluate_slot_entry(self.entry, 1, list(self.entry.workoutlog_set.all()))
         self.assertEqual(suggestion['rule'], 'targets-missed')
         self.assertEqual(suggestion['action'], 'hold')
         self.assertIn('1 of 3', suggestion['reason'])

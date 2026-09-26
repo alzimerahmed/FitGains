@@ -11,8 +11,10 @@
 {% block template %}
     {% if messages %}
         {% for message in messages %}
-            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'info' %}alert-info{% elif message.tags == 'success' %}alert-success{% endif %}">
-                <a href="#" class="close extra-bold" data-bs-dismiss="alert">&times;</a>
+            <div
+                role="{% if message.tags == 'error' or message.tags == 'warning' %}alert{% else %}status{% endif %}"
+                class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'info' %}alert-info{% elif message.tags == 'success' %}alert-success{% endif %}">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% translate 'Close' %}"></button>
                 {{ message }}
             </div>
         {% endfor %}
@@ -37,7 +39,7 @@
                                 {% endif %}
 
                                 {% for error in form.non_field_errors %}
-                                    <div class="alert alert-danger">{{ error }}</div>
+                                    <div class="alert alert-danger" role="alert">{{ error }}</div>
                                 {% endfor %}
 
                                 <div class="mb-3">

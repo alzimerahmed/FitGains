@@ -117,7 +117,9 @@ def sync_ingredient_id_range_task(
     )
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.RequestException,), retry_backoff=True, retry_kwargs={'max_retries': 3}
+)
 def sync_all_ingredients_chunked_task(
     language_codes: str | None = None,
     remote_url: str | None = None,

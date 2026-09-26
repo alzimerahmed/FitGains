@@ -302,7 +302,9 @@ MFA_PASSKEY_SIGNUP_ENABLED = False
 #
 # Social account providers
 #
-ACCOUNT_LOGOUT_ON_GET = True
+# Logout via GET is a trivial forced-logout vector (link prefetching, <img> CSRF);
+# allauth's POST-only logout flow is used instead.
+ACCOUNT_LOGOUT_ON_GET = False
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 

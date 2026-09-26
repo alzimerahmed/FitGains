@@ -32,7 +32,7 @@ from reportlab.platypus import (
 # wger
 from wger.exercises.models import Exercise
 from wger.manager.dataclasses import WorkoutDayData
-from wger.manager.models import Routine
+from wger.manager.models import Routine, SlotEntry
 from wger.utils.cache import CacheKeyMapper
 from wger.utils.pdf import (
     header_colour,
@@ -193,18 +193,18 @@ def reset_routine_cache(instance: Routine, structure: bool = True):
     cache.delete(CacheKeyMapper.routine_api_date_sequence_gym_key(instance.id, instance.user_id))
     cache.delete(CacheKeyMapper.routine_api_logs(instance.id, instance.user_id))
     cache.delete(CacheKeyMapper.routine_api_stats(instance.id, instance.user_id))
-    cache.delete(
-        CacheKeyMapper.routine_api_progression_suggestions(instance.id, instance.user_id)
-    )
+    cache.delete(CacheKeyMapper.routine_api_progression_suggestions(instance.id, instance.user_id))
 
     if structure:
         cache.delete(CacheKeyMapper.routine_api_structure_key(instance.id, instance.user_id))
 
     if instance.pk:
-        for day in instance.days.all():
-            for slot in day.slots.all():
-                for entry in slot.entries.all():
-                    cache.delete(CacheKeyMapper.slot_entry_configs_key(entry.id))
+        # Single query instead of a days→slots→entries traversal: this runs on
+        # every routine-graph write (and every WorkoutLog save via signals)
+        entry_ids = SlotEntry.objects.filter(slot__day__routine_id=instance.pk).values_list(
+            'id', flat=True
+        )
+        cache.delete_many([CacheKeyMapper.slot_entry_configs_key(pk) for pk in entry_ids])
 
 
 def brzycki_one_rm(weight: float | None, reps: float | None) -> Decimal:

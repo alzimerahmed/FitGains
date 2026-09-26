@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING
 from wger.manager.config_calculations.default import display_rounding
 from wger.manager.dataclasses import round_value
 
+
 if TYPE_CHECKING:
     # wger
     from wger.manager.models import Routine
@@ -50,6 +51,12 @@ def _weight_step(slot_entry) -> Decimal:
     """The smallest weight increment the entry is rounded to"""
     step = slot_entry.weight_rounding
     return Decimal(step) if step else DEFAULT_WEIGHT_STEP
+
+
+def _unit_name(slot_entry) -> str:
+    """The display name of the entry's weight unit ('kg', 'lb', ...)"""
+    unit = getattr(slot_entry, 'weight_unit', None)
+    return unit.name if unit is not None and unit.name else 'kg'
 
 
 def evaluate_slot_entry(slot_entry, iteration: int, logs) -> dict:
@@ -114,13 +121,14 @@ def evaluate_slot_entry(slot_entry, iteration: int, logs) -> dict:
     ]
     max_rir = max((log.rir for log in met if log.rir is not None), default=None)
 
+    unit = _unit_name(slot_entry)
     if len(met) < config.sets:
         return {
             **base,
             'rule': 'targets-missed',
             'action': 'hold',
             'reason': f'{len(met)} of {config.sets} prescribed sets reached '
-            f'{target_weight} kg x {target_reps} — repeat the same load until '
+            f'{target_weight} {unit} x {target_reps} — repeat the same load until '
             'all sets hit the targets.',
         }
 
@@ -138,9 +146,9 @@ def evaluate_slot_entry(slot_entry, iteration: int, logs) -> dict:
         **base,
         'rule': 'targets-beaten',
         'action': 'increase-weight',
-        'reason': f'All {config.sets} sets reached {target_weight} kg x {target_reps} '
+        'reason': f'All {config.sets} sets reached {target_weight} {unit} x {target_reps} '
         f'with {max_rir if max_rir is not None else RIR_THRESHOLD}+ reps in reserve '
-        f'— add {step} kg.',
+        f'— add {step} {unit}.',
         'suggested': {'weight': config.weight + step, 'repetitions': config.repetitions},
     }
 
@@ -148,27 +156,53 @@ def evaluate_slot_entry(slot_entry, iteration: int, logs) -> dict:
 def progression_suggestions(routine: 'Routine') -> list[dict]:
     """
     Suggestions for every logged exercise slot of the routine, newest first.
+
+    Two queries total (latest iteration per entry, then the logs of those
+    iterations) instead of 2+ queries per slot entry.
     """
+    # Standard Library
+    from collections import defaultdict
+
     # wger
-    from wger.manager.models import SlotEntry
+    from wger.manager.models import SlotEntry, WorkoutLog
 
     out = []
-    entries = (
-        SlotEntry.objects.filter(slot__day__routine=routine)
-        .select_related('slot__day__routine')
-        .iterator()
+    entries = list(
+        SlotEntry.objects.filter(slot__day__routine=routine).select_related(
+            'slot__day__routine', 'weight_unit', 'repetition_unit'
+        )
     )
+    if not entries:
+        return out
+
+    latest_by_entry: dict[int, int] = {}
+    for row in WorkoutLog.objects.filter(
+        slot_entry_id__in=[entry.pk for entry in entries],
+        user=routine.user,
+        routine=routine,
+        iteration__isnull=False,
+    ).values('slot_entry_id', 'iteration'):
+        current = latest_by_entry.get(row['slot_entry_id'])
+        if current is None or row['iteration'] > current:
+            latest_by_entry[row['slot_entry_id']] = row['iteration']
+
+    if not latest_by_entry:
+        return out
+
+    logs_by_entry: dict[int, list] = defaultdict(list)
+    for log in WorkoutLog.objects.filter(
+        slot_entry_id__in=latest_by_entry.keys(),
+        user=routine.user,
+        routine=routine,
+        iteration__isnull=False,
+    ):
+        if latest_by_entry[log.slot_entry_id] == log.iteration:
+            logs_by_entry[log.slot_entry_id].append(log)
 
     for slot_entry in entries:
-        logs = slot_entry.workoutlog_set.filter(
-            user=routine.user,
-            routine=routine,
-            iteration__isnull=False,
-        )
-        latest = logs.order_by('-iteration').values_list('iteration', flat=True).first()
-        if latest is None:
-            continue
-
-        out.append(evaluate_slot_entry(slot_entry, latest, list(logs.filter(iteration=latest))))
+        latest = latest_by_entry.get(slot_entry.pk)
+        if latest is not None:
+            logs = logs_by_entry.get(slot_entry.pk, [])
+            out.append(evaluate_slot_entry(slot_entry, latest, logs))
 
     return out

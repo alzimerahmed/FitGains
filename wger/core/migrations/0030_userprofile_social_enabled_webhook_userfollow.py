@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('core', '0029_userprofile_timezone'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -18,30 +17,88 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='social_enabled',
-            field=models.BooleanField(default=False, help_text='Allow other users on this instance to follow you and see workouts you explicitly shared. Off by default.', verbose_name='Enable social features'),
+            field=models.BooleanField(
+                default=False,
+                help_text='Allow other users on this instance to follow you and see workouts you explicitly shared. Off by default.',
+                verbose_name='Enable social features',
+            ),
         ),
         migrations.CreateModel(
             name='Webhook',
             fields=[
-                ('id', models.UUIDField(default=wger.utils.uuid.uuid7, primary_key=True, serialize=False)),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=wger.utils.uuid.uuid7, primary_key=True, serialize=False
+                    ),
+                ),
                 ('url', models.URLField(max_length=500, verbose_name='URL')),
-                ('events', models.JSONField(default=list, help_text='List of event names this webhook subscribes to', verbose_name='Events')),
-                ('secret', models.CharField(default=wger.core.models.webhook.generate_webhook_secret, help_text='Used to sign payloads (HMAC-SHA256); shown once at creation', max_length=64, verbose_name='Secret')),
+                (
+                    'events',
+                    models.JSONField(
+                        default=list,
+                        help_text='List of event names this webhook subscribes to',
+                        verbose_name='Events',
+                    ),
+                ),
+                (
+                    'secret',
+                    models.CharField(
+                        default=wger.core.models.webhook.generate_webhook_secret,
+                        help_text='Used to sign payloads (HMAC-SHA256); shown once at creation',
+                        max_length=64,
+                        verbose_name='Secret',
+                    ),
+                ),
                 ('is_active', models.BooleanField(default=True, verbose_name='Active')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Creation date')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='webhooks', to=settings.AUTH_USER_MODEL)),
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='webhooks',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='UserFollow',
             fields=[
-                ('id', models.UUIDField(default=wger.utils.uuid.uuid7, primary_key=True, serialize=False)),
+                (
+                    'id',
+                    models.UUIDField(
+                        default=wger.utils.uuid.uuid7, primary_key=True, serialize=False
+                    ),
+                ),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Creation date')),
-                ('followee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to=settings.AUTH_USER_MODEL)),
-                ('follower', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following', to=settings.AUTH_USER_MODEL)),
+                (
+                    'followee',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='followers',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    'follower',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='following',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('follower', 'followee'), name='unique_user_follow'), models.CheckConstraint(condition=models.Q(('follower', models.F('followee')), _negated=True), name='no_self_follow')],
+                'constraints': [
+                    models.UniqueConstraint(
+                        fields=('follower', 'followee'), name='unique_user_follow'
+                    ),
+                    models.CheckConstraint(
+                        condition=models.Q(('follower', models.F('followee')), _negated=True),
+                        name='no_self_follow',
+                    ),
+                ],
             },
         ),
     ]

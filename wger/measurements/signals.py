@@ -124,6 +124,7 @@ def _measurement_saved(sender, instance, created=False, **kwargs):
 
     # Webhook failures (including a down broker) must never break the write
     try:
+        # wger
         from wger.core.services.webhooks import dispatch_event
 
         dispatch_event(

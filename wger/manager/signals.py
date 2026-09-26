@@ -156,6 +156,7 @@ def dispatch_webhook(user_id: int, event: str, payload: dict):
     write that triggered them
     """
     try:
+        # wger
         from wger.core.services.webhooks import dispatch_event
 
         dispatch_event(user_id, event, payload)

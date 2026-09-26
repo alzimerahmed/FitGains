@@ -66,6 +66,49 @@ class Routine(models.Model):
     Maximum duration of a routine in days (~4 months)
     """
 
+    @classmethod
+    def with_structure_prefetch(cls):
+        """
+        Queryset with the full day → slot → entry → config tree prefetched.
+
+        Used by the structure serializer paths (API structure action, share-token
+        resolve) which walk the default related managers — without this they
+        issue ~1 + D + S + E + 10·E queries per routine.
+        """
+        # Local import: models package imports this module
+        # wger
+        from wger.manager.models import Slot, SlotEntry
+
+        return cls.objects.prefetch_related(
+            Prefetch(
+                'days',
+                queryset=Day.objects.prefetch_related(
+                    Prefetch(
+                        'slots',
+                        queryset=Slot.objects.prefetch_related(
+                            Prefetch(
+                                'entries',
+                                queryset=SlotEntry.objects.prefetch_related(
+                                    'repetition_unit',
+                                    'weight_unit',
+                                    'weightconfig_set',
+                                    'maxweightconfig_set',
+                                    'repetitionsconfig_set',
+                                    'maxrepetitionsconfig_set',
+                                    'rirconfig_set',
+                                    'maxrirconfig_set',
+                                    'restconfig_set',
+                                    'maxrestconfig_set',
+                                    'setsconfig_set',
+                                    'maxsetsconfig_set',
+                                ),
+                            )
+                        ),
+                    )
+                ),
+            )
+        )
+
     class Meta:
         ordering = [
             '-start',
@@ -371,9 +414,11 @@ class Routine(models.Model):
         """
         out = []
 
-        qs = self.sessions.all()
+        qs = self.sessions.prefetch_related('logs')
         if date:
-            qs = qs.filter(date=date)
+            # WorkoutSession has no `date` column — filter on the timestamp's
+            # local day instead of raising FieldError
+            qs = qs.filter(datetime_start__date=date)
 
         for session in qs:
             out.append({'session': session, 'logs': session.logs.all()})

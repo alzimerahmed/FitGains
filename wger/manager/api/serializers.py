@@ -88,8 +88,9 @@ class RoutineShareTokenSerializer(serializers.ModelSerializer):
     """
     Share token serializer (G5)
 
-    The token value is only returned at creation time; afterwards it is
-    write-protected so a leaked API response cannot widen the share.
+    The token value is read-only and owner-visible on every read of the
+    token row (owner-only endpoint); it is never accepted as input, so a
+    leaked API response cannot widen the share.
     """
 
     token = serializers.UUIDField(read_only=True)

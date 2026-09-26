@@ -91,6 +91,7 @@ class Webhook(models.Model):
         return self
 
     def clean(self):
+        # Django
         from django.core.exceptions import ValidationError
 
         if not isinstance(self.events, list) or not self.events:
