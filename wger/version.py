@@ -41,13 +41,22 @@ Current version of the app.
 
 This literal is what the API reports and what .github/workflows/docker.yml
 extracts to tag the images, so both agree. It must be valid semver: write
-pre-releases as "2.8.0-dev", not "2.8.0.dev0", otherwise the docker workflow
+pre-releases as "1.0.0-dev", not "1.0.0.dev0", otherwise the docker workflow
 will silently produce no version tags (only a warning in the log) but the build
 will complete successfully otherwise.
 """
 
 VERSION = Version(VERSION_STRING)
 """Parsed form of VERSION_STRING, for version comparisons"""
+
+UPSTREAM_COMPAT_VERSION = Version('2.8.0')
+"""
+The wger version this fork's sync/API behaviour is compatible with.
+
+FitGains has its own version line (1.x), but the remote wger server only knows
+upstream versions when advertising its minimum-server requirement. This is the
+upstream-equivalent level used for that check instead of VERSION.
+"""
 
 
 def get_version() -> str:
