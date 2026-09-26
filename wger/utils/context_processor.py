@@ -28,7 +28,7 @@ from wger.utils.language import get_language_data
 def processor(request):
     languages_dict = dict(settings.AVAILABLE_LANGUAGES)
     full_path = request.get_full_path()
-    static_path = static('images/logos/logo-social.png')
+    static_path = static('images/logos/logo.png')
 
     # fmt: off
     context = {

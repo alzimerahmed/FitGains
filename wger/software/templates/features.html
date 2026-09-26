@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block opengraphimages %}
-    <meta property="og:image" content="{% static 'images/logos/logo-font.svg' %}">
+    <meta property="og:image" content="{% static 'images/logos/logo.png' %}">
 {% endblock %}
 
 
@@ -27,7 +27,7 @@
         <nav class="navbar navbar-expand-lg px-4">
             <div class="container-xl">
                 <a class="navbar-brand" href="{% url 'core:index' %}">
-                    <img src="{% static 'images/logos/logo-font.svg' %}" alt="wger logo"/>
+                    <img src="{% static 'images/logos/logo.png' %}" style="width: 38px;" alt="FitGains logo"/>
                 </a>
                 <button class="navbar-toggler"
                         type="button"
@@ -431,7 +431,7 @@
     <footer class="d-grid gap-3 p-5 footer-bg">
         <div class="container-xl">
             <div class="d-flex pb-4">
-                <img src="{% static 'images/logos/logo-font-inverse.svg' %}" alt="wger logo"/>
+                <img src="{% static 'images/logos/logo.png' %}" style="width: 38px;" alt="FitGains logo"/>
             </div>
             <div class="row row-cols-lg-4 row-cols-sm-1 g-2 border-bottom border-light pb-3">
                 <div class="col-lg-3 col-sm-6 col-12">

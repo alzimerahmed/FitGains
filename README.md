@@ -2,6 +2,8 @@
 
 <div align="center">
 
+<img src="FitGains%20icon.png" alt="FitGains" width="160">
+
 [![CI](https://github.com/alzimerahmed/FitGains/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/alzimerahmed/FitGains/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![Django](https://img.shields.io/badge/Django-5.x-092E20?logo=django&logoColor=white)](https://www.djangoproject.com)
