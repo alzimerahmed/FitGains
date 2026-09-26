@@ -43,6 +43,9 @@ class UserDataExportImportTestCase(WgerTestCase):
 
         before_routines = Routine.objects.filter(user=source).count()
         before_logs = WorkoutLog.objects.filter(user=source).count()
+        # The target user already owns fixture rows; only count the
+        # routines the import actually created
+        target_pks_before = set(Routine.objects.filter(user=target).values_list('pk', flat=True))
 
         counts = import_user_data(target, payload)
 
@@ -50,7 +53,7 @@ class UserDataExportImportTestCase(WgerTestCase):
         self.assertEqual(counts['manager.WorkoutLog'], before_logs)
 
         # All imported routines belong to the target user
-        imported = Routine.objects.filter(user=target).order_by('pk')
+        imported = Routine.objects.filter(user=target).exclude(pk__in=target_pks_before)
         self.assertEqual(imported.count(), before_routines)
         for routine in imported:
             self.assertEqual(routine.user, target)
@@ -65,7 +68,7 @@ class UserDataExportImportTestCase(WgerTestCase):
         from wger.manager.models import Day
 
         imported_day_routine_pks = set(
-            Day.objects.filter(routine__user=target).values_list('routine_id', flat=True)
+            Day.objects.filter(routine__in=imported).values_list('routine_id', flat=True)
         )
         self.assertTrue(imported_day_routine_pks.issubset({r.pk for r in imported}))
         self.assertFalse(imported_day_routine_pks & source_pks)
