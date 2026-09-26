@@ -35,7 +35,10 @@ class PlateCalculatorLogicTestCase(WgerTestCase):
     def test_exact_match(self):
         result = calculate_plates(Decimal('100'), Decimal('20'), [Decimal('25'), Decimal('5')])
         self.assertTrue(result['exact'])
-        self.assertEqual(result['plates'], [{'weight': Decimal('25'), 'count': 1}])
+        self.assertEqual(
+            result['plates'],
+            [{'weight': Decimal('25'), 'count': 1}, {'weight': Decimal('5'), 'count': 3}],
+        )
         self.assertEqual(result['leftover'], Decimal('0'))
 
     def test_greedy_uses_largest_first(self):
@@ -69,7 +72,8 @@ class PlateCalculatorLogicTestCase(WgerTestCase):
             Decimal('100'), Decimal('20'), [Decimal('10'), Decimal('10'), Decimal('5')]
         )
         self.assertTrue(result['exact'])
-        self.assertEqual(len(result['plates']), 2)
+        # Duplicates collapse to one denomination: 4 x 10 per side
+        self.assertEqual(result['plates'], [{'weight': Decimal('10'), 'count': 4}])
 
 
 class PlateCalculatorApiTestCase(WgerTestCase):
@@ -84,7 +88,15 @@ class PlateCalculatorApiTestCase(WgerTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data['exact'])
-        self.assertEqual(response.data['plates'], [{'weight': '25.00', 'count': 2}])
+        # per side 40: one 25, one 10 and one 5
+        self.assertEqual(
+            response.data['plates'],
+            [
+                {'weight': '25.00', 'count': 1},
+                {'weight': '10.00', 'count': 1},
+                {'weight': '5.00', 'count': 1},
+            ],
+        )
 
     def test_missing_weight_is_rejected(self):
         response = self.client.get(reverse('plate-calculator-list'))

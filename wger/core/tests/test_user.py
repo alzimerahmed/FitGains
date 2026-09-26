@@ -414,7 +414,10 @@ class UserDetailPageMacroUnitTestCase(WgerTestCase):
         response = self.client.get(reverse('core:user:overview', kwargs={'pk': member.pk}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, 'oz')
+        # The 'oz' unit label would render as a text node; searching for the
+        # bare substring hits random 'oz' sequences in csrf tokens instead
+        self.assertNotContains(response, '>oz<')
+        self.assertNotContains(response, ' oz ')
 
 
 class UserTrustworthinessTestCase(WgerTestCase):

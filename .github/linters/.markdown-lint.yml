@@ -1,0 +1,5 @@
+# Markdownlint config for super-linter
+# AGENTS.md is an agent-facing doc with long lines and bare URLs by design
+MD013: false
+MD034: false
+MD060: false

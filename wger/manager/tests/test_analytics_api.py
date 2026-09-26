@@ -90,6 +90,9 @@ class VolumeServiceTestCase(WgerTestCase):
 
     def setUp(self):
         super().setUp()
+        # The base fixtures ship workout logs; the series under test assumes
+        # a clean slate so bucket counts are exact
+        WorkoutLog.objects.all().delete()
         self.routine = Routine.objects.create(
             user_id=1,
             name='Analytics routine',
@@ -164,6 +167,9 @@ class OneRmServiceTestCase(WgerTestCase):
 
     def setUp(self):
         super().setUp()
+        # The base fixtures ship workout logs; the series under test assumes
+        # a clean slate so bucket counts are exact
+        WorkoutLog.objects.all().delete()
         # Same day: the 5-rep set estimates higher than the 10-rep one
         make_log(1, 1, 100, 5, datetime.datetime(2024, 2, 1), iteration=1).save()  # 116.67
         make_log(1, 1, 80, 10, datetime.datetime(2024, 2, 1), iteration=1).save()  # 106.67

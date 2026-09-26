@@ -182,7 +182,8 @@ class SocialFeedAuthTestCase(WgerTestCase):
     Negative authz checks for the feed and follow endpoints
     """
 
-    def test_anonymous_feed_is_empty_not_error(self):
+    def test_anonymous_feed_requires_auth(self):
+        # The feed is personal (follow graph); anonymous probes get rejected
+        # instead of an empty 200 list
         response = self.client.get(reverse('social-feed-list'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 0)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

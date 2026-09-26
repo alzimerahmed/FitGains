@@ -10,7 +10,7 @@
 
 *A FOSS workout, nutrition and body-tracking server you host yourself — built on the wger codebase.*
 
-[Quick Start](#quick-start) • [Features](#features) • [Tech Stack](#tech-stack) • [Building](#building)
+[Quick Start](#quick-start) • [Features](#features) • [Tech Stack](#tech-stack)
 
 </div>
 
@@ -38,7 +38,7 @@ Not yet published. Run it locally and see for yourself — the web UI is mobile-
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
+| --- | --- |
 | Backend | Python 3.12+, Django 5.x, Django REST Framework |
 | Auth | django-allauth (MFA, OIDC) + django-axes |
 | Background jobs | Celery + Redis |
@@ -48,7 +48,7 @@ Not yet published. Run it locally and see for yourself — the web UI is mobile-
 
 ## Project Structure
 
-```
+```text
 wger/
   core/          users, auth, preferences, API infra
   manager/       workout routines, schedules, logs, analytics services
