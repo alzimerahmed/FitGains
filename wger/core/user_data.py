@@ -67,7 +67,6 @@ from wger.nutrition.models import (
     MealItem,
     NutritionPlan,
 )
-from wger.weight.models import WeightEntry
 
 
 class Spec:
@@ -100,7 +99,6 @@ EXPORT_SPEC = [
     Spec(Meal, 'plan__user'),
     Spec(MealItem, 'meal__plan__user'),
     Spec(LogItem, 'plan__user'),
-    Spec(WeightEntry, 'user', 'user'),
     Spec(Category, 'user', 'user'),
     Spec(Measurement, 'category__user'),
 ]
@@ -130,6 +128,8 @@ def import_user_data(user, payload: dict) -> dict:
     """
     if payload.get('version') != 1:
         raise ValueError('Unsupported export version')
+    if not isinstance(payload.get('models'), dict):
+        raise ValueError('Malformed export: "models" section missing')
 
     by_label = {spec.model._meta.label: spec for spec in EXPORT_SPEC}
     # old pk -> new instance, per model label
@@ -164,10 +164,26 @@ def import_user_data(user, payload: dict) -> dict:
                     deferred.append((label, row['pk'], name))
                 else:
                     target_map = pk_map.get(related_label, {})
-                    new_fields[name] = target_map.get(value, value)
+                    if value not in target_map:
+                        raise ValueError(
+                            f'Missing mapping for {related_label}:{value} '
+                            f'(referenced by {label})'
+                        )
+                    new_fields[name] = target_map[value]
 
             if spec.user_field:
                 new_fields[spec.user_field] = user
+
+            # Official/typed measurement categories are unique per
+            # (user, metric_type) and auto-created for users: merge into the
+            # target's existing category instead of creating a duplicate.
+            if spec.model is Category and fields.get('metric_type') != 'custom':
+                existing = Category.objects.filter(
+                    user=user, metric_type=fields.get('metric_type')
+                ).first()
+                if existing is not None:
+                    pk_map[label][row['pk']] = existing
+                    continue
 
             instance = spec.model(**new_fields)
             instance.save()
@@ -176,8 +192,12 @@ def import_user_data(user, payload: dict) -> dict:
         counts[label] = len(rows)
 
     # Pass two: self-FKs
+    rows_by_label = {
+        label: {row['pk']: row for row in payload['models'].get(label, [])}
+        for label in by_label
+    }
     for label, old_pk, field_name in deferred:
-        row = next(r for r in payload['models'][label] if r['pk'] == old_pk)
+        row = rows_by_label[label][old_pk]
         old_value = row['fields'][field_name]
         instance = pk_map[label][old_pk]
         setattr(instance, field_name, pk_map[label].get(old_value))
@@ -187,7 +207,9 @@ def import_user_data(user, payload: dict) -> dict:
 
 
 def export_to_json(user) -> str:
-    return json.dumps(export_user_data(user))
+    from django.core.serializers.json import DjangoJSONEncoder
+
+    return json.dumps(export_user_data(user), cls=DjangoJSONEncoder)
 
 
 def import_from_json(user, json_text: str) -> dict:

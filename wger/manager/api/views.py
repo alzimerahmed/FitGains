@@ -27,7 +27,10 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     extend_schema,
 )
-from rest_framework import viewsets
+from rest_framework import (
+    status,
+    viewsets,
+)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -685,15 +688,26 @@ class PlateCalculatorViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
         def to_decimal(value, default=None):
             try:
-                return Decimal(value)
-            except (TypeError, ValueError):
+                result = Decimal(value)
+            except (TypeError, ValueError, ArithmeticError):
                 return default
+            if not result.is_finite():
+                return default
+            return result
 
         target = to_decimal(request.query_params.get('weight'))
         if target is None or target < 0:
-            return Response({'detail': 'A non-negative "weight" query parameter is required.'}, 400)
+            return Response(
+                {'detail': 'A non-negative "weight" query parameter is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        bar = to_decimal(request.query_params.get('bar'), Decimal('20')) or Decimal(0)
+        bar = to_decimal(request.query_params.get('bar'), Decimal('20'))
+        if bar is None or bar < 0:
+            return Response(
+                {'detail': '"bar" must be a non-negative number.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         raw_available = request.query_params.get('available', '25,20,15,10,5,2.5,1.25')
         available = [
             value
@@ -701,7 +715,10 @@ class PlateCalculatorViewSet(viewsets.ViewSet):
             if value is not None and value > 0
         ]
         if not available:
-            return Response({'detail': '"available" contains no valid plate weights.'}, 400)
+            return Response(
+                {'detail': '"available" contains no valid plate weights.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         result = calculate_plates(target, bar, available)
         return Response(PlateCalculatorResultSerializer(result).data)

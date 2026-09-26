@@ -26,6 +26,7 @@ reference implementation to build on.
 
 # Standard Library
 from collections import defaultdict
+from dataclasses import dataclass
 from decimal import Decimal
 from typing import (
     TYPE_CHECKING,
@@ -114,6 +115,7 @@ def _apply_config_value(
     return out
 
 
+@dataclass(slots=True)
 class _WalkState:
     """
     Walk state of a single progression field.

@@ -51,6 +51,7 @@ jobs:
 
       # DX gate: fail fast when a model change is missing its migration
       - name: Check for missing migrations
+        if: matrix.python-version == '3.13'
         run: uv run ./manage.py makemigrations --check --dry-run
 
       # Only run the tests with coverage for one version of python.

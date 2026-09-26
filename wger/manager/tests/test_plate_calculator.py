@@ -93,3 +93,14 @@ class PlateCalculatorApiTestCase(WgerTestCase):
     def test_invalid_weight_is_rejected(self):
         response = self.client.get(reverse('plate-calculator-list'), data={'weight': 'abc'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_non_finite_weight_is_rejected(self):
+        for value in ('NaN', 'Infinity', '-Infinity'):
+            response = self.client.get(reverse('plate-calculator-list'), data={'weight': value})
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_negative_bar_is_rejected(self):
+        response = self.client.get(
+            reverse('plate-calculator-list'), data={'weight': '100', 'bar': '-1'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

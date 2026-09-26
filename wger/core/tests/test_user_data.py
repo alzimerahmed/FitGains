@@ -60,6 +60,15 @@ class UserDataExportImportTestCase(WgerTestCase):
         for routine in imported:
             self.assertNotIn(routine.pk, source_pks)
 
+        # FK remapping: imported days point at the new routines, not the source's
+        from wger.manager.models import Day
+
+        imported_day_routine_pks = set(
+            Day.objects.filter(routine__user=target).values_list('routine_id', flat=True)
+        )
+        self.assertTrue(imported_day_routine_pks.issubset({r.pk for r in imported}))
+        self.assertFalse(imported_day_routine_pks & source_pks)
+
     def test_import_rejects_unknown_version(self):
         user = User.objects.get(username='test')
         with self.assertRaises(ValueError):
