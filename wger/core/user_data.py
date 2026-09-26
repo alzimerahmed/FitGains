@@ -150,6 +150,12 @@ def import_user_data(user, payload: dict) -> dict:
                     new_fields[name] = value
                     continue
 
+                if name == spec.user_field:
+                    # Handled by the user_field assignment below; leaving the
+                    # exported pk here would set user_id and Django's __init__
+                    # would prefer the attname over the instance kwarg
+                    continue
+
                 related_label = field.related_model._meta.label
                 if related_label not in by_label:
                     # Catalogue model (exercise, units, ...): keep the raw pk;
