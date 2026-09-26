@@ -164,6 +164,13 @@ def import_user_data(user, payload: dict) -> dict:
                 else:
                     target_map = pk_map.get(related_label, {})
                     if value not in target_map:
+                        if field.null:
+                            # The FK points outside the export (e.g. a session
+                            # linked to a routine owned by someone else).
+                            # Dangling it as NULL keeps the row; only hard-fail
+                            # when the reference is required.
+                            new_fields[name] = None
+                            continue
                         raise ValueError(
                             f'Missing mapping for {related_label}:{value} (referenced by {label})'
                         )
