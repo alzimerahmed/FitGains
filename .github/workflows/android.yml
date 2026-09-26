@@ -27,8 +27,9 @@ jobs:
       # packages our AGP/compileSdk need are present
       - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses > /dev/null
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
