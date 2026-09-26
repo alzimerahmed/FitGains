@@ -133,6 +133,11 @@ router.register(
 router.register(r'rir-config', manager_api_views.RiRConfigViewSet, basename='rir-config')
 router.register(r'max-rir-config', manager_api_views.MaxRiRConfigViewSet, basename='max-rir-config')
 router.register(r'workoutlog', manager_api_views.WorkoutLogViewSet, basename='workoutlog')
+router.register(
+    r'plate-calculator',
+    manager_api_views.PlateCalculatorViewSet,
+    basename='plate-calculator',
+)
 
 # Core app
 router.register(r'language', core_api_views.LanguageViewSet, basename='language')

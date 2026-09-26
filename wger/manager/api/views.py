@@ -14,6 +14,7 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 # Standard Library
+from decimal import Decimal
 
 # Django
 from django.conf import settings
@@ -21,13 +22,18 @@ from django.core.cache import cache
 from django.db.models import Q
 
 # Third Party
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    extend_schema,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 # wger
 from wger.manager.api.consts import BASE_CONFIG_FILTER_FIELDS
+from wger.manager.api.plate_calculator import calculate_plates
 from wger.manager.api.filtersets import (
     WorkoutLogFilterSet,
     WorkoutSessionFilterSet,
@@ -42,6 +48,7 @@ from wger.manager.api.serializers import (
     MaxRiRConfigSerializer,
     MaxSetNrConfigSerializer,
     MaxWeightConfigSerializer,
+    PlateCalculatorResultSerializer,
     RepetitionsConfigSerializer,
     RestConfigSerializer,
     RiRConfigSerializer,
@@ -635,3 +642,66 @@ class MaxRiRConfigViewSet(AbstractConfigViewSet):
             return MaxRiRConfig.objects.none()
 
         return MaxRiRConfig.objects.filter(slot_entry__slot__day__routine__user=self.request.user)
+
+
+class PlateCalculatorViewSet(viewsets.ViewSet):
+    """
+    Plate calculator: returns the plates to load for a target weight.
+
+    Pure computation, no database access. All values are in the caller's
+    unit (kg or lb), the endpoint is unit-agnostic.
+    """
+
+    serializer_class = PlateCalculatorResultSerializer
+
+    @extend_schema(
+        summary='Calculate the plate layout for a target weight',
+        parameters=[
+            OpenApiParameter(
+                'weight',
+                OpenApiTypes.DECIMAL,
+                OpenApiParameter.QUERY,
+                required=True,
+                description='Target total weight (including the bar)',
+            ),
+            OpenApiParameter(
+                'bar',
+                OpenApiTypes.DECIMAL,
+                OpenApiParameter.QUERY,
+                description='Bar weight, 20 by default',
+            ),
+            OpenApiParameter(
+                'available',
+                OpenApiTypes.STR,
+                OpenApiParameter.QUERY,
+                description=(
+                    'Comma-separated available plate denominations, '
+                    '"25,20,15,10,5,2.5,1.25" by default'
+                ),
+            ),
+        ],
+        responses={200: PlateCalculatorResultSerializer},
+    )
+    def list(self, request, *args, **kwargs):
+        def to_decimal(value, default=None):
+            try:
+                return Decimal(value)
+            except (TypeError, ValueError):
+                return default
+
+        target = to_decimal(request.query_params.get('weight'))
+        if target is None or target < 0:
+            return Response({'detail': 'A non-negative "weight" query parameter is required.'}, 400)
+
+        bar = to_decimal(request.query_params.get('bar'), Decimal('20')) or Decimal(0)
+        raw_available = request.query_params.get('available', '25,20,15,10,5,2.5,1.25')
+        available = [
+            value
+            for value in (to_decimal(v.strip()) for v in raw_available.split(','))
+            if value is not None and value > 0
+        ]
+        if not available:
+            return Response({'detail': '"available" contains no valid plate weights.'}, 400)
+
+        result = calculate_plates(target, bar, available)
+        return Response(PlateCalculatorResultSerializer(result).data)

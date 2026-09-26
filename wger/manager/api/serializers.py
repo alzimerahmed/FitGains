@@ -645,3 +645,23 @@ class LogStatsDataSerializer(serializers.Serializer):
     intensity = GroupedLogDataSerializer()
     sets = GroupedLogDataSerializer()
     volume = GroupedLogDataSerializer()
+
+
+class PlateEntrySerializer(serializers.Serializer):
+    """
+    A single plate denomination and how many times it goes on each side
+    """
+
+    weight = serializers.DecimalField(max_digits=6, decimal_places=2)
+    count = serializers.IntegerField(min_value=0)
+
+
+class PlateCalculatorResultSerializer(serializers.Serializer):
+    """
+    Result of a plate calculator query
+    """
+
+    plates = PlateEntrySerializer(many=True)
+    per_side = serializers.DecimalField(max_digits=8, decimal_places=2)
+    leftover = serializers.DecimalField(max_digits=8, decimal_places=2)
+    exact = serializers.BooleanField()
