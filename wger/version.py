@@ -65,4 +65,3 @@ def get_version_with_git() -> str:
 
 def get_version_date() -> str | None:
     return os.environ.get('APP_BUILD_DATE')
-
