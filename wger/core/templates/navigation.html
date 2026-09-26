@@ -24,7 +24,8 @@
                     <li class="nav-item dropdown">
                         <a href="{% url 'manager:routine:overview' %}"
                            rel="nofollow"
-                           class="nav-link dropdown-toggle text-white {% if active_tab == 'workout' %}text-decoration-underline{% endif %}{% if active_tab == 'workout' %} aria-current="page"{% endif %}"
+                           class="nav-link dropdown-toggle text-white {% if active_tab == 'workout' %}text-decoration-underline{% endif %}"
+                           {% if active_tab == 'workout' %}aria-current="page"{% endif %}
                            data-bs-toggle="dropdown">{% translate "Training" %} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
@@ -141,7 +142,8 @@
                     {#               #}
                     <li class="nav-item dropdown">
                         <a href="{% url 'nutrition:plan:overview' %}"
-                           class="dropdown-toggle nav-link text-white {% if active_tab == 'nutrition' %}text-decoration-underline{% endif %}{% if active_tab == 'nutrition' %} aria-current="page"{% endif %}"
+                           class="dropdown-toggle nav-link text-white {% if active_tab == 'nutrition' %}text-decoration-underline{% endif %}"
+                           {% if active_tab == 'nutrition' %}aria-current="page"{% endif %}
                            data-bs-toggle="dropdown"
                            rel="nofollow">{% translate "Nutrition" %} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -188,7 +190,8 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a href="{% url 'weight:overview' %}"
-                               class="dropdown-toggle nav-link text-white {% if active_tab == 'weight' %}text-decoration-underline{% endif %}{% if active_tab == 'weight' %} aria-current="page"{% endif %}"
+                               class="dropdown-toggle nav-link text-white {% if active_tab == 'weight' %}text-decoration-underline{% endif %}"
+                           {% if active_tab == 'weight' %}aria-current="page"{% endif %}
                                data-bs-toggle="dropdown"
                                rel="nofollow">{% translate "Body weight" %} <b
                                 class="caret"></b></a>
@@ -210,7 +213,8 @@
                     {#              #}
                     <li class="nav-item dropdown">
                         <a href=""
-                           class="dropdown-toggle nav-link text-white {% if active_tab == 'software' %}text-decoration-underline{% endif %}{% if active_tab == 'software' %} aria-current="page"{% endif %}"
+                           class="dropdown-toggle nav-link text-white {% if active_tab == 'software' %}text-decoration-underline{% endif %}"
+                           {% if active_tab == 'software' %}aria-current="page"{% endif %}
                            data-bs-toggle="dropdown">{% translate "About this software" %} <b
                             class="caret"></b></a>
                         <ul class="dropdown-menu">

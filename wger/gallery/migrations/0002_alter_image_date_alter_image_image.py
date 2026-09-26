@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('gallery', '0001_initial'),
     ]
@@ -20,6 +19,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='image',
             name='image',
-            field=models.ImageField(height_field='height', help_text='Only PNG and JPEG formats are supported', upload_to=wger.gallery.models.image.gallery_upload_dir, validators=[wger.utils.images.validate_image_static_no_animation], verbose_name='Image', width_field='width'),
+            field=models.ImageField(
+                height_field='height',
+                help_text='Only PNG and JPEG formats are supported',
+                upload_to=wger.gallery.models.image.gallery_upload_dir,
+                validators=[wger.utils.images.validate_image_static_no_animation],
+                verbose_name='Image',
+                width_field='width',
+            ),
         ),
     ]

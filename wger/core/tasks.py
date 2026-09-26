@@ -59,9 +59,10 @@ def send_email_task(payload: dict):
 
 
 @app.task(
-    # Same: only network-level failures are transient; a rejected 4xx
-    # delivery is logged by deliver_webhook and must not be retried
-    autoretry_for=(requests.RequestException,),
+    # Only connection-level failures are transient. A rejected 4xx delivery
+    # (requests.HTTPError from raise_for_status) is logged by deliver_webhook
+    # and must not be retried — the receiver will reject it again.
+    autoretry_for=(requests.ConnectionError, requests.Timeout),
     retry_backoff=True,
     retry_kwargs={'max_retries': 5},
 )

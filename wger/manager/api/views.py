@@ -20,6 +20,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 # Third Party
 from drf_spectacular.types import OpenApiTypes
@@ -199,10 +200,19 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Return the full object structure of the routine.
         """
+
+        def produce():
+            # Prefetch the tree on the permission-scoped queryset: foreign
+            # routines 404 (probing resistance) and the object permission
+            # check still runs for trainer/shared visibility rules
+            routine = get_object_or_404(Routine.with_structure_prefetch(self.get_queryset()), pk=pk)
+            self.check_object_permissions(request, routine)
+            return RoutineStructureSerializer(routine).data
+
         return cached_routine_response(
             request,
             CacheKeyMapper.routine_api_structure_key(pk, request.user.id),
-            lambda: RoutineStructureSerializer(Routine.with_structure_prefetch().get(pk=pk)).data,
+            produce,
         )
 
     @extend_schema(responses={200: LogDisplaySerializer(many=True)})
@@ -266,9 +276,6 @@ class RoutineViewSet(viewsets.ModelViewSet):
         permission would reject non-owner writes, but copying a public
         template is an allowed write for the copier, like the web view.
         """
-        # Django
-        from django.shortcuts import get_object_or_404
-
         routine = get_object_or_404(Routine, pk=pk)
         if routine.user != request.user and not routine.is_public:
             raise PermissionDenied('You can only copy your own routines or public templates.')

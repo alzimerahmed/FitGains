@@ -67,19 +67,21 @@ class Routine(models.Model):
     """
 
     @classmethod
-    def with_structure_prefetch(cls):
+    def with_structure_prefetch(cls, queryset=None):
         """
         Queryset with the full day → slot → entry → config tree prefetched.
 
         Used by the structure serializer paths (API structure action, share-token
         resolve) which walk the default related managers — without this they
-        issue ~1 + D + S + E + 10·E queries per routine.
+        issue ~1 + D + S + E + 10·E queries per routine. Pass ``queryset`` to
+        keep an existing scoping (e.g. the viewset's permission-filtered one).
         """
         # Local import: models package imports this module
         # wger
         from wger.manager.models import Slot, SlotEntry
 
-        return cls.objects.prefetch_related(
+        base = queryset if queryset is not None else cls.objects.all()
+        return base.prefetch_related(
             Prefetch(
                 'days',
                 queryset=Day.objects.prefetch_related(
