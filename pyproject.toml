@@ -6,13 +6,13 @@ build-backend = "hatchling.build"
 name = "wger"
 dynamic = ["version", ]
 authors = [
-    { name = "wger team", email = "hello@wger.de" },
+    { name = "Alzimer Ahmed", email = "alzimerahmed84@gmail.com" },
 ]
-description = "FLOSS workout, fitness and weight manager/tracker"
+description = "FitGains - FLOSS workout, fitness and weight manager/tracker"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "AGPL-3.0-or-later"
-license-files = ["LICENSE.txt", "AUTHORS.md"]
+license-files = ["LICENSE.txt"]
 classifiers = [
     # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     'Development Status :: 5 - Production/Stable',
@@ -91,7 +91,6 @@ Documentation = "https://wger.readthedocs.io"
 Repository = "https://github.com/wger-project/wger"
 Issues = "https://github.com/wger-project/wger/issues"
 Changelog = "https://wger.readthedocs.io/en/latest/changelog.html"
-Funding = "https://buymeacoffee.com/wger"
 
 
 [project.scripts]

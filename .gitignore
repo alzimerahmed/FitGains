@@ -93,3 +93,9 @@ venv-wger
 
 # macOS
 .DS_Store
+
+# Devin prompt system + per-project knowledge layer (private, never pushed)
+.devin/
+.switchboard/
+docs/*.md
+docs/design/
