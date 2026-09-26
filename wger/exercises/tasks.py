@@ -20,6 +20,7 @@ import random
 from django.conf import settings
 
 # Third Party
+import requests
 from celery.schedules import crontab
 
 # wger
@@ -41,7 +42,12 @@ from wger.exercises.sync import (
 logger = logging.getLogger(__name__)
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 5},
+)
 def sync_exercises_task():
     """
     Fetches the current exercises from the default wger instance
@@ -55,7 +61,12 @@ def sync_exercises_task():
     handle_deleted_entries(logger.info)
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 5},
+)
 def sync_images_task():
     """
     Fetches the exercise images from the default wger instance
@@ -63,7 +74,12 @@ def sync_images_task():
     download_exercise_images(logger.info)
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 5},
+)
 def sync_videos_task():
     """
     Fetches the exercise videos from the default wger instance

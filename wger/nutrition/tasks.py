@@ -54,7 +54,12 @@ via cursor pagination — fast at any catalogue size.
 """
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 5},
+)
 def fetch_ingredient_image_task(pk: int):
     """
     Fetches the ingredient image from an upstream wger server (or Open Food Facts)
@@ -63,7 +68,12 @@ def fetch_ingredient_image_task(pk: int):
     fetch_ingredient_image(pk)
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 5},
+)
 def fetch_all_ingredient_images_task():
     """
     Fetches all ingredient image from an upstream wger server (or Open Food Facts)
@@ -197,7 +207,12 @@ def export_ingredients_dump_task():
     export_ingredient_dump(logger.info)
 
 
-@app.task
+@app.task(
+    autoretry_for=(requests.exceptions.RequestException,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={'max_retries': 3},
+)
 def sync_off_daily_delta():
     """
     Fetches OFF's daily delta product updates
