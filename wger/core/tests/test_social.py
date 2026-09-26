@@ -175,3 +175,14 @@ class SocialFeedTestCase(WgerTestCase):
         self.client.force_login(follower)
         response = self.client.get(reverse('social-feed-list'))
         self.assertEqual(response.data['results'][0]['username'], 'admin')
+
+
+class SocialFeedAuthTestCase(WgerTestCase):
+    """
+    Negative authz checks for the feed and follow endpoints
+    """
+
+    def test_anonymous_feed_is_empty_not_error(self):
+        response = self.client.get(reverse('social-feed-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 0)

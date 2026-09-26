@@ -121,16 +121,21 @@ def _measurement_saved(sender, instance, created=False, **kwargs):
         return
     if instance.category.metric_type != MetricType.BODY_WEIGHT:
         return
-    from wger.core.services.webhooks import dispatch_event
 
-    dispatch_event(
-        instance.category.user_id,
-        'weight.created',
-        {
-            'id': str(instance.pk),
-            'date': instance.date.isoformat(),
-            'value': str(instance.value),
-            'unit': instance.unit,
-            'source': instance.source,
-        },
-    )
+    # Webhook failures (including a down broker) must never break the write
+    try:
+        from wger.core.services.webhooks import dispatch_event
+
+        dispatch_event(
+            instance.category.user_id,
+            'weight.created',
+            {
+                'id': str(instance.pk),
+                'date': instance.date.isoformat(),
+                'value': str(instance.value),
+                'unit': instance.unit,
+                'source': instance.source,
+            },
+        )
+    except Exception:
+        logger.exception('Webhook dispatch failed for event weight.created')

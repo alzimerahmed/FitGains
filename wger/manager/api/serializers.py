@@ -114,6 +114,12 @@ class RoutineShareTokenSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
+        if self.instance is not None:
+            # Updates may only revoke or re-schedule expiry; the token and
+            # the routine it points to are immutable
+            if 'routine' in data and data['routine'] != self.instance.routine:
+                raise serializers.ValidationError({'routine': 'The routine cannot be changed.'})
+
         expires_at = data.get('expires_at')
         if expires_at is not None and expires_at <= timezone.now():
             raise serializers.ValidationError(

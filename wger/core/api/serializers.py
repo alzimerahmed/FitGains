@@ -222,6 +222,29 @@ class WebhookSerializer(serializers.ModelSerializer):
 
     secret = serializers.CharField(write_only=True, required=False)
 
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        # The secret is shown exactly once, in the create response; it is
+        # never serialized again afterwards
+        self._created_secret = instance.secret
+        return instance
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        secret = getattr(self, '_created_secret', None)
+        if secret is not None:
+            data['secret'] = secret
+        return data
+
+    def validate_url(self, value):
+        from wger.core.services.webhooks import WebhookUrlError, validate_webhook_url
+
+        try:
+            validate_webhook_url(value)
+        except WebhookUrlError as e:
+            raise serializers.ValidationError(str(e.message)) from e
+        return value
+
     class Meta:
         model = Webhook
         fields = (
@@ -264,7 +287,10 @@ class UserFollowSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if value == user:
             raise serializers.ValidationError('Users cannot follow themselves.')
-        if not value.userprofile.social_enabled:
+        # A missing profile (possible for API-created users) counts as
+        # social-disabled rather than a 500
+        profile = getattr(value, 'userprofile', None)
+        if profile is None or not profile.social_enabled:
             raise serializers.ValidationError('This user does not allow followers.')
         if UserFollow.objects.filter(follower=user, followee=value).exists():
             raise serializers.ValidationError('You are already following this user.')

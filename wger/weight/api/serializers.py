@@ -26,6 +26,7 @@ from wger.measurements.limits import (
 )
 from wger.measurements.models import Measurement
 from wger.measurements.models.category import MetricType
+from wger.measurements.models.measurement import MeasurementSource
 
 
 class WeightEntrySerializer(serializers.ModelSerializer):
@@ -93,7 +94,7 @@ class HealthSyncItemSerializer(serializers.Serializer):
         max_digits=VALUE_MAX_DIGITS,
         decimal_places=VALUE_DECIMAL_PLACES,
     )
-    source = serializers.ChoiceField(choices=('google', 'apple'))
+    source = serializers.ChoiceField(choices=(MeasurementSource.GOOGLE, MeasurementSource.APPLE))
     notes = serializers.CharField(required=False, allow_blank=True, max_length=100)
 
     def validate_weight(self, value):

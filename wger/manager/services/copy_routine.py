@@ -20,6 +20,7 @@ from typing import List
 
 # Django
 from django.contrib.auth.models import User
+from django.db import transaction
 
 # wger
 from wger.manager.models import (
@@ -35,7 +36,15 @@ def copy_routine(routine: Routine, user: User) -> Routine:
 
     The copy starts today, is neither a template nor public, and carries
     copies of all days, slots, slot entries and their change configs.
+
+    The whole copy is one transaction: a failure halfway through must not
+    leave a half-built routine behind.
     """
+    with transaction.atomic():
+        return _copy_routine(routine, user)
+
+
+def _copy_routine(routine: Routine, user: User) -> Routine:
     routine_copy: Routine = copy.copy(routine)
     routine_copy.pk = None
     routine_copy.created = None

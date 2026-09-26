@@ -137,7 +137,8 @@ class WebhookApiTestCase(WgerTestCase):
             content_type='application/json',
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertNotIn('secret', response.data)
+        # The secret is shown once, here; see WebhookSecretShownOnceTestCase
+        self.assertIn('secret', response.data)
         self.assertTrue(Webhook.objects.filter(user=user, url='https://example.com/hook').exists())
 
     def test_invalid_event_rejected(self):
@@ -165,3 +166,53 @@ class WebhookApiTestCase(WgerTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(response.data['results'][0]['url'], 'https://example.com/mine')
+
+
+class WebhookSecretShownOnceTestCase(WgerTestCase):
+    """
+    The signing secret must be visible exactly once: in the create response
+    """
+
+    def test_secret_returned_on_create_only(self):
+        user = User.objects.get(username='test')
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('webhook-list'),
+            data=json.dumps({'url': 'https://example.com/hook', 'events': ['weight.created']}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('secret', response.data)
+
+        webhook_id = response.data['id']
+        detail = self.client.get(reverse('webhook-detail', kwargs={'pk': webhook_id}))
+        self.assertNotIn('secret', detail.data)
+
+
+class WebhookUrlValidationTestCase(WgerTestCase):
+    """
+    Webhook URLs must not be able to reach internal infrastructure (SSRF)
+    """
+
+    def test_plain_http_rejected(self):
+        user = User.objects.get(username='test')
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('webhook-list'),
+            data=json.dumps({'url': 'http://example.com/hook', 'events': ['weight.created']}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_localhost_rejected(self):
+        user = User.objects.get(username='test')
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('webhook-list'),
+            data=json.dumps({'url': 'https://localhost:6379/', 'events': ['weight.created']}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
+# Django
+from django.db import transaction
+
 # Third Party
 from drf_spectacular.utils import extend_schema
 from rest_framework import (
@@ -99,10 +102,17 @@ class WeightEntryViewSet(viewsets.ModelViewSet):
         Invalid samples are rejected individually and reported, the valid
         rest of the batch still lands.
         """
+        MAX_BATCH_SIZE = 500
+
         items = request.data if isinstance(request.data, list) else request.data.get('samples', [])
         if not isinstance(items, list):
             return Response(
                 {'detail': 'Expected a list of samples.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(items) > MAX_BATCH_SIZE:
+            return Response(
+                {'detail': f'A batch may contain at most {MAX_BATCH_SIZE} samples.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -111,28 +121,29 @@ class WeightEntryViewSet(viewsets.ModelViewSet):
 
         created = updated = 0
         rejected = []
-        for index, item in enumerate(items):
-            serializer = HealthSyncItemSerializer(data=item, context={'request': request})
-            if not serializer.is_valid():
-                rejected.append({'index': index, 'errors': serializer.errors})
-                continue
+        with transaction.atomic():
+            for index, item in enumerate(items):
+                serializer = HealthSyncItemSerializer(data=item, context={'request': request})
+                if not serializer.is_valid():
+                    rejected.append({'index': index, 'errors': serializer.errors})
+                    continue
 
-            data = serializer.validated_data
-            _, was_created = Measurement.objects.update_or_create(
-                category=category,
-                source=data['source'],
-                external_id=data['external_id'],
-                defaults={
-                    'date': data['date'],
-                    'value': data['weight'],
-                    'notes': data.get('notes', ''),
-                    'extra_data': {'unit': profile.weight_unit, 'origin': 'health-sync'},
-                },
-            )
-            if was_created:
-                created += 1
-            else:
-                updated += 1
+                data = serializer.validated_data
+                _, was_created = Measurement.objects.update_or_create(
+                    category=category,
+                    source=data['source'],
+                    external_id=data['external_id'],
+                    defaults={
+                        'date': data['date'],
+                        'value': data['weight'],
+                        'notes': data.get('notes', ''),
+                        'extra_data': {'unit': profile.weight_unit, 'origin': 'health-sync'},
+                    },
+                )
+                if was_created:
+                    created += 1
+                else:
+                    updated += 1
 
         return Response(
             HealthSyncResultSerializer(

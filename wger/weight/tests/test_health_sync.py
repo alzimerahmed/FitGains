@@ -115,3 +115,15 @@ class HealthSyncApiTestCase(WgerTestCase):
         )
         self.assertEqual(response.data['created'], 0)
         self.assertEqual(len(response.data['rejected']), 1)
+
+    def test_sync_rejects_oversized_batch(self):
+        user = User.objects.get(username='test')
+        self.client.force_login(user)
+
+        batch = [self.sample() for _ in range(501)]
+        response = self.client.post(
+            reverse('weightentry-sync'),
+            data=json.dumps(batch),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

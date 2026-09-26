@@ -791,7 +791,9 @@ class RoutineShareTokenViewSet(WgerOwnerObjectModelViewSet):
     serializer_class = RoutineShareTokenSerializer
     is_private = True
     ordering_fields = '__all__'
-    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+    # PATCH is allowed so a leaked link can be revoked without destroying
+    # the audit row; the serializer only accepts expires_at/revoked changes
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
     filterset_fields = ('routine',)
 
     def get_queryset(self):
@@ -827,8 +829,10 @@ class RoutineShareResolveView(APIView):
         responses={200: RoutineStructureSerializer},
     )
     def get(self, request, token):
+        # routine__is_template=True: a routine that stopped being a template
+        # after the token was created must not keep resolving
         share_token = (
-            RoutineShareToken.objects.filter(token=token)
+            RoutineShareToken.objects.filter(token=token, routine__is_template=True)
             .select_related('routine')
             .first()
         )
@@ -848,16 +852,13 @@ class SocialFeedViewSet(viewsets.ReadOnlyModelViewSet):
     shared. Sessions are annotated with the owner's username.
     """
 
-    serializer_class = WorkoutSessionSerializer
+    serializer_class = SocialFeedSessionSerializer
     permission_classes = [AllowAny]
 
     def get_permissions(self):
         if getattr(self, 'swagger_fake_view', False):
             return [AllowAny()]
         return [permission() for permission in self.permission_classes]
-
-    def get_serializer_class(self):
-        return SocialFeedSessionSerializer
 
     def get_queryset(self):
         # REST API generation
