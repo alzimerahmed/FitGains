@@ -23,8 +23,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # ubuntu-latest ships an Android SDK ($ANDROID_HOME); just ensure the
+      # packages our AGP/compileSdk need are present
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -55,11 +59,11 @@ jobs:
         run: |
           APK_UNSIGNED=$(find android/app/build/outputs/apk/release -name '*-unsigned.apk' | head -1)
           PASS="${{ secrets.ANDROID_KEYSTORE_PASSWORD || 'fitgains' }}"
-          "$ANDROID_SDK_ROOT/build-tools/"*/apksigner sign \
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" sign \
             --ks "$RUNNER_TEMP/keys/fitgains.jks" \
             --ks-pass "pass:$PASS" --key-pass "pass:$PASS" \
             --out fitgains.apk "$APK_UNSIGNED"
-          "$ANDROID_SDK_ROOT/build-tools/"*/apksigner verify fitgains.apk
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify fitgains.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v5
