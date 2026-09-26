@@ -10,7 +10,7 @@
 
 FROM ubuntu:24.04
 
-LABEL org.opencontainers.image.authors="wger team <hello@wger.de>"
+LABEL org.opencontainers.image.authors="Alzimer Ahmed <alzimerahmed84@gmail.com>"
 
 # Install dependencies
 ENV DEBIAN_FRONTEND=noninteractive

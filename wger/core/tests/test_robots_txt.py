@@ -28,4 +28,4 @@ class RobotsTxtTestCase(WgerTestCase):
     def test_robots(self):
         response = self.client.get(reverse('robots'))
         for lang in Language.objects.all():
-            self.assertTrue(f'wger.de/{lang.short_name}/sitemap.xml' in str(response.content))
+            self.assertTrue(f'/{lang.short_name}/sitemap.xml' in str(response.content))

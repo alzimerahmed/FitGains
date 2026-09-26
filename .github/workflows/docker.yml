@@ -8,10 +8,11 @@ on:
       - master
 
 env:
-  REGISTRY_IMAGE: ${{ vars.REGISTRY_REPO }}/server
+  REGISTRY_IMAGE: ghcr.io/alzimerahmed/fitgains
 
 permissions:
   contents: read
+  packages: write
 
 concurrency:
   group: docker-prod-${{ github.ref }}
@@ -88,11 +89,12 @@ jobs:
           restore-keys: |
             multi-buildx-${{ matrix.platform }}
 
-      - name: Login to Docker Hub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set build date
         run: echo "BUILD_DATE=$(date -u +'%Y-%m-%d')" >> $GITHUB_ENV
@@ -162,11 +164,12 @@ jobs:
           images: |
             ${{ env.REGISTRY_IMAGE }}
 
-      - name: Login to Docker Hub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create manifest list and push
         working-directory: /tmp/digests

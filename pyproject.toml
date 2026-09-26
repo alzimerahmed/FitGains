@@ -86,11 +86,11 @@ docker = [
 
 
 [project.urls]
-Homepage = "https://wger.de/"
-Documentation = "https://wger.readthedocs.io"
-Repository = "https://github.com/wger-project/wger"
-Issues = "https://github.com/wger-project/wger/issues"
-Changelog = "https://wger.readthedocs.io/en/latest/changelog.html"
+Homepage = "https://github.com/alzimerahmed/FitGains"
+Documentation = "https://github.com/alzimerahmed/FitGains#readme"
+Repository = "https://github.com/alzimerahmed/FitGains"
+Issues = "https://github.com/alzimerahmed/FitGains/issues"
+Changelog = "https://github.com/alzimerahmed/FitGains/releases"
 
 
 [project.scripts]

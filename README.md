@@ -1,102 +1,128 @@
-# wger
+# FitGains — Self-hosted fitness and workout manager
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/logos/logo.png" width="100" height="100" alt="wger logo">
+<div align="center">
 
-![AGPLv3 License](https://img.shields.io/badge/License-AGPLv3-blue.svg)
-![Build Status](https://img.shields.io/github/actions/workflow/status/wger-project/wger/ci.yml?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/wger-project/wger/badge.svg?branch=master)](https://coveralls.io/github/wger-project/wger?branch=master)
-![Translation Status](https://hosted.weblate.org/widget/wger/svg-badge.svg)
-</p>
+[![CI](https://github.com/alzimerahmed/FitGains/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/alzimerahmed/FitGains/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org)
+[![Django](https://img.shields.io/badge/Django-5.x-092E20?logo=django&logoColor=white)](https://www.djangoproject.com)
+[![Docker](https://img.shields.io/badge/Docker-self--hosted-2496ED?logo=docker&logoColor=white)](https://github.com/alzimerahmed/FitGains/pkgs/container/fitgains)
+[![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE.txt)
 
+*A FOSS workout, nutrition and body-tracking server you host yourself — built on the wger codebase.*
 
-wger (ˈvɛɡɐ) is a free workout and fitness manager.
+[Quick Start](#quick-start) • [Features](#features) • [Tech Stack](#tech-stack) • [Building](#building)
 
-- 🏋️ **Custom Workout Routines** – Create flexible routines with automatic weight progression rules.
-- 📊 **Comprehensive Tracking** – Track diet plans, body weight, and custom measurements.
-- 🍽️ **Nutrition Management** – Log your calories with a food database
-  from [Open Food Facts](https://openfoodfacts.org).
-- 📸 **Progress Gallery** – Upload and track your fitness progress with photos.
-- 📚 **Exercise Wiki** – Access and contribute to the built-in exercises.
-- 📱 **Cross-Platform Apps** – Available on
-  [Android](https://play.google.com/store/apps/details?id=de.wger.flutter),
-  [iOS](https://apps.apple.com/us/app/wger-workout-manager/id6502226792),
-  [F-Droid](https://f-droid.org/en/packages/de.wger.flutter/),
-  and [Flathub](https://flathub.org/apps/de.wger.flutter).
-- 🐳 **Self-Hostable** – Deploy easily with Docker for full control.
-- 🌍 **Multilingual Support** – Translated by the community via Weblate.
-- 🔗 **Powerful API** – REST API for third-party integrations or automations.
-- 👥 **Multi-User Support** – Includes basic gym management features.
-- 🆓 **100% Free & Open Source** – Licensed under AGPL-3.0 or later.
+</div>
 
+---
 
-For a live system, visit: <https://wger.de>
+## Features
 
-<p align="center" style="line-height:0; margin:0; padding:0;">
-  <a href="https://play.google.com/store/apps/details?id=de.wger.flutter" target="_blank" style="text-decoration:none; border:none; outline:none;"><img src="https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/logos/play-store/badge.svg" alt="Get it on Google Play" height="50" style="margin-right:8px; vertical-align:middle; border:none; outline:none; display:inline-block;"></a>
-  <a href="https://apps.apple.com/us/app/wger-workout-manager/id6502226792" target="_blank" style="text-decoration:none; border:none; outline:none;"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="64" style="margin-right:8px; vertical-align:middle; border:none; outline:none; display:inline-block; background:none;"></a>
-  <a href="https://f-droid.org/packages/de.wger.flutter/" target="_blank" style="text-decoration:none; border:none; outline:none;"><img src="https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/logos/fdroid/get-it-on.png" alt="Get it on F-Droid" height="50" style="margin-right:8px; vertical-align:middle; border:none; outline:none; display:inline-block; background:none;"></a>
-  <a href="https://flathub.org/apps/de.wger.flutter" target="_blank" style="text-decoration:none; border:none; outline:none;"><img src="https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/logos/flathub/black.svg" alt="Get it on Flathub" height="50" style="vertical-align:middle; border:none; outline:none; display:inline-block; background:none;"></a>
-</p>
+- **Custom workout routines** — flexible routines with automatic weight/rep progression rules and explainable adaptive progression suggestions.
+- **Analytics** — tonnage, volume and estimated 1RM endpoints computed server-side from your workout logs.
+- **Nutrition tracking** — meal plans and calorie logging backed by the [Open Food Facts](https://openfoodfacts.org) database, with barcode lookup.
+- **Body weight and measurements** — daily weigh-ins, custom measurement categories, and idempotent bulk sync from Health Connect / Apple Health.
+- **Progress gallery** — photo-based progress tracking.
+- **Exercise wiki** — built-in, editable exercise database with muscles, equipment and categories.
+- **Sharing** — routine templates, share links, and opt-in social feeds with per-session visibility.
+- **Webhooks** — HMAC-signed event notifications for workout, session and weight events.
+- **REST API** — versioned API (`/api/v2/`) with an OpenAPI schema, consumed by the wger Flutter mobile clients.
+- **Multi-user gyms** — gym management features for trainers and gym operators.
+- **Multilingual** — 20+ languages via Weblate translations.
+- **Self-hostable** — one `docker compose up -d` for the full stack (server, PostgreSQL, Redis, Celery).
 
+## Screenshots
 
+Not yet published. Run it locally and see for yourself — the web UI is mobile-first with dark mode.
 
-## Self-hosting
+## Tech Stack
 
-Hosting your own instance is basically just a `docker compose up -d` away. For
-more detailed setup instructions take a look at the provided
-[docker compose file](https://github.com/wger-project/docker) and the
-[corresponding documentation](https://wger.readthedocs.io/en/latest/installation/docker.html).
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.12+, Django 5.x, Django REST Framework |
+| Auth | django-allauth (MFA, OIDC) + django-axes |
+| Background jobs | Celery + Redis |
+| Database | PostgreSQL (production), SQLite (dev) |
+| Web UI | Django templates + Bootstrap 5, dark mode |
+| Packaging | uv, ruff, Docker (multi-arch images) |
 
-## Developing and contributing
+## Project Structure
 
-Our goal is to build an awesome and flexible fitness and nutrition manager,
-along with a comprehensive list of exercises and ingredients, all released
-under a free license.
+```
+wger/
+  core/          users, auth, preferences, API infra
+  manager/       workout routines, schedules, logs, analytics services
+  exercises/     exercise wiki + muscles/equipment/categories
+  nutrition/     plans, meals, ingredients, Open Food Facts sync
+  weight/        body weight log
+  measurements/  custom measurements + health sync
+  gallery/       progress photos
+  gym/           multi-user gym management
+  trophies/      achievements
+  mailer/        newsletter/emails
+  software/      changelog, about, API docs pages
+extras/docker/   Dockerfiles (base, production, demo, development)
+```
 
-For this, we’d love your help! Whether it’s code, translations, exercises or
-reporting issues and ideas, check out our
-[contribution guide](https://wger.readthedocs.io/en/latest/contributing.html)
-to get started.
+## Quick Start
 
-A huge thank you to everyone who has contributed so far! ❤️ See the full list
-in [AUTHORS.md](AUTHORS.md).
+```bash
+git clone https://github.com/alzimerahmed/FitGains.git
+cd FitGains
+docker compose up -d
+```
 
-## Documentation
+The web UI is then available at `http://localhost:8000` (default admin: `admin` / `adminadmin` — change it immediately).
 
-Consult the online documentation at
+<details>
+<summary>Local development without Docker</summary>
 
-* <https://wger.readthedocs.io>
+```bash
+uv sync
+uv run python manage.py migrate
+uv run python manage.py start-server
+```
 
-for installation instructions, API documentation, development guidelines, and
-other information
+Redis is required for Celery; SQLite is used by default in development.
+</details>
 
-## Contact
+## Usage
 
-Feel free to contact us if you found this useful or if there was something that
-didn't behave as you expected. We can't fix what we don't know about, so please
-report liberally. If you're not sure if something is a bug or not, feel free to
-file a bug anyway.
+Create a routine, add days and exercises with progression rules, then log your workouts —
+FitGains computes tonnage and 1RM trends and suggests progression adjustments you can accept
+or dismiss. Everything is also available programmatically:
 
-* **Discord:** <https://discord.gg/rPWFv6W>
-* **Mastodon:** <https://fosstodon.org/@wger>
-* **Issue tracker:** <https://github.com/wger-project/wger/issues>
+```bash
+curl -H "Authorization: Token <your-token>" http://localhost:8000/api/v2/workoutlog-analytics/<routine-id>/
+```
 
-## Sources
+## FAQ / Troubleshooting
 
-All the code and the content is available on github:
+**Is this wger?** FitGains is a hard fork of [wger](https://github.com/wger-project/wger) (AGPL-3.0). It is developed independently and does not track upstream. All credit for the original codebase belongs to the wger contributors.
 
-* <https://github.com/wger-project>
+**Can I use the mobile apps?** Yes — the official wger Flutter apps speak the same `/api/v2/` API and work against a FitGains instance.
 
-## Translation
+## Contributing
 
-Translate the app to your language on [Weblate](https://hosted.weblate.org/engage/wger/).
+Fork the repo, create a branch, and open a pull request. Run `ruff check` and the test suite before submitting. Translations are managed via Weblate.
 
-[![translation status](https://hosted.weblate.org/widgets/wger/-/multi-blue.svg)](https://hosted.weblate.org/engage/wger/)
+## Roadmap
+
+- [x] Analytics and adaptive progression
+- [x] Routine sharing and opt-in social feed
+- [x] Health Connect / Apple Health sync surface
+- [x] Webhooks
+- [ ] Wearables / watch apps
+- [ ] AI meal-photo recognition
+
+## Changelog
+
+See [GitHub Releases](https://github.com/alzimerahmed/FitGains/releases).
 
 ## License
 
-* Application Code: [AGPL-3.0-or-later](https://www.gnu.org/licenses/agpl-3.0.html)
-* Exercise/Ingredient Data: Creative Commons (see individual entries)
-* Documentation: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+- Application Code: [AGPL-3.0-or-later](LICENSE.txt)
+- Exercise/Ingredient Data: Creative Commons (see individual entries)
+- Documentation: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
+FitGains is a fork of wger — copyright remains with the wger-project contributors per AGPL-3.0.

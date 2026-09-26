@@ -4,7 +4,7 @@
 # Please consult https://wger.readthedocs.io/en/latest/development/backend.html
 # on how to use and start it.
 
-FROM wger/server:latest
+FROM ghcr.io/alzimerahmed/fitgains:latest
 
 USER root
 

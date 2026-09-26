@@ -1,17 +1,17 @@
 #
-# Docker image for wger
+# Docker image for FitGains
 #
 # Please consult the README for usage
 #
 # Note: you MUST build this image from the project's root!
-# docker build -f extras/docker/production/Dockerfile --tag wger/server .
+# docker build -f extras/docker/production/Dockerfile --tag ghcr.io/alzimerahmed/fitgains .
 #
-# To run the container consult https://github.com/wger-project/docker
+# To run the container use the docker-compose.yaml in the repo root
 
 ##########
 # Builder
 ##########
-FROM wger/base:latest AS builder
+FROM ghcr.io/alzimerahmed/fitgains-base:latest AS builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Need a newer node than what's in ubuntu
@@ -70,8 +70,8 @@ RUN npm ci --production \
 ########
 # Final
 ########
-FROM wger/base:latest AS final
-LABEL org.opencontainers.image.authors="wger team <hello@wger.de>"
+FROM ghcr.io/alzimerahmed/fitgains-base:latest AS final
+LABEL org.opencontainers.image.authors="Alzimer Ahmed <alzimerahmed84@gmail.com>"
 ARG DOCKER_DIR=./extras/docker/production
 ARG BUILD_COMMIT
 ARG BUILD_DATE

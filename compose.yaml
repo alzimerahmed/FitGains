@@ -1,0 +1,96 @@
+# FitGains — self-hosting stack
+#
+# Usage:
+#   docker compose up -d
+#   (first start applies migrations, collects static files and creates an admin user)
+#
+# All FitGains settings are environment variables (see settings/main.py).
+# Change the passwords below before exposing this to the internet.
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fitgains
+      POSTGRES_PASSWORD: fitgains-change-me
+      POSTGRES_DB: fitgains
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fitgains"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - cache-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: ghcr.io/alzimerahmed/fitgains:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "False"
+      DJANGO_DB_ENGINE: django.db.backends.postgresql
+      DJANGO_DB_DATABASE: fitgains
+      DJANGO_DB_USER: fitgains
+      DJANGO_DB_PASSWORD: fitgains-change-me
+      DJANGO_DB_HOST: db
+      DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_LOCATION: redis://cache:6379/1
+      CELERY_BROKER: redis://cache:6379/2
+      DJANGO_PERFORM_MIGRATIONS: "True"
+      DJANGO_COLLECTSTATIC_ON_STARTUP: "True"
+      SYNC_EXERCISES_ON_STARTUP: "True"
+      DOWNLOAD_EXERCISE_IMAGES_ON_STARTUP: "True"
+      WGER_USE_GUNICORN: "True"
+      WGER_PORT: "8000"
+      # Set this to the URL users use to reach the instance
+      SITE_URL: http://localhost:8000
+      # Generate your own: python -c "import secrets; print(secrets.token_urlsafe(50))"
+      SECRET_KEY: ""
+    volumes:
+      - media:/home/wger/media
+      - static:/home/wger/static
+
+  worker:
+    image: ghcr.io/alzimerahmed/fitgains:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    command: celery -A wger worker --loglevel=INFO
+    environment:
+      DJANGO_DEBUG: "False"
+      DJANGO_DB_ENGINE: django.db.backends.postgresql
+      DJANGO_DB_DATABASE: fitgains
+      DJANGO_DB_USER: fitgains
+      DJANGO_DB_PASSWORD: fitgains-change-me
+      DJANGO_DB_HOST: db
+      DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_LOCATION: redis://cache:6379/1
+      CELERY_BROKER: redis://cache:6379/2
+
+volumes:
+  db-data:
+  cache-data:
+  media:
+  static:

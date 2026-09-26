@@ -193,7 +193,7 @@
 
     <p>{% translate "Example with curl:" %}</p>
     <pre>
-curl -X GET https://wger.de/api/v2/routine/ \
+curl -X GET {{ request.scheme }}://{{ request.get_host }}/api/v2/routine/ \
      -H 'Authorization: Token {% if token %}{{ token.key }}{% else %}1234567890abcde...{% endif %}'
 </pre>
 

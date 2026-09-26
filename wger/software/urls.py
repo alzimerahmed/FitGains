@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     path(
         'code',
-        RedirectView.as_view(permanent=True, url='https://github.com/wger-project/wger'),
+        RedirectView.as_view(permanent=True, url='https://github.com/alzimerahmed/FitGains'),
         name='code',
     ),
     path(

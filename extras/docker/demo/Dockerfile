@@ -17,7 +17,7 @@
 ##########
 # Builder
 ##########
-FROM wger/base:latest AS builder
+FROM ghcr.io/alzimerahmed/fitgains-base:latest AS builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN wget -O- https://deb.nodesource.com/setup_22.x | bash - \
@@ -57,8 +57,8 @@ RUN npm ci --production \
 ########
 # Final
 ########
-FROM wger/base:latest AS final
-LABEL org.opencontainers.image.authors="wger team <hello@wger.de>"
+FROM ghcr.io/alzimerahmed/fitgains-base:latest AS final
+LABEL org.opencontainers.image.authors="Alzimer Ahmed <alzimerahmed84@gmail.com>"
 ENV TERM=xterm
 ARG DOCKER_DIR=./extras/docker/demo
 EXPOSE 80

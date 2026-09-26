@@ -48,7 +48,9 @@ def fetch_github_stats() -> dict:
     }
 
     try:
-        result_github_api = requests.get('https://api.github.com/repos/wger-project/wger').json()
+        result_github_api = requests.get(
+            'https://api.github.com/repos/alzimerahmed/FitGains'
+        ).json()
         context['nr_users'] = User.objects.count()
         context['nr_exercises'] = Exercise.objects.count()
         context['nr_ingredients'] = Ingredient.objects.count()
