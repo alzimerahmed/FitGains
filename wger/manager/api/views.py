@@ -37,6 +37,7 @@ from rest_framework.response import Response
 # wger
 from wger.manager.api.consts import BASE_CONFIG_FILTER_FIELDS
 from wger.manager.api.plate_calculator import calculate_plates
+from wger.manager.services.progression_suggestions import progression_suggestions
 from wger.manager.api.filtersets import (
     WorkoutLogFilterSet,
     WorkoutSessionFilterSet,
@@ -52,6 +53,7 @@ from wger.manager.api.serializers import (
     MaxSetNrConfigSerializer,
     MaxWeightConfigSerializer,
     PlateCalculatorResultSerializer,
+    ProgressionSuggestionSerializer,
     RepetitionsConfigSerializer,
     RestConfigSerializer,
     RiRConfigSerializer,
@@ -213,6 +215,27 @@ class RoutineViewSet(viewsets.ModelViewSet):
             request,
             CacheKeyMapper.routine_api_stats(pk, request.user.id),
             lambda: LogStatsDataSerializer(self.get_object().calculate_log_statistics()).data,
+        )
+
+    @extend_schema(
+        summary='Adaptive progression suggestions for the routine',
+        responses={200: ProgressionSuggestionSerializer(many=True)},
+    )
+    @action(detail=True, url_path='progression-suggestions', pagination_class=None)
+    def progression_suggestions(self, request, pk):
+        """
+        Explainable next-step suggestions per logged exercise slot (G7).
+
+        Advisory only: reads the logs against the prescription, nothing is
+        written. Each suggestion carries the rule that fired, the observed
+        sets and a plain-language reason.
+        """
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_progression_suggestions(pk, request.user.id),
+            lambda: ProgressionSuggestionSerializer(
+                progression_suggestions(self.get_object()), many=True
+            ).data,
         )
 
     @staticmethod

@@ -80,6 +80,10 @@ class CacheKeyMapper:
         return f'routine-api-stats-{user_id}-{pk}'
 
     @classmethod
+    def routine_api_progression_suggestions(cls, pk: int, user_id: int):
+        return f'routine-api-progression-suggestions-{user_id}-{pk}'
+
+    @classmethod
     def routine_api_logs(cls, pk: int, user_id: int):
         return f'routine-api-logs-{user_id}-{pk}'
 

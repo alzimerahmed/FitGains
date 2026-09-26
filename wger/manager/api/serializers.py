@@ -665,3 +665,49 @@ class PlateCalculatorResultSerializer(serializers.Serializer):
     per_side = serializers.DecimalField(max_digits=8, decimal_places=2)
     leftover = serializers.DecimalField(max_digits=8, decimal_places=2)
     exact = serializers.BooleanField()
+
+
+class ObservedSetSerializer(serializers.Serializer):
+    """
+    One logged set a suggestion was measured against
+    """
+
+    weight = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
+    repetitions = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
+    rir = serializers.DecimalField(max_digits=2, decimal_places=1, allow_null=True)
+
+
+class PrescriptionSerializer(serializers.Serializer):
+    """
+    The prescription a suggestion was measured against
+    """
+
+    weight = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
+    repetitions = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True)
+    rir = serializers.DecimalField(max_digits=2, decimal_places=1, allow_null=True)
+    sets = serializers.IntegerField()
+
+
+class SuggestedLoadSerializer(serializers.Serializer):
+    """
+    The load a suggestion proposes for the next iteration
+    """
+
+    weight = serializers.DecimalField(max_digits=6, decimal_places=2)
+    repetitions = serializers.DecimalField(max_digits=6, decimal_places=2)
+
+
+class ProgressionSuggestionSerializer(serializers.Serializer):
+    """
+    One explainable adaptive progression suggestion (G7)
+    """
+
+    slot_entry = serializers.IntegerField()
+    exercise = serializers.IntegerField()
+    iteration = serializers.IntegerField()
+    rule = serializers.CharField()
+    action = serializers.CharField()
+    reason = serializers.CharField()
+    observed = ObservedSetSerializer(many=True)
+    prescription = PrescriptionSerializer()
+    suggested = SuggestedLoadSerializer(allow_null=True)
