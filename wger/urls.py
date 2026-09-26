@@ -44,6 +44,7 @@ from wger.exercises.api import views as exercises_api_views
 from wger.exercises.sitemap import ExercisesSitemap
 from wger.gallery.api import views as gallery_api_views
 from wger.manager.api import views as manager_api_views
+from wger.manager.api.analytics import WorkoutLogAnalyticsViewSet
 from wger.measurements.api import views as measurements_api_views
 from wger.nutrition.api import views as nutrition_api_views
 from wger.trophies.api import views as trophies_api_views
@@ -133,6 +134,11 @@ router.register(
 router.register(r'rir-config', manager_api_views.RiRConfigViewSet, basename='rir-config')
 router.register(r'max-rir-config', manager_api_views.MaxRiRConfigViewSet, basename='max-rir-config')
 router.register(r'workoutlog', manager_api_views.WorkoutLogViewSet, basename='workoutlog')
+router.register(
+    r'workoutlog-analytics',
+    WorkoutLogAnalyticsViewSet,
+    basename='workoutlog-analytics',
+)
 router.register(
     r'plate-calculator',
     manager_api_views.PlateCalculatorViewSet,
