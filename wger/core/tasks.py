@@ -54,6 +54,20 @@ def send_email_task(payload: dict):
     message.send()
 
 
+@app.task(
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={'max_retries': 5},
+)
+def deliver_webhook_task(webhook_id, event: str, payload: dict):
+    """
+    Deliver one signed webhook payload, see wger.core.services.webhooks
+    """
+    from wger.core.services.webhooks import deliver_webhook
+
+    deliver_webhook(webhook_id, event, payload)
+
+
 @app.task
 def flush_expired_jwt_tokens_task():
     """

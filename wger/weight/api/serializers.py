@@ -76,3 +76,41 @@ class WeightEntrySerializer(serializers.ModelSerializer):
         unit = self.context['request'].user.userprofile.weight_unit
         data['weight'] = self.fields['weight'].to_representation(instance.value_in(unit))
         return data
+
+
+class HealthSyncItemSerializer(serializers.Serializer):
+    """
+    One body-weight sample pushed by a health platform sync (G3)
+
+    ``external_id`` is the sample's identity on the source platform; resending
+    the same (source, external_id) pair updates in place, making the sync
+    idempotent.
+    """
+
+    external_id = serializers.UUIDField()
+    date = serializers.DateTimeField()
+    weight = serializers.DecimalField(
+        max_digits=VALUE_MAX_DIGITS,
+        decimal_places=VALUE_DECIMAL_PLACES,
+    )
+    source = serializers.ChoiceField(choices=('google', 'apple'))
+    notes = serializers.CharField(required=False, allow_blank=True, max_length=100)
+
+    def validate_weight(self, value):
+        unit = self.context['request'].user.userprofile.weight_unit
+        limits = limits_for(MetricType.BODY_WEIGHT, unit)
+        if not limits.min <= value <= limits.max:
+            raise serializers.ValidationError(
+                f'Weight must be between {limits.min} and {limits.max} {unit}'
+            )
+        return value
+
+
+class HealthSyncResultSerializer(serializers.Serializer):
+    """
+    Outcome summary of a health sync batch (G3)
+    """
+
+    created = serializers.IntegerField()
+    updated = serializers.IntegerField()
+    rejected = serializers.ListField(child=serializers.DictField(), required=False)

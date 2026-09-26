@@ -81,14 +81,18 @@ from wger.core.api.serializers import (
     LicenseSerializer,
     RepetitionUnitSerializer,
     RoutineWeightUnitSerializer,
+    UserFollowSerializer,
     UserprofileSerializer,
+    WebhookSerializer,
 )
 from wger.core.models import (
     Language,
     License,
     RepetitionUnit,
+    UserFollow,
     UserProfile,
     WeightUnit,
+    Webhook,
 )
 from wger.utils.powersync import REGISTRY as POWERSYNC_REGISTRY
 from wger.version import (
@@ -478,3 +482,52 @@ def upload_powersync_data(request):
     if result is not None:
         return JsonResponse(result, status=200)
     return JsonResponse({'status': 'ok!'}, status=200)
+
+
+class WebhookViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for webhook objects (G11)
+
+    Each user manages their own webhooks; deliveries are signed with the
+    per-webhook secret, which is only visible at creation time.
+    """
+
+    serializer_class = WebhookSerializer
+    permission_classes = [IsAuthenticated]
+    ordering_fields = '__all__'
+    filterset_fields = ('is_active',)
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
+
+    def get_queryset(self):
+        # REST API generation
+        if getattr(self, 'swagger_fake_view', False):
+            return Webhook.objects.none()
+
+        return Webhook.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class UserFollowViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for user follows (G6)
+
+    Users can follow others who enabled social features on their profile;
+    what is then shared is decided per workout session by the followee.
+    """
+
+    serializer_class = UserFollowSerializer
+    permission_classes = [IsAuthenticated]
+    ordering_fields = '__all__'
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+
+    def get_queryset(self):
+        # REST API generation
+        if getattr(self, 'swagger_fake_view', False):
+            return UserFollow.objects.none()
+
+        return UserFollow.objects.filter(follower=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(follower=self.request.user)

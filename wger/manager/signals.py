@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 # Standard Library
+import logging
 from functools import wraps
 
 # Django
@@ -48,6 +49,9 @@ from wger.manager.models import (
     WorkoutSession,
 )
 from wger.utils.cache import CacheKeyMapper
+
+
+logger = logging.getLogger(__name__)
 
 
 def ignore_missing_relations(handler):
@@ -105,19 +109,58 @@ def handle_config_change(sender, instance: AbstractChangeConfig, **kwargs):
 
 
 @ignore_missing_relations
-def handle_workout_log_change(sender, instance: WorkoutLog, **kwargs):
+def handle_workout_log_change(sender, instance: WorkoutLog, created=False, **kwargs):
     update_activity_cache(sender, instance, **kwargs)
     if instance.routine:
         cache.delete(CacheKeyMapper.routine_api_logs(instance.routine.id, instance.user_id))
         reset_routine_cache(instance.routine, structure=False)
+    if created:
+        dispatch_webhook(
+            instance.user_id,
+            'workoutlog.created',
+            {
+                'id': str(instance.pk),
+                'routine': str(instance.routine_id) if instance.routine_id else None,
+                'exercise': instance.exercise_id,
+                'repetitions': instance.repetitions,
+                'weight': str(instance.weight),
+                'date': str(instance.date),
+            },
+        )
 
 
 @ignore_missing_relations
-def handle_workout_session_change(sender, instance: WorkoutSession, **kwargs):
+def handle_workout_session_change(sender, instance: WorkoutSession, created=False, **kwargs):
     update_activity_cache(sender, instance, **kwargs)
     if instance.routine:
         cache.delete(CacheKeyMapper.routine_api_logs(instance.routine.id, instance.user_id))
         reset_routine_cache(instance.routine, structure=False)
+    if created:
+        dispatch_webhook(
+            instance.user_id,
+            'workoutsession.created',
+            {
+                'id': str(instance.pk),
+                'routine': str(instance.routine_id) if instance.routine_id else None,
+                'datetime_start': instance.datetime_start.isoformat(),
+                'datetime_end': (
+                    instance.datetime_end.isoformat() if instance.datetime_end else None
+                ),
+            },
+        )
+
+
+def dispatch_webhook(user_id: int, event: str, payload: dict):
+    """
+    Forward the event to the user's webhooks; failures must never break the
+    write that triggered them
+    """
+    try:
+        from wger.core.services.webhooks import dispatch_event
+
+        dispatch_event(user_id, event, payload)
+    except Exception:
+        logger.exception('Webhook dispatch failed for event %s', event)
 
 
 def remember_time_zone(sender, instance: UserProfile, raw=False, **kwargs):

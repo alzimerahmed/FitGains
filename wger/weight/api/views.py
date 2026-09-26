@@ -16,7 +16,13 @@
 # along with Workout Manager.  If not, see <http://www.gnu.org/licenses/>.
 
 # Third Party
-from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
+from rest_framework import (
+    status,
+    viewsets,
+)
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 # wger
 from wger.measurements.models import (
@@ -24,7 +30,11 @@ from wger.measurements.models import (
     Measurement,
 )
 from wger.weight.api.filtersets import WeightEntryFilterSet
-from wger.weight.api.serializers import WeightEntrySerializer
+from wger.weight.api.serializers import (
+    HealthSyncItemSerializer,
+    HealthSyncResultSerializer,
+    WeightEntrySerializer,
+)
 
 
 class WeightEntryViewSet(viewsets.ModelViewSet):
@@ -72,3 +82,60 @@ class WeightEntryViewSet(viewsets.ModelViewSet):
             serializer.save(extra_data={**serializer.instance.extra_data, 'unit': unit})
         else:
             serializer.save()
+
+    @extend_schema(
+        summary='Bulk-upsert body-weight samples from a health platform sync',
+        request=HealthSyncItemSerializer(many=True),
+        responses={200: HealthSyncResultSerializer},
+    )
+    @action(detail=False, methods=['post'], pagination_class=None)
+    def sync(self, request):
+        """
+        Health-platform sync surface (G3).
+
+        Mobile clients (Health Connect / Apple Health) push batches of
+        body-weight samples; each sample is upserted on its (source,
+        external_id) pair, so replaying a batch never duplicates entries.
+        Invalid samples are rejected individually and reported, the valid
+        rest of the batch still lands.
+        """
+        items = request.data if isinstance(request.data, list) else request.data.get('samples', [])
+        if not isinstance(items, list):
+            return Response(
+                {'detail': 'Expected a list of samples.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        profile = request.user.userprofile
+        category = Category.get_or_create_body_weight(request.user, unit=profile.weight_unit)
+
+        created = updated = 0
+        rejected = []
+        for index, item in enumerate(items):
+            serializer = HealthSyncItemSerializer(data=item, context={'request': request})
+            if not serializer.is_valid():
+                rejected.append({'index': index, 'errors': serializer.errors})
+                continue
+
+            data = serializer.validated_data
+            _, was_created = Measurement.objects.update_or_create(
+                category=category,
+                source=data['source'],
+                external_id=data['external_id'],
+                defaults={
+                    'date': data['date'],
+                    'value': data['weight'],
+                    'notes': data.get('notes', ''),
+                    'extra_data': {'unit': profile.weight_unit, 'origin': 'health-sync'},
+                },
+            )
+            if was_created:
+                created += 1
+            else:
+                updated += 1
+
+        return Response(
+            HealthSyncResultSerializer(
+                {'created': created, 'updated': updated, 'rejected': rejected}
+            ).data
+        )

@@ -122,6 +122,18 @@ class WorkoutSession(models.Model):
     The user's general impression of workout
     """
 
+    is_public = models.BooleanField(
+        verbose_name='Shared with followers',
+        default=False,
+        help_text=(
+            'If set, users who follow you and have social features '
+            'enabled can see this workout session.'
+        ),
+    )
+    """
+    Opt-in sharing of this session with followers (G6)
+    """
+
     def __str__(self):
         """
         Return a more human-readable representation

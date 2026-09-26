@@ -144,6 +144,18 @@ router.register(
     manager_api_views.PlateCalculatorViewSet,
     basename='plate-calculator',
 )
+router.register(
+    r'routine-share-token',
+    manager_api_views.RoutineShareTokenViewSet,
+    basename='routine-share-token',
+)
+router.register(
+    r'social-feed',
+    manager_api_views.SocialFeedViewSet,
+    basename='social-feed',
+)
+router.register(r'webhook', core_api_views.WebhookViewSet, basename='webhook')
+router.register(r'userfollow', core_api_views.UserFollowViewSet, basename='userfollow')
 
 # Core app
 router.register(r'language', core_api_views.LanguageViewSet, basename='language')
@@ -339,6 +351,11 @@ urlpatterns += [
         name='userprofile-verify-email',
     ),
     path('api/v2/', include(router.urls)),
+    path(
+        'api/v2/routine-share/<uuid:token>/',
+        manager_api_views.RoutineShareResolveView.as_view(),
+        name='routine-share-resolve',
+    ),
     path('api/v2/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v2/token/verify', TokenVerifyView.as_view(), name='token_verify'),
     # Others

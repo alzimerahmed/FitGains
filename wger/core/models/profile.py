@@ -393,6 +393,19 @@ class UserProfile(models.Model):
     )
     """Flag to enable or disable trophies for this user"""
 
+    social_enabled = models.BooleanField(
+        default=False,
+        verbose_name=_('Enable social features'),
+        help_text=_(
+            'Allow other users on this instance to follow you and see '
+            'workouts you explicitly shared. Off by default.'
+        ),
+    )
+    """
+    Opt-in switch for social features (G6): being followable and appearing
+    in the shared-workout feed
+    """
+
     @property
     def get_allauth_email(self) -> EmailAddress | None:
         try:

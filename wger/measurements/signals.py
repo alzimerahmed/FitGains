@@ -37,6 +37,7 @@ from wger.measurements.models import (
     Category,
     Measurement,
 )
+from wger.measurements.models.category import MetricType
 from wger.measurements.models.measurement import MeasurementSource
 from wger.utils.helpers import (
     deletion_originates_from_user,
@@ -108,3 +109,28 @@ def _category_saved(sender, instance, **kwargs):
     reconcile backfills or clears its calculated rows
     """
     schedule_reconcile(instance.pk)
+
+
+@receiver(post_save, sender=Measurement, dispatch_uid='measurements_webhook_weight')
+@disable_for_loaddata
+def _measurement_saved(sender, instance, created=False, **kwargs):
+    """
+    Fan out the weight.created webhook event for body-weight entries (G11)
+    """
+    if not created:
+        return
+    if instance.category.metric_type != MetricType.BODY_WEIGHT:
+        return
+    from wger.core.services.webhooks import dispatch_event
+
+    dispatch_event(
+        instance.category.user_id,
+        'weight.created',
+        {
+            'id': str(instance.pk),
+            'date': instance.date.isoformat(),
+            'value': str(instance.value),
+            'unit': instance.unit,
+            'source': instance.source,
+        },
+    )

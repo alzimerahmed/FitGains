@@ -100,7 +100,7 @@ patterns_routine = [
     ),
     path(
         '<int:pk>/copy',
-        routine.copy_routine,
+        routine.copy_routine_view,
         name='copy',
     ),
     path(

@@ -26,7 +26,10 @@ from wger.core.models import (
     License,
     RepetitionUnit,
     UserProfile,
+    UserFollow,
     WeightUnit,
+    Webhook,
+    WebhookEvent,
 )
 
 
@@ -78,6 +81,7 @@ class UserprofileSerializer(serializers.ModelSerializer):
             'weight_unit',
             'num_days_weight_reminder',
             'time_zone',
+            'social_enabled',
         )
 
 
@@ -205,3 +209,63 @@ class LanguageCheckSerializer(serializers.Serializer):
             )
 
         return super().validate(data)
+
+
+class WebhookSerializer(serializers.ModelSerializer):
+    """
+    Webhook serializer (G11)
+
+    The signing secret is write-only: it is generated server-side unless the
+    client supplies one, and never sent back, so a leaked API response cannot
+    forge signatures.
+    """
+
+    secret = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = Webhook
+        fields = (
+            'id',
+            'url',
+            'events',
+            'secret',
+            'is_active',
+            'created',
+        )
+        read_only_fields = ('id', 'created')
+
+    def validate_events(self, value):
+        if not isinstance(value, list) or not value:
+            raise serializers.ValidationError('At least one event is required.')
+        invalid = [e for e in value if e not in WebhookEvent.values]
+        if invalid:
+            raise serializers.ValidationError(f'Unknown events: {invalid}')
+        return value
+
+
+class UserFollowSerializer(serializers.ModelSerializer):
+    """
+    User follow serializer (G6)
+    """
+
+    follower = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = UserFollow
+        fields = (
+            'id',
+            'follower',
+            'followee',
+            'created',
+        )
+        read_only_fields = ('id', 'created')
+
+    def validate_followee(self, value):
+        user = self.context['request'].user
+        if value == user:
+            raise serializers.ValidationError('Users cannot follow themselves.')
+        if not value.userprofile.social_enabled:
+            raise serializers.ValidationError('This user does not allow followers.')
+        if UserFollow.objects.filter(follower=user, followee=value).exists():
+            raise serializers.ValidationError('You are already following this user.')
+        return value

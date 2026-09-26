@@ -16,9 +16,14 @@
 
 # Local
 from .cache import UserCache
+from .follow import UserFollow
 from .language import Language
 from .license import License
 from .long_lived_session import LongLivedSession
 from .profile import UserProfile
 from .rep_unit import RepetitionUnit
 from .weight_unit import WeightUnit
+from .webhook import (
+    Webhook,
+    WebhookEvent,
+)

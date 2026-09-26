@@ -39,6 +39,7 @@ from wger.manager.models import (
     RestConfig,
     RiRConfig,
     Routine,
+    RoutineShareToken,
     SetsConfig,
     Slot,
     SlotEntry,
@@ -80,6 +81,44 @@ class RoutineSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'end': f'A routine cannot span more than {Routine.MAX_DURATION_DAYS} days.'}
                 )
+        return data
+
+
+class RoutineShareTokenSerializer(serializers.ModelSerializer):
+    """
+    Share token serializer (G5)
+
+    The token value is only returned at creation time; afterwards it is
+    write-protected so a leaked API response cannot widen the share.
+    """
+
+    token = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = RoutineShareToken
+        fields = (
+            'id',
+            'routine',
+            'token',
+            'created',
+            'expires_at',
+            'revoked',
+        )
+        read_only_fields = ('id', 'created')
+
+    def validate_routine(self, value: Routine) -> Routine:
+        if value.user != self.context['request'].user:
+            raise serializers.ValidationError('You can only share your own routines.')
+        if not value.is_template:
+            raise serializers.ValidationError('Only templates can be shared.')
+        return value
+
+    def validate(self, data):
+        expires_at = data.get('expires_at')
+        if expires_at is not None and expires_at <= timezone.now():
+            raise serializers.ValidationError(
+                {'expires_at': 'The expiry date must be in the future.'}
+            )
         return data
 
 
@@ -450,6 +489,7 @@ class WorkoutSessionSerializer(serializers.ModelSerializer):
             'impression',
             'datetime_start',
             'datetime_end',
+            'is_public',
         )
 
     def validate(self, attrs):
@@ -711,3 +751,23 @@ class ProgressionSuggestionSerializer(serializers.Serializer):
     observed = ObservedSetSerializer(many=True)
     prescription = PrescriptionSerializer()
     suggested = SuggestedLoadSerializer(allow_null=True)
+
+
+class SocialFeedSessionSerializer(serializers.ModelSerializer):
+    """
+    Workout session as it appears in the shared-workout feed (G6)
+    """
+
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = WorkoutSession
+        fields = (
+            'id',
+            'username',
+            'routine',
+            'notes',
+            'impression',
+            'datetime_start',
+            'datetime_end',
+        )

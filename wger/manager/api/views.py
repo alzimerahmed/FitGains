@@ -32,11 +32,16 @@ from rest_framework import (
     viewsets,
 )
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 # wger
+from wger.core.models import UserFollow
 from wger.manager.api.consts import BASE_CONFIG_FILTER_FIELDS
 from wger.manager.api.plate_calculator import calculate_plates
+from wger.manager.services.copy_routine import copy_routine
 from wger.manager.services.progression_suggestions import (
     progression_suggestions as build_progression_suggestions,
 )
@@ -60,10 +65,12 @@ from wger.manager.api.serializers import (
     RestConfigSerializer,
     RiRConfigSerializer,
     RoutineSerializer,
+    RoutineShareTokenSerializer,
     RoutineStructureSerializer,
     SetNrConfigSerializer,
     SlotEntrySerializer,
     SlotSerializer,
+    SocialFeedSessionSerializer,
     WeightConfigSerializer,
     WorkoutDayDataDisplayModeSerializer,
     WorkoutDayDataGymModeSerializer,
@@ -81,6 +88,7 @@ from wger.manager.models import (
     RestConfig,
     RiRConfig,
     Routine,
+    RoutineShareToken,
     SetsConfig,
     Slot,
     SlotEntry,
@@ -239,6 +247,29 @@ class RoutineViewSet(viewsets.ModelViewSet):
                 build_progression_suggestions(self.get_object()), many=True
             ).data,
         )
+
+    @extend_schema(
+        summary='Copy the routine into the requesting user\'s routines',
+        responses={201: RoutineSerializer},
+    )
+    @action(detail=True, methods=['post'], pagination_class=None)
+    def copy(self, request, pk):
+        """
+        Make a copy of the routine for the requesting user (G5).
+
+        Works on the user's own routines and on public templates; anything
+        else is forbidden. Resolves the object directly: the object
+        permission would reject non-owner writes, but copying a public
+        template is an allowed write for the copier, like the web view.
+        """
+        from django.shortcuts import get_object_or_404
+
+        routine = get_object_or_404(Routine, pk=pk)
+        if routine.user != request.user and not routine.is_public:
+            raise PermissionDenied('You can only copy your own routines or public templates.')
+
+        routine_copy = copy_routine(routine, request.user)
+        return Response(RoutineSerializer(routine_copy).data, status=status.HTTP_201_CREATED)
 
     @staticmethod
     def get_owner_objects():
@@ -747,3 +778,104 @@ class PlateCalculatorViewSet(viewsets.ViewSet):
 
         result = calculate_plates(target, bar, available)
         return Response(PlateCalculatorResultSerializer(result).data)
+
+
+class RoutineShareTokenViewSet(WgerOwnerObjectModelViewSet):
+    """
+    API endpoint for routine share tokens (G5)
+
+    Tokens are managed by the routine's owner; anyone holding the token
+    value can then read the routine's structure without authenticating.
+    """
+
+    serializer_class = RoutineShareTokenSerializer
+    is_private = True
+    ordering_fields = '__all__'
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+    filterset_fields = ('routine',)
+
+    def get_queryset(self):
+        """
+        Only allow access to appropriate objects
+        """
+        # REST API generation
+        if getattr(self, 'swagger_fake_view', False):
+            return RoutineShareToken.objects.none()
+
+        return RoutineShareToken.objects.filter(routine__user=self.request.user)
+
+    @staticmethod
+    def get_owner_objects():
+        """
+        Return objects to check for ownership permission
+        """
+        return [(Routine, 'routine')]
+
+
+class RoutineShareResolveView(APIView):
+    """
+    Read-only access to a shared routine template via its share token (G5)
+
+    Unauthenticated by design: the token in the URL is the credential.
+    Invalid, expired or revoked tokens answer 404 so links cannot be probed.
+    """
+
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary='Resolve a routine share token to the routine structure',
+        responses={200: RoutineStructureSerializer},
+    )
+    def get(self, request, token):
+        share_token = (
+            RoutineShareToken.objects.filter(token=token)
+            .select_related('routine')
+            .first()
+        )
+        if share_token is None or not share_token.is_valid():
+            return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(RoutineStructureSerializer(share_token.routine).data)
+
+
+class SocialFeedViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Shared-workout feed (G6)
+
+    Returns the workout sessions the people the user follows have explicitly
+    shared. Everything is opt-in on both sides: the followee must have social
+    features enabled on their profile and must have marked the session as
+    shared. Sessions are annotated with the owner's username.
+    """
+
+    serializer_class = WorkoutSessionSerializer
+    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return [AllowAny()]
+        return [permission() for permission in self.permission_classes]
+
+    def get_serializer_class(self):
+        return SocialFeedSessionSerializer
+
+    def get_queryset(self):
+        # REST API generation
+        if getattr(self, 'swagger_fake_view', False):
+            return WorkoutSession.objects.none()
+
+        if not self.request.user.is_authenticated:
+            return WorkoutSession.objects.none()
+
+        followed_ids = UserFollow.objects.filter(follower=self.request.user).values_list(
+            'followee_id', flat=True
+        )
+        return (
+            WorkoutSession.objects.filter(
+                user_id__in=followed_ids,
+                is_public=True,
+                user__userprofile__social_enabled=True,
+            )
+            .select_related('user', 'routine')
+            .order_by('-datetime_start')
+        )
