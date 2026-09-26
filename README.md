@@ -69,6 +69,7 @@ extras/docker/   Dockerfiles (base, production, demo, development)
 ```bash
 git clone https://github.com/alzimerahmed/FitGains.git
 cd FitGains
+echo "SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" > .env
 docker compose up -d
 ```
 

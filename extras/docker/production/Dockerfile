@@ -6,7 +6,7 @@
 # Note: you MUST build this image from the project's root!
 # docker build -f extras/docker/production/Dockerfile --tag ghcr.io/alzimerahmed/fitgains .
 #
-# To run the container use the docker-compose.yaml in the repo root
+# To run the container use the compose.yaml in the repo root
 
 ##########
 # Builder

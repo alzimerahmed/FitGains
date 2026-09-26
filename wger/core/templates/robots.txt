@@ -1,5 +1,5 @@
 User-Agent: *
 Disallow: /api/v2
 
-{% for lang in languages %}Sitemap: /{{lang.0}}/sitemap.xml
+{% for lang in languages %}Sitemap: {{ request.scheme }}://{{ request.get_host }}/{{lang.0}}/sitemap.xml
 {% endfor %}

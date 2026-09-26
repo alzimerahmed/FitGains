@@ -26,6 +26,7 @@ services:
   cache:
     image: redis:7-alpine
     restart: unless-stopped
+    # Do NOT publish 6379 to the host; Redis has no auth and is internal-only
     command: redis-server --appendonly yes
     volumes:
       - cache-data:/data
@@ -53,6 +54,8 @@ services:
       DJANGO_DB_PASSWORD: fitgains-change-me
       DJANGO_DB_HOST: db
       DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_BACKEND: django_redis.cache.RedisCache
+      DJANGO_CACHE_CLIENT_CLASS: django_redis.client.DefaultClient
       DJANGO_CACHE_LOCATION: redis://cache:6379/1
       CELERY_BROKER: redis://cache:6379/2
       DJANGO_PERFORM_MIGRATIONS: "True"
@@ -61,10 +64,14 @@ services:
       DOWNLOAD_EXERCISE_IMAGES_ON_STARTUP: "True"
       WGER_USE_GUNICORN: "True"
       WGER_PORT: "8000"
-      # Set this to the URL users use to reach the instance
+      USE_CELERY: "True"
+      # Set this to the URL users use to reach the instance;
+      # add your hostname to ALLOWED_HOSTS when not accessing via localhost
       SITE_URL: http://localhost:8000
-      # Generate your own: python -c "import secrets; print(secrets.token_urlsafe(50))"
-      SECRET_KEY: ""
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      # Required: sessions and password resets break if the key changes on
+      # every restart. Generate with: python -c "import secrets; print(secrets.token_urlsafe(50))"
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in a .env file next to this compose file}
     volumes:
       - media:/home/wger/media
       - static:/home/wger/static
@@ -86,8 +93,12 @@ services:
       DJANGO_DB_PASSWORD: fitgains-change-me
       DJANGO_DB_HOST: db
       DJANGO_DB_PORT: "5432"
+      DJANGO_CACHE_BACKEND: django_redis.cache.RedisCache
+      DJANGO_CACHE_CLIENT_CLASS: django_redis.client.DefaultClient
       DJANGO_CACHE_LOCATION: redis://cache:6379/1
       CELERY_BROKER: redis://cache:6379/2
+      USE_CELERY: "True"
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in a .env file next to this compose file}
 
 volumes:
   db-data:
