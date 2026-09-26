@@ -98,6 +98,22 @@ def request_user_or_trainer_q(request):
     return Q(user=request.user)
 
 
+def cached_routine_response(request, cache_key, produce):
+    """
+    Shared cache-or-compute wrapper for the routine detail actions (H2).
+
+    The viewsets stay thin: they only pass a cache key and a producer for
+    the payload; caching, TTL and response shaping happen here once.
+    """
+    cached_data = cache.get(cache_key)
+    if cached_data is not None:
+        return Response(cached_data)
+
+    out = produce()
+    cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
+    return Response(out)
+
+
 class RoutineViewSet(viewsets.ModelViewSet):
     """
     API endpoint for routine objects
@@ -140,18 +156,14 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Return the day sequence of the routine
         """
-        cache_key = CacheKeyMapper.routine_api_date_sequence_display_key(pk, request.user.id)
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-
-        out = WorkoutDayDataDisplayModeSerializer(
-            self.get_object().date_sequence,
-            many=True,
-        ).data
-        cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
-
-        return Response(out)
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_date_sequence_display_key(pk, request.user.id),
+            lambda: WorkoutDayDataDisplayModeSerializer(
+                self.get_object().date_sequence,
+                many=True,
+            ).data,
+        )
 
     @extend_schema(responses={200: WorkoutDayDataGymModeSerializer(many=True)})
     @action(detail=True, url_path='date-sequence-gym', pagination_class=None)
@@ -159,15 +171,13 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Return the day sequence of the routine
         """
-        cache_key = CacheKeyMapper.routine_api_date_sequence_gym_key(pk, request.user.id)
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-
-        out = WorkoutDayDataGymModeSerializer(self.get_object().date_sequence, many=True).data
-        cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
-
-        return Response(out)
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_date_sequence_gym_key(pk, request.user.id),
+            lambda: WorkoutDayDataGymModeSerializer(
+                self.get_object().date_sequence, many=True
+            ).data,
+        )
 
     @extend_schema(responses={200: RoutineStructureSerializer})
     @action(detail=True)
@@ -175,14 +185,11 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Return the full object structure of the routine.
         """
-        cache_key = CacheKeyMapper.routine_api_structure_key(pk, request.user.id)
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-
-        out = RoutineStructureSerializer(self.get_object()).data
-        cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
-        return Response(out)
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_structure_key(pk, request.user.id),
+            lambda: RoutineStructureSerializer(self.get_object()).data,
+        )
 
     @extend_schema(responses={200: LogDisplaySerializer(many=True)})
     @action(detail=True, url_path='logs', pagination_class=None)
@@ -190,14 +197,11 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Returns the logs for the routine
         """
-        cache_key = CacheKeyMapper.routine_api_logs(pk, request.user.id)
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-
-        out = LogDisplaySerializer(self.get_object().logs_display(), many=True).data
-        cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
-        return Response(out)
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_logs(pk, request.user.id),
+            lambda: LogDisplaySerializer(self.get_object().logs_display(), many=True).data,
+        )
 
     @extend_schema(responses={200: LogStatsDataSerializer})
     @action(detail=True, url_path='stats')
@@ -205,15 +209,11 @@ class RoutineViewSet(viewsets.ModelViewSet):
         """
         Returns the logs for the routine
         """
-        cache_key = CacheKeyMapper.routine_api_stats(pk, request.user.id)
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-
-        out = LogStatsDataSerializer(self.get_object().calculate_log_statistics()).data
-        cache.set(cache_key, out, settings.WGER_SETTINGS['ROUTINE_CACHE_TTL'])
-
-        return Response(out)
+        return cached_routine_response(
+            request,
+            CacheKeyMapper.routine_api_stats(pk, request.user.id),
+            lambda: LogStatsDataSerializer(self.get_object().calculate_log_statistics()).data,
+        )
 
     @staticmethod
     def get_owner_objects():
