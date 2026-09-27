@@ -99,3 +99,7 @@ venv-wger
 .switchboard/
 docs/*.md
 docs/design/
+
+# Mobile signing secrets (never commit)
+mobile/fastlane/metadata/envfiles/fitgains-release.jks
+mobile/fastlane/metadata/envfiles/key.properties

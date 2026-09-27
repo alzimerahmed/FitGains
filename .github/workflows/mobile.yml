@@ -1,0 +1,74 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile.yml'
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build_apk:
+    name: Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Restore signing key
+        working-directory: mobile/fastlane/metadata/envfiles
+        run: |
+          echo "${{ secrets.FITGAINS_SIGNING_KEY_BASE64 }}" | base64 -d > fitgains-release.jks
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=fitgains-release.jks\n' \
+            "${{ secrets.FITGAINS_STORE_PASSWORD }}" \
+            "${{ secrets.FITGAINS_STORE_PASSWORD }}" \
+            "${{ secrets.FITGAINS_KEY_ALIAS }}" > key.properties
+
+      - name: Pub get
+        working-directory: mobile
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: mobile
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || flutter analyze
+
+      - name: Build release APK
+        working-directory: mobile
+        run: flutter build apk --release
+
+      - name: Rename artifact
+        working-directory: mobile
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d+ -f1)
+          cp build/app/outputs/flutter-apk/app-release.apk "FitGains-${VERSION}.apk"
+          echo "APK=FitGains-${VERSION}.apk" >> "$GITHUB_ENV"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: FitGains-APK
+          path: mobile/${{ env.APK }}
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${GITHUB_REF_NAME}" "mobile/${APK}" --repo "${GITHUB_REPOSITORY}" --clobber
