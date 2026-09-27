@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/uuid.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/core/uuid.dart';
 
 void main() {
   test('generates lowercase hex in the canonical 8-4-4-4-12 shape', () {

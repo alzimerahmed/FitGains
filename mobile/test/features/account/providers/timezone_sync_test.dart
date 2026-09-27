@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/features/account/models/user_profile.dart';
+import 'package:fitgains/features/account/providers/timezone_sync.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/shared_preferences.dart';
-import 'package:wger/features/account/models/user_profile.dart';
-import 'package:wger/features/account/providers/timezone_sync.dart';
 
 import 'user_profile_notifier_test.mocks.dart';
 

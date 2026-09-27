@@ -1,14 +1,14 @@
+import 'package:fitgains/core/widgets/datetime_input.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/providers/workout_session_repository.dart';
+import 'package:fitgains/features/routines/widgets/forms/session.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/widgets/datetime_input.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/providers/workout_session_repository.dart';
-import 'package:wger/features/routines/widgets/forms/session.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import 'session_form_test.mocks.dart';
 

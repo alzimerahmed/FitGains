@@ -16,21 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/exercises/providers/exercise_repository.dart';
+import 'package:fitgains/features/exercises/providers/exercises_notifier.dart';
+import 'package:fitgains/features/measurements/models/measurement_calculation.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
+import 'package:fitgains/features/measurements/widgets/calculation_params.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/exercises/providers/exercise_repository.dart';
-import 'package:wger/features/exercises/providers/exercises_notifier.dart';
-import 'package:wger/features/measurements/models/measurement_calculation.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
-import 'package:wger/features/measurements/widgets/calculation_params.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/exercises.dart';
 import '../../../helpers/fake_auth_environment.dart';

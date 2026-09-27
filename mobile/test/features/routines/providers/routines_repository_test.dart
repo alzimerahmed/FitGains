@@ -18,20 +18,20 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/core/network/wger_base.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/routines/models/base_config.dart';
+import 'package:fitgains/features/routines/models/day.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/models/slot.dart';
+import 'package:fitgains/features/routines/models/slot_entry.dart';
+import 'package:fitgains/features/routines/providers/routines_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/core/network/wger_base.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/routines/models/base_config.dart';
-import 'package:wger/features/routines/models/day.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/models/slot.dart';
-import 'package:wger/features/routines/models/slot_entry.dart';
-import 'package:wger/features/routines/providers/routines_repository.dart';
 
 import '../../../fixtures/fixture_reader.dart';
 import '../../../helpers/in_memory_drift.dart';

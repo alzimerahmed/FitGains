@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/providers/workout_logs_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/providers/workout_logs_repository.dart';
 
 import '../../../helpers/in_memory_drift.dart';
 

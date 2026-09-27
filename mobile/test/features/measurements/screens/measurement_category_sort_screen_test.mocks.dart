@@ -6,10 +6,10 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:wger/features/measurements/models/measurement_bucket.dart' as _i6;
-import 'package:wger/features/measurements/models/measurement_category.dart' as _i4;
-import 'package:wger/features/measurements/models/measurement_entry.dart' as _i5;
-import 'package:wger/features/measurements/providers/measurement_repository.dart' as _i2;
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart' as _i6;
+import 'package:fitgains/features/measurements/models/measurement_category.dart' as _i4;
+import 'package:fitgains/features/measurements/models/measurement_entry.dart' as _i5;
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

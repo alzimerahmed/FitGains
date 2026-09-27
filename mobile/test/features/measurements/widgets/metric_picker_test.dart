@@ -16,6 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/form_screen.dart';
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
+import 'package:fitgains/features/measurements/screens/measurement_entries_screen.dart';
+import 'package:fitgains/features/measurements/widgets/forms/category.dart';
+import 'package:fitgains/features/measurements/widgets/metric_picker.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -23,15 +32,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/form_screen.dart';
-import 'package:wger/core/network/auth_credentials_storage.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
-import 'package:wger/features/measurements/screens/measurement_entries_screen.dart';
-import 'package:wger/features/measurements/widgets/forms/category.dart';
-import 'package:wger/features/measurements/widgets/metric_picker.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../helpers/measurement_repository_stubs.dart';
 import 'metric_picker_test.mocks.dart';

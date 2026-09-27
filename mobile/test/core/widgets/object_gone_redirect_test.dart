@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/widgets/object_gone_redirect.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/widgets/object_gone_redirect.dart';
 
 void main() {
   /// Pushes a detail route whose body flips to [objectGoneRedirect] once [gone]

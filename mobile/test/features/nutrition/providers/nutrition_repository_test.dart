@@ -17,13 +17,13 @@
  */
 
 import 'package:drift/drift.dart' as drift;
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/nutrition/models/log.dart';
+import 'package:fitgains/features/nutrition/models/meal.dart';
+import 'package:fitgains/features/nutrition/models/meal_item.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/nutrition/models/log.dart';
-import 'package:wger/features/nutrition/models/meal.dart';
-import 'package:wger/features/nutrition/models/meal_item.dart';
-import 'package:wger/features/nutrition/models/nutritional_plan.dart';
-import 'package:wger/features/nutrition/providers/nutrition_repository.dart';
 
 import '../../../helpers/in_memory_drift.dart';
 

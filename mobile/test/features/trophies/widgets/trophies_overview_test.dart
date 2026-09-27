@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/trophies/providers/trophy_notifier.dart';
+import 'package:fitgains/features/trophies/widgets/trophies_overview.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:network_image_mock/network_image_mock.dart';
-import 'package:wger/features/trophies/providers/trophy_notifier.dart';
-import 'package:wger/features/trophies/widgets/trophies_overview.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/trophies.dart';
 

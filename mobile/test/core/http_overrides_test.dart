@@ -18,10 +18,10 @@
 
 import 'dart:io';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/http_overrides.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/io_client.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/http_overrides.dart';
 
 class _FakeCertificate extends Fake implements X509Certificate {}
 

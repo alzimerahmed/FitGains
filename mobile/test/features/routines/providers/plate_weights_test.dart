@@ -1,11 +1,11 @@
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/features/routines/providers/plate_weights.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart'; // Added for annotations
 import 'package:mockito/mockito.dart'; // Added for mockito
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/features/routines/providers/plate_weights.dart';
 
 import 'plate_weights_test.mocks.dart';
 

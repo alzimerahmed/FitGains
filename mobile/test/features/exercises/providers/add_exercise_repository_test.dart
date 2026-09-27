@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/exceptions/http_exception.dart';
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/features/exercises/models/exercise_submission.dart';
+import 'package:fitgains/features/exercises/providers/add_exercise_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/exceptions/http_exception.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/features/exercises/models/exercise_submission.dart';
-import 'package:wger/features/exercises/providers/add_exercise_repository.dart';
 
 import 'add_exercise_repository_test.mocks.dart';
 

@@ -10,19 +10,19 @@ import 'dart:typed_data' as _i15;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i14;
-import 'package:wger/core/search_options.dart' as _i12;
-import 'package:wger/features/measurements/models/measurement_bucket.dart' as _i19;
-import 'package:wger/features/measurements/models/measurement_category.dart' as _i17;
-import 'package:wger/features/measurements/models/measurement_entry.dart' as _i18;
-import 'package:wger/features/measurements/providers/measurement_repository.dart' as _i16;
-import 'package:wger/features/nutrition/models/ingredient.dart' as _i10;
-import 'package:wger/features/nutrition/models/ingredient_filters.dart' as _i11;
-import 'package:wger/features/nutrition/models/log.dart' as _i8;
-import 'package:wger/features/nutrition/models/meal.dart' as _i6;
-import 'package:wger/features/nutrition/models/meal_item.dart' as _i7;
-import 'package:wger/features/nutrition/models/nutritional_plan.dart' as _i5;
-import 'package:wger/features/nutrition/providers/ingredient_repository.dart' as _i9;
-import 'package:wger/features/nutrition/providers/nutrition_repository.dart' as _i3;
+import 'package:fitgains/core/search_options.dart' as _i12;
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart' as _i19;
+import 'package:fitgains/features/measurements/models/measurement_category.dart' as _i17;
+import 'package:fitgains/features/measurements/models/measurement_entry.dart' as _i18;
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart' as _i16;
+import 'package:fitgains/features/nutrition/models/ingredient.dart' as _i10;
+import 'package:fitgains/features/nutrition/models/ingredient_filters.dart' as _i11;
+import 'package:fitgains/features/nutrition/models/log.dart' as _i8;
+import 'package:fitgains/features/nutrition/models/meal.dart' as _i6;
+import 'package:fitgains/features/nutrition/models/meal_item.dart' as _i7;
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart' as _i5;
+import 'package:fitgains/features/nutrition/providers/ingredient_repository.dart' as _i9;
+import 'package:fitgains/features/nutrition/providers/nutrition_repository.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

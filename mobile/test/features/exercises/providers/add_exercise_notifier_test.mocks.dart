@@ -6,9 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:wger/features/exercises/models/exercise_submission.dart' as _i4;
-import 'package:wger/features/exercises/models/exercise_submission_images.dart' as _i5;
-import 'package:wger/features/exercises/providers/add_exercise_repository.dart' as _i2;
+import 'package:fitgains/features/exercises/models/exercise_submission.dart' as _i4;
+import 'package:fitgains/features/exercises/models/exercise_submission_images.dart' as _i5;
+import 'package:fitgains/features/exercises/providers/add_exercise_repository.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

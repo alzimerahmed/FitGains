@@ -18,6 +18,19 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/features/nutrition/models/ingredient.dart';
+import 'package:fitgains/features/nutrition/models/log.dart';
+import 'package:fitgains/features/nutrition/models/meal.dart';
+import 'package:fitgains/features/nutrition/models/meal_item.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_repository.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_notifier.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_repository.dart';
+import 'package:fitgains/features/nutrition/screens/nutritional_plan_screen.dart';
+import 'package:fitgains/features/nutrition/widgets/forms.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,19 +42,6 @@ import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/features/nutrition/models/ingredient.dart';
-import 'package:wger/features/nutrition/models/log.dart';
-import 'package:wger/features/nutrition/models/meal.dart';
-import 'package:wger/features/nutrition/models/meal_item.dart';
-import 'package:wger/features/nutrition/models/nutritional_plan.dart';
-import 'package:wger/features/nutrition/providers/ingredient_repository.dart';
-import 'package:wger/features/nutrition/providers/nutrition_notifier.dart';
-import 'package:wger/features/nutrition/providers/nutrition_repository.dart';
-import 'package:wger/features/nutrition/screens/nutritional_plan_screen.dart';
-import 'package:wger/features/nutrition/widgets/forms.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/nutritional_plans.dart';
 import '../../../fixtures/fixture_reader.dart';

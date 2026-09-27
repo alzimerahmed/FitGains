@@ -16,15 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/nutrition/models/ingredient.dart';
+import 'package:fitgains/features/nutrition/models/ingredient_filters.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_filters_notifier.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_notifier.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/nutrition/models/ingredient.dart';
-import 'package:wger/features/nutrition/models/ingredient_filters.dart';
-import 'package:wger/features/nutrition/providers/ingredient_filters_notifier.dart';
-import 'package:wger/features/nutrition/providers/ingredient_notifier.dart';
-import 'package:wger/features/nutrition/providers/ingredient_repository.dart';
 
 import 'ingredient_notifier_test.mocks.dart';
 

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/nutrition/models/ingredient.dart';
+import 'package:fitgains/features/nutrition/models/log.dart';
+import 'package:fitgains/features/nutrition/models/meal.dart';
+import 'package:fitgains/features/nutrition/models/meal_item.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/nutrition/models/ingredient.dart';
-import 'package:wger/features/nutrition/models/log.dart';
-import 'package:wger/features/nutrition/models/meal.dart';
-import 'package:wger/features/nutrition/models/meal_item.dart';
-import 'package:wger/features/nutrition/models/nutritional_plan.dart';
 
 const _planUuid = 'cc000000-0000-4000-8000-000000000010';
 const _mealUuids = [

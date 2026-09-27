@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/error_dialogs.dart';
+import 'package:fitgains/core/errors.dart';
+import 'package:fitgains/core/keys.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/error_dialogs.dart';
-import 'package:wger/core/errors.dart';
-import 'package:wger/core/keys.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
 
 /// Requests an error dialog from *inside* its own build, the situation a
 /// FlutterError.onError handler is in when a widget fails to build.

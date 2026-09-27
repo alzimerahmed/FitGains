@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "de.wger" "\0"
-            VALUE "FileDescription", "wger" "\0"
+            VALUE "CompanyName", "com.fitgains" "\0"
+            VALUE "FileDescription", "FitGains" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "wger" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 de.wger. All rights reserved." "\0"
-            VALUE "OriginalFilename", "wger.exe" "\0"
-            VALUE "ProductName", "wger" "\0"
+            VALUE "InternalName", "FitGains" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.fitgains. All rights reserved." "\0"
+            VALUE "OriginalFilename", "FitGains.exe" "\0"
+            VALUE "ProductName", "FitGains" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -22,6 +22,13 @@ import 'dart:io';
 
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart';
 import 'package:fake_async/fake_async.dart';
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/network/powersync_session.dart';
+import 'package:fitgains/core/network/secure_token_storage.dart';
+import 'package:fitgains/core/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,13 +39,6 @@ import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/network/auth_notifier.dart';
-import 'package:wger/core/network/auth_state.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/network/powersync_session.dart';
-import 'package:wger/core/network/secure_token_storage.dart';
-import 'package:wger/core/shared_preferences.dart';
 
 import '../../helpers/fake_auth_environment.dart';
 import '../../helpers/fake_connectivity.dart';

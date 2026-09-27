@@ -6,8 +6,8 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:wger/features/routines/models/log.dart' as _i4;
-import 'package:wger/features/routines/providers/workout_logs_repository.dart' as _i2;
+import 'package:fitgains/features/routines/models/log.dart' as _i4;
+import 'package:fitgains/features/routines/providers/workout_logs_repository.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

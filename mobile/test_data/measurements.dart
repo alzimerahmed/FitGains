@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
 
 final testMeasurementEntry1 = MeasurementEntry(
   id: '1',

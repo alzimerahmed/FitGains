@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/exercises/widgets/add_exercise/add_exercise_text_area.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/exercises/widgets/add_exercise/add_exercise_text_area.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
 
 void main() {
   Widget makeTestable({required Widget child}) {

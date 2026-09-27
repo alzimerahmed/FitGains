@@ -201,10 +201,6 @@ WGER_SETTINGS['SYNC_INGREDIENTS_DUMP_URL'] = env.str(
     'https://wger.de/media/ingredients/ingredients.jsonl.gz',
 )
 WGER_SETTINGS['SYNC_OFF_DAILY_DELTA_CELERY'] = env.bool('SYNC_OFF_DAILY_DELTA_CELERY', False)
-# PWA / Trusted Web Activity: configure to enable Digital Asset Links
-# verification for a Bubblewrap-built APK
-WGER_SETTINGS['ANDROID_APP_PACKAGE'] = env.str('ANDROID_APP_PACKAGE', '')
-WGER_SETTINGS['ANDROID_APP_SHA256_FINGERPRINTS'] = env.list('ANDROID_APP_SHA256_FINGERPRINTS', [])
 WGER_SETTINGS['EXPORT_INGREDIENTS_BULK_CELERY'] = env.bool('EXPORT_INGREDIENTS_BULK_CELERY', False)
 WGER_SETTINGS['USE_RECAPTCHA'] = env.bool('USE_RECAPTCHA', False)
 WGER_SETTINGS['USE_CELERY'] = env.bool('USE_CELERY', False)

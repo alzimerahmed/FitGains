@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/exercises/models/category.dart';
+import 'package:fitgains/features/exercises/models/equipment.dart';
+import 'package:fitgains/features/exercises/providers/exercise_filter_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/exercises/models/category.dart';
-import 'package:wger/features/exercises/models/equipment.dart';
-import 'package:wger/features/exercises/providers/exercise_filter_state.dart';
 
 import '../../../../test_data/exercises.dart';
 

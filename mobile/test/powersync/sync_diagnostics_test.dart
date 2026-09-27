@@ -18,9 +18,9 @@
 
 import 'dart:io' show SocketException;
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/powersync/sync_diagnostics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/powersync/sync_diagnostics.dart';
 
 import '../helpers/sync_status.dart';
 

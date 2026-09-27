@@ -16,18 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/account/providers/user_profile_repository.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/exercises/providers/exercise_repository.dart';
+import 'package:fitgains/features/exercises/providers/exercises_notifier.dart';
+import 'package:fitgains/features/routines/models/repetition_unit.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/models/weight_unit.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
+import 'package:fitgains/features/routines/providers/workout_session_repository.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/account/providers/user_profile_repository.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/exercises/providers/exercise_repository.dart';
-import 'package:wger/features/exercises/providers/exercises_notifier.dart';
-import 'package:wger/features/routines/models/repetition_unit.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/models/weight_unit.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
-import 'package:wger/features/routines/providers/workout_session_repository.dart';
 
 import 'routine_form_test_overrides.mocks.dart';
 

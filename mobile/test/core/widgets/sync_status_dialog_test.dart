@@ -19,6 +19,17 @@
 import 'dart:async';
 import 'dart:io' show SocketException;
 
+import 'package:fitgains/core/error_dialogs.dart' show CopyToClipboardButton;
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/widgets/sync_status_dialog.dart';
+import 'package:fitgains/database/powersync/powersync.dart'
+    show pendingUploadCountProvider, syncStatus, syncWatchdogProvider;
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/generated/app_localizations_en.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
+import 'package:fitgains/powersync/connector.dart'
+    show NoPowerSyncEndpointException, RetryableUploadException;
+import 'package:fitgains/powersync/sync_watchdog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,17 +40,6 @@ import 'package:powersync/powersync.dart'
         SyncResponseException,
         SyncStatus,
         UpdateType;
-import 'package:wger/core/error_dialogs.dart' show CopyToClipboardButton;
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/widgets/sync_status_dialog.dart';
-import 'package:wger/database/powersync/powersync.dart'
-    show pendingUploadCountProvider, syncStatus, syncWatchdogProvider;
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/generated/app_localizations_en.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
-import 'package:wger/powersync/connector.dart'
-    show NoPowerSyncEndpointException, RetryableUploadException;
-import 'package:wger/powersync/sync_watchdog.dart';
 
 import '../../helpers/sync_status.dart';
 

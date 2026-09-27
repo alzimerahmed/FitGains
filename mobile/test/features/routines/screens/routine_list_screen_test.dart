@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/form_screen.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/providers/routines_repository.dart';
+import 'package:fitgains/features/routines/screens/routine_list_screen.dart';
+import 'package:fitgains/features/routines/screens/routine_screen.dart';
+import 'package:fitgains/features/routines/widgets/forms/routine.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/form_screen.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/providers/routines_repository.dart';
-import 'package:wger/features/routines/screens/routine_list_screen.dart';
-import 'package:wger/features/routines/screens/routine_screen.dart';
-import 'package:wger/features/routines/widgets/forms/routine.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import 'routine_list_screen_test.mocks.dart';
 

@@ -18,6 +18,8 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/app_settings_notifier.dart';
+import 'package:fitgains/core/consts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
@@ -25,8 +27,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/app_settings_notifier.dart';
-import 'package:wger/core/consts.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

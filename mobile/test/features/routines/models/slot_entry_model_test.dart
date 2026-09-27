@@ -18,9 +18,9 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/features/routines/models/base_config.dart';
+import 'package:fitgains/features/routines/models/slot_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/routines/models/base_config.dart';
-import 'package:wger/features/routines/models/slot_entry.dart';
 
 import '../../../../test_data/exercises.dart';
 import '../../../fixtures/fixture_reader.dart';

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
 
 void main() {
   group('isOfficialBodyWeight', () {

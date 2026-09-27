@@ -18,6 +18,15 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/http_overrides.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/network/secure_token_storage.dart';
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/features/auth/screens/auth_screen.dart';
+import 'package:fitgains/features/auth/screens/mfa_challenge_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,15 +37,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/http_overrides.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/network/secure_token_storage.dart';
-import 'package:wger/core/shared_preferences.dart';
-import 'package:wger/features/auth/screens/auth_screen.dart';
-import 'package:wger/features/auth/screens/mfa_challenge_screen.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../helpers/fake_auth_environment.dart';
 import '../../../helpers/fake_connectivity.dart';

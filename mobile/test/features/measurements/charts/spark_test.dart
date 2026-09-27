@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/measurements/charts/series.dart';
+import 'package:fitgains/features/measurements/charts/spark.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/measurements/charts/series.dart';
-import 'package:wger/features/measurements/charts/spark.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
 
 void main() {
   group('sparkKindFor', () {

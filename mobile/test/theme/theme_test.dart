@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/theme/theme.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/theme/theme.dart';
 
 void main() {
   group('wgerThemeFromSeed', () {

@@ -17,6 +17,15 @@
  */
 
 import 'package:collection/collection.dart';
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/features/health/models/health_metric.dart';
+import 'package:fitgains/features/health/models/health_reading.dart';
+import 'package:fitgains/features/health/providers/health_importer.dart';
+import 'package:fitgains/features/health/providers/health_repository.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_bridge/health.dart';
@@ -25,15 +34,6 @@ import 'package:mockito/mockito.dart';
 import 'package:powersync/powersync.dart' as ps;
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/network/auth_credentials_storage.dart';
-import 'package:wger/core/shared_preferences.dart';
-import 'package:wger/features/health/models/health_metric.dart';
-import 'package:wger/features/health/models/health_reading.dart';
-import 'package:wger/features/health/providers/health_importer.dart';
-import 'package:wger/features/health/providers/health_repository.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
 
 import 'health_importer_test.mocks.dart';
 

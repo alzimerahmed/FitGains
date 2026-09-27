@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/features/trophies/models/trophy.dart';
-import 'package:wger/features/trophies/models/user_trophy.dart';
-import 'package:wger/features/trophies/models/user_trophy_progression.dart';
+import 'package:fitgains/features/trophies/models/trophy.dart';
+import 'package:fitgains/features/trophies/models/user_trophy.dart';
+import 'package:fitgains/features/trophies/models/user_trophy_progression.dart';
 
 const _trophyImageBase =
     'https://raw.githubusercontent.com/wger-project/wger/master/wger/trophies/static/trophies';

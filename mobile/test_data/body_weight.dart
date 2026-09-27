@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
 
 /// Body weight entries are measurements in the user's official body weight
 /// category (metric_type=body_weight, is_official=true), created by the server.

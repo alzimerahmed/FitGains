@@ -17,23 +17,23 @@
  */
 
 import 'package:clock/clock.dart';
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/widgets/form_submit_button.dart';
+import 'package:fitgains/features/nutrition/models/meal.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_repository.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_notifier.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_repository.dart';
+import 'package:fitgains/features/nutrition/screens/nutritional_plan_screen.dart';
+import 'package:fitgains/features/nutrition/widgets/forms.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/widgets/form_submit_button.dart';
-import 'package:wger/features/nutrition/models/meal.dart';
-import 'package:wger/features/nutrition/models/nutritional_plan.dart';
-import 'package:wger/features/nutrition/providers/ingredient_repository.dart';
-import 'package:wger/features/nutrition/providers/nutrition_notifier.dart';
-import 'package:wger/features/nutrition/providers/nutrition_repository.dart';
-import 'package:wger/features/nutrition/screens/nutritional_plan_screen.dart';
-import 'package:wger/features/nutrition/widgets/forms.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/nutritional_plans.dart';
 import '../../../helpers/fake_connectivity.dart';

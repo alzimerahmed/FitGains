@@ -19,15 +19,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/errors.dart';
+import 'package:fitgains/core/exceptions/http_exception.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/errors.dart';
-import 'package:wger/core/exceptions/http_exception.dart';
 
 void main() {
   group('extractErrors', () {
@@ -271,7 +271,7 @@ void main() {
     test('Drops logs first, then trims the stack trace from the bottom', () {
       final longTrace = List.generate(
         80,
-        (i) => '#$i SomeClass.someMethod (package:wger/some/file.dart:$i:11)',
+        (i) => '#$i SomeClass.someMethod (package:fitgains/some/file.dart:$i:11)',
       ).join('\n');
 
       final url = buildGithubIssueUrl(

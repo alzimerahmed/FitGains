@@ -17,12 +17,12 @@
  */
 
 import 'package:clock/clock.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/models/repetition_unit.dart';
+import 'package:fitgains/features/routines/models/weight_unit.dart';
+import 'package:fitgains/features/routines/providers/gym_log_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/models/repetition_unit.dart';
-import 'package:wger/features/routines/models/weight_unit.dart';
-import 'package:wger/features/routines/providers/gym_log_notifier.dart';
 
 import '../../../../test_data/exercises.dart';
 

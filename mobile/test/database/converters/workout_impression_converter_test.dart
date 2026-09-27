@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/converters/workout_impression_converter.dart';
+import 'package:fitgains/features/routines/models/session.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/converters/workout_impression_converter.dart';
-import 'package:wger/features/routines/models/session.dart';
 
 void main() {
   const converter = WorkoutImpressionConverter();

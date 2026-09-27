@@ -18,8 +18,8 @@
 
 import 'dart:math';
 
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
 
 /// Measurement categories for the store screenshots: the account of someone
 /// syncing daily, shaped like a health import, plus a hand-kept tape measure.

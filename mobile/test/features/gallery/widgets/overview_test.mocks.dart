@@ -7,8 +7,8 @@ import 'dart:async' as _i4;
 
 import 'package:image_picker/image_picker.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:wger/features/gallery/models/image.dart' as _i2;
-import 'package:wger/features/gallery/providers/gallery_repository.dart' as _i3;
+import 'package:fitgains/features/gallery/models/image.dart' as _i2;
+import 'package:fitgains/features/gallery/providers/gallery_repository.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

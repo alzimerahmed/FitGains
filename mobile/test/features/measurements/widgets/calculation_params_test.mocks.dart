@@ -6,18 +6,18 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:wger/core/language.dart' as _i14;
-import 'package:wger/core/search_options.dart' as _i8;
-import 'package:wger/features/exercises/models/category.dart' as _i10;
-import 'package:wger/features/exercises/models/equipment.dart' as _i12;
-import 'package:wger/features/exercises/models/exercise_filters.dart' as _i9;
-import 'package:wger/features/exercises/models/muscle.dart' as _i13;
-import 'package:wger/features/exercises/providers/exercise_repository.dart' as _i7;
-import 'package:wger/features/exercises/providers/exercises_notifier.dart' as _i11;
-import 'package:wger/features/measurements/models/measurement_bucket.dart' as _i6;
-import 'package:wger/features/measurements/models/measurement_category.dart' as _i4;
-import 'package:wger/features/measurements/models/measurement_entry.dart' as _i5;
-import 'package:wger/features/measurements/providers/measurement_repository.dart' as _i2;
+import 'package:fitgains/core/language.dart' as _i14;
+import 'package:fitgains/core/search_options.dart' as _i8;
+import 'package:fitgains/features/exercises/models/category.dart' as _i10;
+import 'package:fitgains/features/exercises/models/equipment.dart' as _i12;
+import 'package:fitgains/features/exercises/models/exercise_filters.dart' as _i9;
+import 'package:fitgains/features/exercises/models/muscle.dart' as _i13;
+import 'package:fitgains/features/exercises/providers/exercise_repository.dart' as _i7;
+import 'package:fitgains/features/exercises/providers/exercises_notifier.dart' as _i11;
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart' as _i6;
+import 'package:fitgains/features/measurements/models/measurement_category.dart' as _i4;
+import 'package:fitgains/features/measurements/models/measurement_entry.dart' as _i5;
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

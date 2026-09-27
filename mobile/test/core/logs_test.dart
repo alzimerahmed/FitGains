@@ -17,9 +17,9 @@
  */
 
 import 'package:clock/clock.dart';
+import 'package:fitgains/core/logs.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
-import 'package:wger/core/logs.dart';
 
 void main() {
   group('log store test cases', () {

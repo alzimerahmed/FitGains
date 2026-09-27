@@ -22,6 +22,9 @@ import 'dart:io';
 
 import 'package:drift/drift.dart' show GeneratedColumnWithTypeConverter;
 import 'package:fake_async/fake_async.dart';
+import 'package:fitgains/database/converters/date_only_text_converter.dart';
+import 'package:fitgains/powersync/api_client.dart';
+import 'package:fitgains/powersync/connector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -29,9 +32,6 @@ import 'package:logging/logging.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:powersync/powersync.dart';
-import 'package:wger/database/converters/date_only_text_converter.dart';
-import 'package:wger/powersync/api_client.dart';
-import 'package:wger/powersync/connector.dart';
 
 import '../helpers/in_memory_drift.dart';
 import 'connector_test.mocks.dart';

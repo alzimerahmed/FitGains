@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/nutrition/models/nutritional_values.dart';
+import 'package:fitgains/features/nutrition/widgets/charts.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/nutrition/models/nutritional_values.dart';
-import 'package:wger/features/nutrition/widgets/charts.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 void main() {
   Widget createMealBarChartScreen(NutritionalValues logged, NutritionalValues planned) {

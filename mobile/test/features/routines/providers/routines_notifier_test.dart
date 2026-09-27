@@ -18,25 +18,25 @@
 
 import 'dart:async';
 
+import 'package:fitgains/features/account/models/user_profile.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/exercises/providers/exercises_notifier.dart';
+import 'package:fitgains/features/routines/models/day.dart';
+import 'package:fitgains/features/routines/models/day_data.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/models/set_config_data.dart';
+import 'package:fitgains/features/routines/models/slot.dart';
+import 'package:fitgains/features/routines/models/slot_data.dart';
+import 'package:fitgains/features/routines/models/slot_entry.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
+import 'package:fitgains/features/routines/providers/routines_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/account/models/user_profile.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/exercises/providers/exercises_notifier.dart';
-import 'package:wger/features/routines/models/day.dart';
-import 'package:wger/features/routines/models/day_data.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/models/set_config_data.dart';
-import 'package:wger/features/routines/models/slot.dart';
-import 'package:wger/features/routines/models/slot_data.dart';
-import 'package:wger/features/routines/models/slot_entry.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
-import 'package:wger/features/routines/providers/routines_repository.dart';
 
 import '../../../../test_data/exercises.dart';
 import '../../../../test_data/routines.dart';

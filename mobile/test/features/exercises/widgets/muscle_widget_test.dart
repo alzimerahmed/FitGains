@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/exercises/models/muscle.dart';
+import 'package:fitgains/features/exercises/widgets/exercises.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/exercises/models/muscle.dart';
-import 'package:wger/features/exercises/widgets/exercises.dart';
 
 void main() {
   const muscleFront1 = Muscle(id: 1, name: 'Biceps brachii', nameEn: 'Biceps', isFront: true);

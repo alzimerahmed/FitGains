@@ -18,16 +18,16 @@
 
 import 'dart:async';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/network/auth_credential.dart';
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/core/network/secure_token_storage.dart';
+import 'package:fitgains/core/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/network/auth_credential.dart';
-import 'package:wger/core/network/auth_credentials_storage.dart';
-import 'package:wger/core/network/secure_token_storage.dart';
-import 'package:wger/core/shared_preferences.dart';
 
 import '../../helpers/fake_auth_environment.dart';
 import 'auth_credentials_storage_test.mocks.dart';

@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/health/models/health_metric.dart';
+import 'package:fitgains/features/health/models/health_reading.dart';
+import 'package:fitgains/features/health/providers/health_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_bridge/health.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/health/models/health_metric.dart';
-import 'package:wger/features/health/models/health_reading.dart';
-import 'package:wger/features/health/providers/health_repository.dart';
 
 import 'health_repository_test.mocks.dart';
 

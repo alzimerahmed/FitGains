@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/features/account/models/account.dart';
+import 'package:fitgains/features/account/models/user_profile.dart';
+import 'package:fitgains/features/account/providers/account_repository.dart';
+import 'package:fitgains/features/account/providers/user_profile_repository.dart';
+import 'package:fitgains/features/account/widgets/forms.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/features/account/models/account.dart';
-import 'package:wger/features/account/models/user_profile.dart';
-import 'package:wger/features/account/providers/account_repository.dart';
-import 'package:wger/features/account/providers/user_profile_repository.dart';
-import 'package:wger/features/account/widgets/forms.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import 'forms_test.mocks.dart';
 

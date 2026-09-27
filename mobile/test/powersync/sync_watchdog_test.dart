@@ -17,9 +17,9 @@
  */
 
 import 'package:fake_async/fake_async.dart';
+import 'package:fitgains/powersync/sync_watchdog.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
-import 'package:wger/powersync/sync_watchdog.dart';
 
 import '../helpers/sync_status.dart';
 

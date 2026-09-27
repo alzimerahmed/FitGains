@@ -18,7 +18,7 @@
 
 import 'dart:math';
 
-import 'package:wger/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
 
 import '../body_weight.dart';
 

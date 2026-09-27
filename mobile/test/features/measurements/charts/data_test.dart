@@ -17,13 +17,13 @@
  */
 
 import 'package:collection/collection.dart';
+import 'package:fitgains/features/measurements/charts/data.dart';
+import 'package:fitgains/features/measurements/charts/range.dart';
+import 'package:fitgains/features/measurements/charts/series.dart';
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/measurements/charts/data.dart';
-import 'package:wger/features/measurements/charts/range.dart';
-import 'package:wger/features/measurements/charts/series.dart';
-import 'package:wger/features/measurements/models/measurement_bucket.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
 
 void main() {
   MeasurementChartEntry entry(num value, DateTime date) => MeasurementChartEntry(value, date);

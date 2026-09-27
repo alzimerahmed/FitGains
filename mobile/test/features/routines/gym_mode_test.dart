@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/features/routines/gym_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/features/routines/gym_mode.dart';
 
 void main() {
   group('Test the plate calculator', () {

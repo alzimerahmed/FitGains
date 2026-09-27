@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/health/models/health_metric.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_bridge/health.dart';
-import 'package:wger/features/health/models/health_metric.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
 
 HealthMetric _metric(MetricType type) => healthMetrics.firstWhere((m) => m.metricType == type);
 

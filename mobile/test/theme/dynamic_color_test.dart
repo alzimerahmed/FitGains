@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/theme/dynamic_color.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/theme/dynamic_color.dart';
 
 void main() {
   final light = ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4));

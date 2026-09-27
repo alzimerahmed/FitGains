@@ -17,21 +17,21 @@
  */
 
 import 'package:drift/native.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/exercises/providers/exercise_filter_state.dart';
+import 'package:fitgains/features/exercises/providers/exercise_filters_notifier.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/providers/gym_state.dart';
+import 'package:fitgains/features/routines/providers/gym_state_notifier.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
+import 'package:fitgains/features/routines/screens/gym_mode.dart';
+import 'package:fitgains/features/routines/screens/routine_screen.dart';
+import 'package:fitgains/features/routines/widgets/gym_mode/summary.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
+import 'package:fitgains/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/exercises/providers/exercise_filter_state.dart';
-import 'package:wger/features/exercises/providers/exercise_filters_notifier.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/providers/gym_state.dart';
-import 'package:wger/features/routines/providers/gym_state_notifier.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
-import 'package:wger/features/routines/screens/gym_mode.dart';
-import 'package:wger/features/routines/screens/routine_screen.dart';
-import 'package:wger/features/routines/widgets/gym_mode/summary.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
-import 'package:wger/theme/theme.dart';
 
 import '../../test_data/screenshots/exercises.dart';
 import '../../test_data/screenshots/routines.dart';

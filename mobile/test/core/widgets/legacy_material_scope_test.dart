@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/widgets/legacy_material_scope.dart';
 import 'package:flutter/material.dart' as legacy;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/widgets/legacy_material_scope.dart';
 
 void main() {
   const seed = Color(0xFF2A4C7D);

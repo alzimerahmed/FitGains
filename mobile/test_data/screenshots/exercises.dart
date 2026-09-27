@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/exercises/models/muscle.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/exercises/models/muscle.dart';
 
 import '../exercises.dart';
 import '../screenshots_exercises.dart';

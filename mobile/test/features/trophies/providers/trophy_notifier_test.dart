@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/trophies/providers/trophy_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/trophies/providers/trophy_notifier.dart';
 
 import '../../../helpers/fake_connectivity.dart';
 

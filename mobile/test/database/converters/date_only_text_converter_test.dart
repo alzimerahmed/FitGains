@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/converters/date_only_text_converter.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/converters/date_only_text_converter.dart';
 
 void main() {
   const converter = DateOnlyTextConverter();

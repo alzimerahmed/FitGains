@@ -1,7 +1,7 @@
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/features/measurements/charts/series.dart';
+import 'package:fitgains/features/measurements/measurements.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/features/measurements/charts/series.dart';
-import 'package:wger/features/measurements/measurements.dart';
 
 void main() {
   group('whereDate', () {

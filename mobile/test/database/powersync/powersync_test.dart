@@ -20,14 +20,14 @@ import 'dart:io';
 
 import 'package:drift/drift.dart' show DriftSqlType, Table, TableInfo;
 import 'package:drift/native.dart';
+import 'package:fitgains/core/http_overrides.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/database/powersync/powersync.dart';
+import 'package:fitgains/powersync/schema.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
 import 'package:powersync/powersync.dart' show SyncStatus;
-import 'package:wger/core/http_overrides.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/database/powersync/powersync.dart';
-import 'package:wger/powersync/schema.dart';
 
 /// PowerSync manages the JSON view tables itself, but the raw tables are
 /// materialised from hand-written DDL. Nothing fails loudly when that DDL and

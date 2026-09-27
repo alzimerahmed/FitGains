@@ -17,9 +17,9 @@
  */
 
 import 'package:drift/drift.dart' hide isNull;
+import 'package:fitgains/database/converters/json_map_converter.dart';
+import 'package:fitgains/database/powersync/database.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/converters/json_map_converter.dart';
-import 'package:wger/database/powersync/database.dart';
 
 import '../../helpers/in_memory_drift.dart';
 

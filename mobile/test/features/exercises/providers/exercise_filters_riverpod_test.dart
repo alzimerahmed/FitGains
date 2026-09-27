@@ -1,12 +1,12 @@
+import 'package:fitgains/core/search_options.dart';
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/features/exercises/models/category.dart';
+import 'package:fitgains/features/exercises/models/exercise_filters.dart';
+import 'package:fitgains/features/exercises/providers/exercise_filters_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/search_options.dart';
-import 'package:wger/core/shared_preferences.dart';
-import 'package:wger/features/exercises/models/category.dart';
-import 'package:wger/features/exercises/models/exercise_filters.dart';
-import 'package:wger/features/exercises/providers/exercise_filters_riverpod.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

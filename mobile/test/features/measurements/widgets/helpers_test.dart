@@ -16,23 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/widgets/legend.dart';
+import 'package:fitgains/features/measurements/charts/data.dart';
+import 'package:fitgains/features/measurements/charts/series.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/widgets/charts/bar_chart.dart';
+import 'package:fitgains/features/measurements/widgets/charts/distribution_chart.dart';
+import 'package:fitgains/features/measurements/widgets/charts/heatmap_chart.dart';
+import 'package:fitgains/features/measurements/widgets/charts/line_chart.dart';
+import 'package:fitgains/features/measurements/widgets/charts/overall_change.dart';
+import 'package:fitgains/features/measurements/widgets/charts/stacked_bar_chart.dart';
+import 'package:fitgains/features/measurements/widgets/helpers.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/widgets/legend.dart';
-import 'package:wger/features/measurements/charts/data.dart';
-import 'package:wger/features/measurements/charts/series.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
-import 'package:wger/features/measurements/widgets/charts/bar_chart.dart';
-import 'package:wger/features/measurements/widgets/charts/distribution_chart.dart';
-import 'package:wger/features/measurements/widgets/charts/heatmap_chart.dart';
-import 'package:wger/features/measurements/widgets/charts/line_chart.dart';
-import 'package:wger/features/measurements/widgets/charts/overall_change.dart';
-import 'package:wger/features/measurements/widgets/charts/stacked_bar_chart.dart';
-import 'package:wger/features/measurements/widgets/helpers.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/measurements.dart';
 import '../../../helpers/measurement_chart_buckets.dart';

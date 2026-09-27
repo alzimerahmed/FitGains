@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/converters/exercise_image_style_converter.dart';
+import 'package:fitgains/features/exercises/models/image.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/converters/exercise_image_style_converter.dart';
-import 'package:wger/features/exercises/models/image.dart';
 
 void main() {
   const converter = ExerciseImageStyleConverter();

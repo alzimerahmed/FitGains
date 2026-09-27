@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/widgets/scroll_behavior.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/widgets/scroll_behavior.dart';
 
 void main() {
   ScrollMetrics metrics({double? minExtent, double? maxExtent, double? pixels}) {

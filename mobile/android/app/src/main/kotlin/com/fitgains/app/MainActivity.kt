@@ -1,4 +1,4 @@
-package de.wger.flutter
+package com.fitgains.app
 
 import android.content.ActivityNotFoundException
 import android.content.Intent

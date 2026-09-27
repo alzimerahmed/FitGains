@@ -16,21 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/widgets/dashboard/calendar.dart';
+import 'package:fitgains/features/account/models/user_profile.dart';
+import 'package:fitgains/features/account/providers/user_profile_notifier.dart';
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/providers/measurement_notifier.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_notifier.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
-import 'package:wger/core/widgets/dashboard/calendar.dart';
-import 'package:wger/features/account/models/user_profile.dart';
-import 'package:wger/features/account/providers/user_profile_notifier.dart';
-import 'package:wger/features/measurements/models/measurement_bucket.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/providers/measurement_notifier.dart';
-import 'package:wger/features/nutrition/providers/nutrition_notifier.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/body_weight.dart';
 import '../../../../test_data/routines.dart';

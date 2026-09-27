@@ -20,13 +20,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fitgains/core/exceptions/http_exception.dart';
+import 'package:fitgains/core/network/base_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/exceptions/http_exception.dart';
-import 'package:wger/core/network/base_provider.dart';
 
 import '../../fixtures/fixture_reader.dart';
 import 'base_provider_test.mocks.dart';

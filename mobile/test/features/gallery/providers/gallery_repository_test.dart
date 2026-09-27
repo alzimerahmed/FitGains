@@ -18,12 +18,12 @@
 
 import 'dart:async';
 
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/gallery/models/image.dart';
+import 'package:fitgains/features/gallery/providers/gallery_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/gallery/models/image.dart';
-import 'package:wger/features/gallery/providers/gallery_repository.dart';
 
 import '../../../../test_data/gallery.dart';
 import '../../../helpers/in_memory_drift.dart';

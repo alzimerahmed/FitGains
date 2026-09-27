@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/converters/time_of_day_converter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/database/converters/time_of_day_converter.dart';
 
 void main() {
   const converter = TimeOfDayConverter();

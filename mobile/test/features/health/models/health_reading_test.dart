@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/health/models/health_reading.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_bridge/health.dart';
-import 'package:wger/features/health/models/health_reading.dart';
 
 HealthDataPoint dataPoint({String uuid = 'abc-123', HealthValue? value}) {
   return HealthDataPoint(

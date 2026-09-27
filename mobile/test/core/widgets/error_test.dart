@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/exceptions/http_exception.dart';
+import 'package:fitgains/core/widgets/error.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' show Response;
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/exceptions/http_exception.dart';
-import 'package:wger/core/widgets/error.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -66,7 +66,7 @@ void main() {
 
     testWidgets('shows the stacktrace below the error when one is provided', (tester) async {
       final stack = StackTrace.fromString(
-        '#0  _MyClass.foo (package:wger/foo.dart:42)\n'
+        '#0  _MyClass.foo (package:fitgains/foo.dart:42)\n'
         '#1  main (file:///main.dart:10)',
       );
 

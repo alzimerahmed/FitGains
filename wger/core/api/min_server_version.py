@@ -22,18 +22,15 @@ from packaging.version import parse
 # wger
 from wger.core.api.endpoints import MIN_SERVER_VERSION_ENDPOINT
 from wger.utils.url import make_uri
-from wger.version import UPSTREAM_COMPAT_VERSION
+from wger.version import VERSION
 
 
 def check_min_server_version(remote_url):
     url = make_uri(MIN_SERVER_VERSION_ENDPOINT, server_url=remote_url)
     min_version = parse(requests.get(url).json())
 
-    # The remote advertises its floor in upstream (wger) version numbers, so
-    # compare against our upstream-compat level, not the FitGains version line
-    if min_version > UPSTREAM_COMPAT_VERSION:
+    if min_version > VERSION:
         raise CommandError(
             f'The remote wger server at {remote_url} requires at least version {min_version}, '
-            f'but this instance is compatible with up to {UPSTREAM_COMPAT_VERSION}. '
-            'Please update to continue.'
+            f'but this instance is running version {VERSION}. Please update to continue.'
         )

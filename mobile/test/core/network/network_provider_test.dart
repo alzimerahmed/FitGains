@@ -21,6 +21,9 @@ import 'dart:io';
 
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart';
 import 'package:fake_async/fake_async.dart';
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/network/wger_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,9 +31,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:logging/logging.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/network/wger_base.dart';
 
 /// Connectivity fake that each test can drive: [current] sets what
 /// `checkConnectivity()` reports, [emit] pushes a change event.

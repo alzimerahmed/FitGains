@@ -18,15 +18,15 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/network/auth_credential.dart';
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/core/network/secure_token_storage.dart';
+import 'package:fitgains/core/network/server_gating.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:version/version.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/network/auth_credential.dart';
-import 'package:wger/core/network/auth_credentials_storage.dart';
-import 'package:wger/core/network/secure_token_storage.dart';
-import 'package:wger/core/network/server_gating.dart';
 
 import '../../helpers/fake_auth_environment.dart';
 

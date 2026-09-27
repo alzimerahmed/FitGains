@@ -16,6 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/app_settings_notifier.dart';
+import 'package:fitgains/core/form_screen.dart';
+import 'package:fitgains/features/account/providers/user_profile_repository.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/providers/measurement_notifier.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
+import 'package:fitgains/features/measurements/screens/weight_screen.dart';
+import 'package:fitgains/features/measurements/widgets/chart_range_selector.dart';
+import 'package:fitgains/features/measurements/widgets/charts/line_chart.dart';
+import 'package:fitgains/features/measurements/widgets/weight_form.dart';
+import 'package:fitgains/features/nutrition/providers/ingredient_repository.dart';
+import 'package:fitgains/features/nutrition/providers/nutrition_repository.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,20 +38,6 @@ import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/app_settings_notifier.dart';
-import 'package:wger/core/form_screen.dart';
-import 'package:wger/features/account/providers/user_profile_repository.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
-import 'package:wger/features/measurements/providers/measurement_notifier.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
-import 'package:wger/features/measurements/screens/weight_screen.dart';
-import 'package:wger/features/measurements/widgets/chart_range_selector.dart';
-import 'package:wger/features/measurements/widgets/charts/line_chart.dart';
-import 'package:wger/features/measurements/widgets/weight_form.dart';
-import 'package:wger/features/nutrition/providers/ingredient_repository.dart';
-import 'package:wger/features/nutrition/providers/nutrition_repository.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/body_weight.dart';
 import '../../../../test_data/profile.dart';

@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/app_settings_notifier.dart';
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/http_overrides.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/features/account/widgets/settings/certs_not_verified.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/app_settings_notifier.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/http_overrides.dart';
-import 'package:wger/core/network/auth_notifier.dart';
-import 'package:wger/core/network/auth_state.dart';
-import 'package:wger/features/account/widgets/settings/certs_not_verified.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../helpers/fake_auth_notifier.dart';
 

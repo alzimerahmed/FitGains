@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/nutrition/models/ingredient_weight_unit.dart';
+import 'package:fitgains/features/nutrition/models/meal_item.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/nutrition/models/ingredient_weight_unit.dart';
-import 'package:wger/features/nutrition/models/meal_item.dart';
 
 import '../../../../test_data/nutritional_plans.dart';
 

@@ -20,12 +20,12 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>de.wger.flutter.app-auth</string>
+			<string>com.fitgains.app.app-auth</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wger</string>
+				<string>FitGains</string>
 			</array>
 		</dict>
 	</array>

@@ -19,12 +19,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fitgains/powersync/api_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/powersync/api_client.dart';
 
 import 'api_client_test.mocks.dart';
 

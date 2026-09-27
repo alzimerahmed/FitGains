@@ -18,6 +18,13 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/network/secure_token_storage.dart';
+import 'package:fitgains/core/update_app_screen.dart';
+import 'package:fitgains/core/update_server_screen.dart';
+import 'package:fitgains/features/auth/screens/mfa_challenge_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -25,13 +32,6 @@ import 'package:http/http.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/core/network/secure_token_storage.dart';
-import 'package:wger/core/update_app_screen.dart';
-import 'package:wger/core/update_server_screen.dart';
-import 'package:wger/features/auth/screens/mfa_challenge_screen.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../helpers/fake_auth_environment.dart';
 import 'mfa_challenge_screen_test.mocks.dart';

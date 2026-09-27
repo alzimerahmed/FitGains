@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/core/language.dart';
-import 'package:wger/features/exercises/models/category.dart';
-import 'package:wger/features/exercises/models/equipment.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/exercises/models/muscle.dart';
-import 'package:wger/features/exercises/models/translation.dart';
+import 'package:fitgains/core/language.dart';
+import 'package:fitgains/features/exercises/models/category.dart';
+import 'package:fitgains/features/exercises/models/equipment.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/exercises/models/muscle.dart';
+import 'package:fitgains/features/exercises/models/translation.dart';
 
 const testGerman = Language(id: 1, shortName: 'de', fullName: 'Deutsch');
 const testEnglish = Language(id: 2, shortName: 'en', fullName: 'English');

@@ -41,7 +41,7 @@ class AppAuthHandoffTestCase(WgerTestCase):
         self.assertEqual(response.status_code, 200)
         # Meta-refresh carries the custom-scheme URL.
         self.assertContains(response, 'http-equiv="refresh"')
-        self.assertContains(response, 'wger://app-auth#token=')
+        self.assertContains(response, 'fitgains://app-auth#token=')
 
     def test_state_is_echoed_back_in_fragment(self):
         self.user_login('test')
@@ -80,7 +80,7 @@ class AppAuthHandoffTestCase(WgerTestCase):
         end = content.index('"', start)
         return_uri = content[start:end]
         parsed = urlparse(return_uri)
-        self.assertEqual(parsed.scheme, 'wger')
+        self.assertEqual(parsed.scheme, 'fitgains')
         # Fragment carries the token; query is empty.
         self.assertEqual(parsed.query, '')
         self.assertTrue(parsed.fragment.startswith('token='))

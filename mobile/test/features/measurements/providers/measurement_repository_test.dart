@@ -18,12 +18,12 @@
 
 import 'dart:async';
 
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/measurements/models/measurement_bucket.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
 
 import '../../../../test_data/body_weight.dart';
 import '../../../../test_data/measurements.dart';

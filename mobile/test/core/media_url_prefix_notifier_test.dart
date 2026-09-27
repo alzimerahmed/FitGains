@@ -16,18 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/app_settings_notifier.dart';
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/media_url_prefix_notifier.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/core/network/wger_base.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wger/core/app_settings_notifier.dart';
-import 'package:wger/core/consts.dart';
-import 'package:wger/core/media_url_prefix_notifier.dart';
-import 'package:wger/core/network/auth_notifier.dart';
-import 'package:wger/core/network/auth_state.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/core/network/wger_base.dart';
 
 import 'media_url_prefix_notifier_test.mocks.dart';
 

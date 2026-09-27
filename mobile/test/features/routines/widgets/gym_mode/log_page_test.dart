@@ -18,6 +18,19 @@
 
 import 'dart:async';
 
+import 'package:fitgains/core/widgets/error.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/routines/models/day_data.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/models/set_config_data.dart';
+import 'package:fitgains/features/routines/models/slot_data.dart';
+import 'package:fitgains/features/routines/providers/gym_state.dart';
+import 'package:fitgains/features/routines/providers/gym_state_notifier.dart';
+import 'package:fitgains/features/routines/providers/workout_logs_repository.dart';
+import 'package:fitgains/features/routines/widgets/gym_mode/log_page.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -25,19 +38,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/widgets/error.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/routines/models/day_data.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/models/set_config_data.dart';
-import 'package:wger/features/routines/models/slot_data.dart';
-import 'package:wger/features/routines/providers/gym_state.dart';
-import 'package:wger/features/routines/providers/gym_state_notifier.dart';
-import 'package:wger/features/routines/providers/workout_logs_repository.dart';
-import 'package:wger/features/routines/widgets/gym_mode/log_page.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../../test_data/exercises.dart';
 import '../../../../../test_data/routines.dart' as testdata;

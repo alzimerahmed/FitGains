@@ -1,8 +1,8 @@
+import 'package:fitgains/core/validators.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/validators.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
 
 import 'validators_test.mocks.dart';
 

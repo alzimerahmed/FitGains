@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/core/network/base_provider.dart';
+import 'package:fitgains/features/trophies/providers/trophy_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/base_provider.dart';
-import 'package:wger/features/trophies/providers/trophy_repository.dart';
 
 import 'trophy_repository_test.mocks.dart';
 

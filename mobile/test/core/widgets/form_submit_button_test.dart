@@ -18,12 +18,12 @@
 
 import 'dart:async';
 
+import 'package:fitgains/core/error_dialogs.dart';
+import 'package:fitgains/core/exceptions/http_exception.dart';
+import 'package:fitgains/core/widgets/form_submit_button.dart';
+import 'package:fitgains/core/widgets/progress_indicator.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/error_dialogs.dart';
-import 'package:wger/core/exceptions/http_exception.dart';
-import 'package:wger/core/widgets/form_submit_button.dart';
-import 'package:wger/core/widgets/progress_indicator.dart';
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(home: Scaffold(body: child));

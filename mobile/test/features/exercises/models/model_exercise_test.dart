@@ -1,5 +1,5 @@
+import 'package:fitgains/features/exercises/models/exercise.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
 
 import '../../../../test_data/exercises.dart';
 

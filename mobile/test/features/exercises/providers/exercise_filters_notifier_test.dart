@@ -18,14 +18,14 @@
 
 import 'dart:async';
 
+import 'package:fitgains/features/exercises/models/muscle.dart';
+import 'package:fitgains/features/exercises/providers/exercise_filters_notifier.dart';
+import 'package:fitgains/features/exercises/providers/exercise_repository.dart';
+import 'package:fitgains/features/exercises/providers/exercises_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/exercises/models/muscle.dart';
-import 'package:wger/features/exercises/providers/exercise_filters_notifier.dart';
-import 'package:wger/features/exercises/providers/exercise_repository.dart';
-import 'package:wger/features/exercises/providers/exercises_notifier.dart';
 
 import '../../../../test_data/exercises.dart';
 import 'exercise_filters_notifier_test.mocks.dart';

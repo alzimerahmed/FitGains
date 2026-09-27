@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/nutrition/models/nutritional_goals.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_plan.dart';
+import 'package:fitgains/features/nutrition/models/nutritional_values.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/nutrition/models/nutritional_goals.dart';
-import 'package:wger/features/nutrition/models/nutritional_plan.dart';
-import 'package:wger/features/nutrition/models/nutritional_values.dart';
 
 import '../../../../test_data/nutritional_plans.dart';
 

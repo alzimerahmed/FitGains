@@ -17,11 +17,11 @@
  */
 import 'dart:ui';
 
+import 'package:fitgains/features/measurements/charts/series.dart';
+import 'package:fitgains/features/measurements/charts/spark.dart';
+import 'package:fitgains/features/measurements/widgets/charts/spark_charts.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/measurements/charts/series.dart';
-import 'package:wger/features/measurements/charts/spark.dart';
-import 'package:wger/features/measurements/widgets/charts/spark_charts.dart';
 
 const _size = Size(150, 40);
 

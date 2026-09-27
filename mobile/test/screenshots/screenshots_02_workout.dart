@@ -17,16 +17,16 @@
 */
 
 import 'package:drift/native.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/routines/providers/routines_repository.dart';
+import 'package:fitgains/features/routines/screens/routine_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
+import 'package:fitgains/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/routines/providers/routines_repository.dart';
-import 'package:wger/features/routines/screens/routine_screen.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
-import 'package:wger/theme/theme.dart';
 
 import '../../test_data/screenshots/routines.dart';
 import 'screenshots_02_workout.mocks.dart';

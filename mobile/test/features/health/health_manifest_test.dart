@@ -18,10 +18,10 @@
 
 import 'dart:io';
 
+import 'package:fitgains/database/powersync/powersync.dart';
+import 'package:fitgains/features/health/models/health_metric.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_bridge/health.dart';
-import 'package:wger/database/powersync/powersync.dart';
-import 'package:wger/features/health/models/health_metric.dart';
 
 /// The Health Connect read permission each imported type needs declared, as
 /// `HealthPermission.getReadPermission` derives it from the record class.

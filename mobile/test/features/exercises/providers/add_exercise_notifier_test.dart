@@ -18,14 +18,14 @@
 
 import 'dart:io';
 
+import 'package:fitgains/features/exercises/models/exercise_submission.dart';
+import 'package:fitgains/features/exercises/models/exercise_submission_images.dart';
+import 'package:fitgains/features/exercises/providers/add_exercise_notifier.dart';
+import 'package:fitgains/features/exercises/providers/add_exercise_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/exercises/models/exercise_submission.dart';
-import 'package:wger/features/exercises/models/exercise_submission_images.dart';
-import 'package:wger/features/exercises/providers/add_exercise_notifier.dart';
-import 'package:wger/features/exercises/providers/add_exercise_repository.dart';
 
 import '../../../../test_data/exercises.dart';
 import 'add_exercise_notifier_test.mocks.dart';

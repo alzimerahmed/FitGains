@@ -8,14 +8,14 @@ import 'dart:async' as _i4;
 import 'package:health_bridge/health.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:wger/core/network/auth_credentials_storage.dart' as _i11;
-import 'package:wger/core/network/auth_state.dart' as _i12;
-import 'package:wger/features/health/models/health_reading.dart' as _i6;
-import 'package:wger/features/health/providers/health_repository.dart' as _i2;
-import 'package:wger/features/measurements/models/measurement_bucket.dart' as _i10;
-import 'package:wger/features/measurements/models/measurement_category.dart' as _i8;
-import 'package:wger/features/measurements/models/measurement_entry.dart' as _i9;
-import 'package:wger/features/measurements/providers/measurement_repository.dart' as _i7;
+import 'package:fitgains/core/network/auth_credentials_storage.dart' as _i11;
+import 'package:fitgains/core/network/auth_state.dart' as _i12;
+import 'package:fitgains/features/health/models/health_reading.dart' as _i6;
+import 'package:fitgains/features/health/providers/health_repository.dart' as _i2;
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart' as _i10;
+import 'package:fitgains/features/measurements/models/measurement_category.dart' as _i8;
+import 'package:fitgains/features/measurements/models/measurement_entry.dart' as _i9;
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

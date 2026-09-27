@@ -16,17 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/routines/models/base_config.dart';
-import 'package:wger/features/routines/models/day.dart';
-import 'package:wger/features/routines/models/day_data.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/models/set_config_data.dart';
-import 'package:wger/features/routines/models/slot.dart';
-import 'package:wger/features/routines/models/slot_data.dart';
-import 'package:wger/features/routines/models/slot_entry.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/routines/models/base_config.dart';
+import 'package:fitgains/features/routines/models/day.dart';
+import 'package:fitgains/features/routines/models/day_data.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/models/set_config_data.dart';
+import 'package:fitgains/features/routines/models/slot.dart';
+import 'package:fitgains/features/routines/models/slot_data.dart';
+import 'package:fitgains/features/routines/models/slot_entry.dart';
 
 import '../routines.dart';
 import 'exercises.dart';

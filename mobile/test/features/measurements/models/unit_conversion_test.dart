@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:fitgains/features/measurements/models/unit_conversion.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
-import 'package:wger/features/measurements/models/unit_conversion.dart';
 
 MeasurementEntry entry(num value, {Map<String, dynamic>? extraData}) => MeasurementEntry(
   categoryId: 'c',

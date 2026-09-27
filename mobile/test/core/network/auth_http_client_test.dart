@@ -18,16 +18,16 @@
 
 import 'dart:io';
 
+import 'package:fitgains/core/network/auth_http_client.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/core/network/network_provider.dart'
+    show ReachabilityReportingClient, authHttpClientProvider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/core/network/auth_http_client.dart';
-import 'package:wger/core/network/auth_notifier.dart';
-import 'package:wger/core/network/auth_state.dart';
-import 'package:wger/core/network/network_provider.dart'
-    show ReachabilityReportingClient, authHttpClientProvider;
 
 import 'auth_http_client_test.mocks.dart';
 

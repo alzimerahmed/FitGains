@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/account/widgets/settings/health_sync.dart';
+import 'package:fitgains/features/health/providers/health_repository.dart';
+import 'package:fitgains/features/health/providers/health_sync.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/features/account/widgets/settings/health_sync.dart';
-import 'package:wger/features/health/providers/health_repository.dart';
-import 'package:wger/features/health/providers/health_sync.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 /// Reports the platform as available and returns canned results without
 /// touching the real health/preferences stack.

@@ -22,7 +22,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace = "de.wger.flutter"
+    namespace = "com.fitgains.app"
     compileSdk = 37
     compileSdkMinor = 0
     ndkVersion "28.2.13676358"
@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         // Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "de.wger.flutter"
+        applicationId "com.fitgains.app"
         minSdkVersion 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -47,7 +47,7 @@ android {
 
         // Overridden by the debug build type. Set here rather than per build
         // type so the profile variant has it as well
-        resValue "string", "app_name", "wger"
+        resValue "string", "app_name", "FitGains"
     }
 
     signingConfigs {
@@ -67,7 +67,7 @@ android {
             // installed release one on the same device. The launcher icon keeps
             // the wger logo on a different background, see src/debug/res
             applicationIdSuffix ".debug"
-            resValue "string", "app_name", "wger - debug"
+            resValue "string", "app_name", "FitGains - debug"
         }
     }
 }

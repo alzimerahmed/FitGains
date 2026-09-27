@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'package:wger/core/network/auth_notifier.dart';
-import 'package:wger/core/network/auth_state.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
 
 /// An [AuthNotifier] that resolves to a fixed state.
 ///

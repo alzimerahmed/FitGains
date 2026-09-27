@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wger/features/measurements/models/measurement_bucket.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/models/measurement_entry.dart';
 
 /// One bucket per entry, oldest first: what the aggregated query returns for a
 /// series short enough not to be condensed, which every widget fixture is.

@@ -17,7 +17,7 @@
  */
 
 import 'package:drift/native.dart';
-import 'package:wger/database/powersync/database.dart';
+import 'package:fitgains/database/powersync/database.dart';
 
 /// Builds a fresh, empty [DriftPowersyncDatabase] backed by an in-memory
 /// SQLite instance. The schema is created explicitly because the production

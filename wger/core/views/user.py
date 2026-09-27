@@ -132,7 +132,7 @@ _NEW_REFRESH_TOKEN_SESSION_KEY = '_wger_new_long_lived_refresh_token'
 
 
 # Custom URL scheme registered by the flutter app in Info.plist, AndroidManifest.xml, etc.
-_APP_AUTH_SCHEME = 'wger'
+_APP_AUTH_SCHEME = 'fitgains'
 _APP_AUTH_HOST = 'app-auth'
 
 # Hard cap on the echoed ?state= value. The app generates 256 bits of

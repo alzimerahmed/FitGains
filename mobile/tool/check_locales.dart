@@ -21,7 +21,7 @@ library;
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:wger/l10n/language_native_names.dart';
+import 'package:fitgains/l10n/language_native_names.dart';
 import 'package:xml/xml.dart';
 
 const _listEq = ListEquality<String>();

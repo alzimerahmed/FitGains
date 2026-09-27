@@ -17,17 +17,17 @@
  */
 
 import 'package:drift/native.dart';
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/features/account/providers/user_profile_repository.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
+import 'package:fitgains/features/measurements/screens/measurement_categories_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
+import 'package:fitgains/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/features/account/providers/user_profile_repository.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
-import 'package:wger/features/measurements/screens/measurement_categories_screen.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
-import 'package:wger/theme/theme.dart';
 
 import '../../test_data/profile.dart';
 import '../../test_data/screenshots/measurements.dart';

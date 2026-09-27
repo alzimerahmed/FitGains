@@ -18,9 +18,9 @@
 
 import 'dart:io';
 
+import 'package:fitgains/core/log_file_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
-import 'package:wger/core/log_file_store.dart';
 
 void main() {
   // The store registers an AppLifecycleListener, which needs a binding

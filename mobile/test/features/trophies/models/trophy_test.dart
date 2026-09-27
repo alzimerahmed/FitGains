@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/trophies/models/trophy.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/trophies/models/trophy.dart';
 
 void main() {
   group('Trophy model', () {

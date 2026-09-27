@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/routines/models/session.dart';
+import 'package:fitgains/features/routines/validators.dart';
+import 'package:fitgains/l10n/generated/app_localizations_en.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/features/routines/models/session.dart';
-import 'package:wger/features/routines/validators.dart';
-import 'package:wger/l10n/generated/app_localizations_en.dart';
 
 void main() {
   final i18n = AppLocalizationsEn();

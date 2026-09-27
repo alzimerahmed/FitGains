@@ -19,15 +19,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
+import 'package:fitgains/features/routines/screens/routine_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:wger/core/network/network_provider.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
-import 'package:wger/features/routines/screens/routine_screen.dart';
-import 'package:wger/l10n/generated/app_localizations.dart';
-import 'package:wger/l10n/localizations_delegates.dart';
 
 import '../../../../test_data/routines.dart';
 import '../../../helpers/fake_auth_environment.dart';

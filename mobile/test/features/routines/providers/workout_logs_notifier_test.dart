@@ -17,13 +17,13 @@
  */
 
 import 'package:clock/clock.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/features/routines/providers/workout_logs_notifier.dart';
+import 'package:fitgains/features/routines/providers/workout_logs_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/routines/models/log.dart';
-import 'package:wger/features/routines/providers/workout_logs_notifier.dart';
-import 'package:wger/features/routines/providers/workout_logs_repository.dart';
 
 import 'workout_logs_notifier_test.mocks.dart';
 

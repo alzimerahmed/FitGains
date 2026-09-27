@@ -17,25 +17,25 @@
  */
 
 import 'package:clock/clock.dart';
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/features/account/models/user_profile.dart';
+import 'package:fitgains/features/account/providers/user_profile_notifier.dart';
+import 'package:fitgains/features/account/providers/user_profile_repository.dart';
+import 'package:fitgains/features/exercises/models/exercise.dart';
+import 'package:fitgains/features/routines/models/day.dart';
+import 'package:fitgains/features/routines/models/day_data.dart';
+import 'package:fitgains/features/routines/models/routine.dart';
+import 'package:fitgains/features/routines/models/set_config_data.dart';
+import 'package:fitgains/features/routines/models/slot_data.dart';
+import 'package:fitgains/features/routines/providers/gym_state.dart';
+import 'package:fitgains/features/routines/providers/gym_state_notifier.dart';
+import 'package:fitgains/features/routines/providers/routines_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
-import 'package:wger/core/shared_preferences.dart';
-import 'package:wger/features/account/models/user_profile.dart';
-import 'package:wger/features/account/providers/user_profile_notifier.dart';
-import 'package:wger/features/account/providers/user_profile_repository.dart';
-import 'package:wger/features/exercises/models/exercise.dart';
-import 'package:wger/features/routines/models/day.dart';
-import 'package:wger/features/routines/models/day_data.dart';
-import 'package:wger/features/routines/models/routine.dart';
-import 'package:wger/features/routines/models/set_config_data.dart';
-import 'package:wger/features/routines/models/slot_data.dart';
-import 'package:wger/features/routines/providers/gym_state.dart';
-import 'package:wger/features/routines/providers/gym_state_notifier.dart';
-import 'package:wger/features/routines/providers/routines_notifier.dart';
 
 import '../../../../test_data/exercises.dart';
 import '../../../../test_data/routines.dart';

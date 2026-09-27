@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/providers/body_weight_provider.dart';
+import 'package:fitgains/features/measurements/providers/measurement_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:wger/features/measurements/models/measurement_category.dart';
-import 'package:wger/features/measurements/providers/body_weight_provider.dart';
-import 'package:wger/features/measurements/providers/measurement_repository.dart';
 
 import '../../../../test_data/body_weight.dart';
 import 'body_weight_provider_test.mocks.dart';

@@ -17,10 +17,10 @@
  */
 
 import 'package:drift/drift.dart' as drift;
+import 'package:fitgains/database/powersync/database.dart';
+import 'package:fitgains/powersync/schema.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:powersync/powersync.dart' as ps;
-import 'package:wger/database/powersync/database.dart';
-import 'package:wger/powersync/schema.dart';
 
 import '../helpers/in_memory_drift.dart';
 

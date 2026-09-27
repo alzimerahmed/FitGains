@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'package:fitgains/database/converters/utc_datetime_converter.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/database/converters/utc_datetime_converter.dart';
 
 // The assertions compare instants and the isUtc flag, never wall-clock
 // components, so they hold in every time zone.

@@ -18,8 +18,8 @@
 
 import 'dart:convert';
 
+import 'package:fitgains/core/network/jwt.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wger/core/network/jwt.dart';
 
 void main() {
   /// Builds a JWT-shaped string with the given payload (signature is a sham,
