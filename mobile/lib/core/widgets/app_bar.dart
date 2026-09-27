@@ -1,0 +1,213 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'dart:async';
+
+import 'package:fitgains/core/form_screen.dart';
+import 'package:fitgains/core/network/auth_http_client.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:fitgains/core/network/wger_base.dart';
+import 'package:fitgains/core/settings_dashboard_widgets_screen.dart';
+import 'package:fitgains/core/widgets/about.dart';
+import 'package:fitgains/core/widgets/sync_status_dialog.dart';
+import 'package:fitgains/database/powersync/powersync.dart'
+    show builtPowerSyncInstance, connectPowerSync, syncStatus, syncWatchdogProvider;
+import 'package:fitgains/features/account/providers/account_notifier.dart';
+import 'package:fitgains/features/account/widgets/forms.dart';
+import 'package:fitgains/features/account/widgets/settings.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
+
+class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
+  final String _title;
+
+  const MainAppBar(this._title);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final syncState = ref.watch(syncStatus);
+    final status = syncStatusIconAndLabel(
+      syncState,
+      AppLocalizations.of(context),
+      deviceOnline: ref.watch(networkStatusProvider),
+    );
+
+    return AppBar(
+      title: Text(_title),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.widgets_outlined),
+          onPressed: () {
+            Navigator.of(context).pushNamed(ConfigureDashboardWidgetsScreen.routeName);
+          },
+        ),
+        IconButton(
+          icon: Icon(status.icon),
+          onPressed: () {
+            // The dialog watches the sync state itself; the server URL and
+            // adapter gate are tap-time snapshots. The route builder runs
+            // during build, where a dirty provider read forces a mid-build
+            // refresh. Reconnect gates on the adapter, a platform fact,
+            // never on the reachability status (it exists for when that
+            // status is wrong).
+            final serverUrl = ref.read(wgerBaseProvider).serverUrl;
+            final adapterAvailable = ref.read(networkAdapterAvailableProvider);
+
+            showDialog<void>(
+              context: context,
+              builder: (_) => SyncStatusDialog(
+                serverUrl: serverUrl,
+                onReconnect: !adapterAvailable
+                    ? null
+                    : () {
+                        unawaited(ref.read(networkStatusProvider.notifier).check(optimistic: true));
+
+                        final db = builtPowerSyncInstance;
+                        final url = ref.read(wgerBaseProvider).serverUrl;
+                        // The adapter re-check covers it disappearing while
+                        // the dialog was open.
+                        if (db == null ||
+                            url == null ||
+                            !ref.read(networkAdapterAvailableProvider)) {
+                          return;
+                        }
+                        // A manual reconnect is a deliberate new connection epoch.
+                        final watchdog = ref.read(syncWatchdogProvider);
+                        watchdog.reset();
+                        connectPowerSync(
+                          db,
+                          url,
+                          ref.read(authenticatedHttpClientProvider),
+                          watchdog,
+                          reason: 'manual retry',
+                        );
+                      },
+              ),
+            );
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () async {
+            return showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const MainSettingsDialog();
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class MainSettingsDialog extends ConsumerWidget {
+  const MainSettingsDialog({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOnline = ref.watch(networkStatusProvider);
+
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context).optionsLabel),
+      actions: [
+        TextButton(
+          child: Text(
+            MaterialLocalizations.of(context).closeButtonLabel,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+      contentPadding: EdgeInsets.zero,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            //dense: true,
+            leading: const Icon(Icons.person),
+            title: Text(AppLocalizations.of(context).userProfile),
+            enabled: isOnline,
+            trailing: isOnline
+                ? null
+                : Icon(Icons.cloud_off, color: Theme.of(context).colorScheme.outline),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                FormScreen.routeName,
+                arguments: FormScreenArguments(
+                  AppLocalizations.of(context).userProfile,
+                  const UserProfileForm(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            onTap: () => Navigator.of(context).pushNamed(SettingsPage.routeName),
+            title: Text(AppLocalizations.of(context).settingsTitle),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info),
+            onTap: () => Navigator.of(context).pushNamed(AboutPage.routeName),
+            title: Text(AppLocalizations.of(context).aboutPageTitle),
+          ),
+          const Divider(),
+          ListTile(
+            //dense: true,
+            leading: const Icon(Icons.exit_to_app),
+            title: Text(AppLocalizations.of(context).logout),
+            onTap: () async {
+              final navigator = Navigator.of(context);
+
+              // Auth logout wipes the local PowerSync DB as part of its
+              // lifecycle. Await it so we don't race the navigation. Gallery
+              // state lives in PowerSync now and gets cleared along with the
+              // rest of the synced tables.
+              await ref.read(authProvider.notifier).logout();
+              ref.read(accountProvider.notifier).clear();
+
+              navigator.pop();
+              navigator.pushReplacementNamed('/');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// App bar that only displays a title
+class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String _title;
+
+  const EmptyAppBar(this._title);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(title: Text(_title), actions: const []);
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}

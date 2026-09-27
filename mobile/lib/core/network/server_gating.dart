@@ -1,0 +1,312 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c) 2026 - 2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/errors.dart';
+import 'package:fitgains/core/helpers.dart';
+import 'package:fitgains/core/network/api_headers.dart';
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/core/network/network_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:version/version.dart';
+
+/// `/api/v2/` endpoints used by the gating chain.
+const _MIN_APP_VERSION_PATH = 'min-app-version';
+const _SERVER_VERSION_PATH = 'version';
+
+/// Server-side reachability and version checks that gate "we have valid
+/// credentials" from "the user can actually use the app".
+class ServerGating {
+  final http.Client _client;
+  final AuthCredentialsStorage _storage;
+  final _logger = Logger('ServerGating');
+
+  ServerGating(this._client, this._storage);
+
+  /// Runs the credential-dependent gates: minimum app version, then PowerSync
+  /// reachability (only on the first-time path). The server-version gate runs
+  /// separately via [serverVersionGate], so callers check the version once and
+  /// pass it into the auth state themselves.
+  Future<AuthStatus> resolve({
+    required JwtCredential credential,
+    required String serverUrl,
+    required PackageInfo appVersion,
+  }) async {
+    if (await applicationUpdateRequired(serverUrl, appVersion.version)) {
+      return AuthStatus.appUpdateRequired;
+    }
+    if (!await isPowerSyncReachable(serverUrl: serverUrl, credential: credential)) {
+      return AuthStatus.powerSyncUnreachable;
+    }
+    return AuthStatus.loggedIn;
+  }
+
+  /// The single place the server version is fetched and checked. Returns the
+  /// fetched `version` (for the auth state; null when unreadable) and whether
+  /// it's `tooOld` for this app. Lenient: `tooOld` is false on an unreadable
+  /// version.
+  Future<({String? version, bool tooOld})> serverVersionGate(String serverUrl) async {
+    final version = await fetchServerVersion(serverUrl);
+    return (version: version, tooOld: serverUpdateRequired(version));
+  }
+
+  /// Probe against `/routine` to confirm the server is reachable and
+  /// accepts our credential. Returns null when the request couldn't leave
+  /// the device (offline, TLS handshake failure, etc.) so callers can
+  /// distinguish "we couldn't reach the server" from "the server said no".
+  /// Only the latter is grounds for logging the user out, and a 403 counts
+  /// only with the API's error body, so the probe is a GET (HEAD carries no
+  /// body) limited to one row.
+  Future<http.Response?> probe({
+    required JwtCredential credential,
+    required String serverUrl,
+    required PackageInfo appVersion,
+  }) async {
+    try {
+      return await _client.get(
+        makeUri(serverUrl, 'routine', query: {'limit': '1'}),
+        headers: {
+          HttpHeaders.acceptHeader: 'application/json',
+          HttpHeaders.userAgentHeader: getAppNameHeader(appVersion),
+          HttpHeaders.authorizationHeader: credential.authHeaderValue,
+        },
+      );
+    } on Exception catch (e, s) {
+      if (isNetworkError(e)) {
+        _logger.warning('wger probe: server unreachable: $e', e, s);
+        return null;
+      }
+      rethrow;
+    }
+  }
+
+  /// Detects reverse-proxy misconfiguration on the wger server by
+  /// confirming pagination URLs returned by the API point back to the
+  /// same host and scheme as the configured [serverUrl]. Returns true
+  /// when the configuration looks fine (or the check could not be
+  /// completed conclusively, so the caller defaults to permissive).
+  Future<bool> serverConfigSane({
+    required String serverUrl,
+    required JwtCredential credential,
+  }) async {
+    try {
+      final baseUri = Uri.parse(serverUrl);
+      final response = await _client.get(
+        Uri.parse('$serverUrl/api/v2/exercise/?limit=1'),
+        headers: {
+          HttpHeaders.authorizationHeader: credential.authHeaderValue,
+          HttpHeaders.acceptHeader: 'application/json',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        return true;
+      }
+
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final nextUrl = data['next'] as String?;
+      if (nextUrl == null) {
+        return true;
+      }
+
+      final nextUri = Uri.parse(nextUrl);
+      return nextUri.host.toLowerCase() == baseUri.host.toLowerCase() &&
+          nextUri.scheme == baseUri.scheme;
+    } catch (e) {
+      _logger.info('serverConfigSane check failed: $e');
+      return true;
+    }
+  }
+
+  /// Tries to reach the PowerSync service and returns true if it looks
+  /// alive. Only runs the first time a user logs in (subsequent calls
+  /// short-circuit via [AuthCredentialsStorage.hasEverSynced]); on
+  /// success the flag is set so future starts skip the probe.
+  Future<bool> isPowerSyncReachable({
+    required String serverUrl,
+    required JwtCredential credential,
+  }) async {
+    if (await _storage.hasEverSynced()) {
+      return true;
+    }
+
+    try {
+      final tokenResponse = await _client.get(
+        makeUri(serverUrl, 'powersync-token', trailingSlash: false),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: credential.authHeaderValue,
+        },
+      );
+      if (tokenResponse.statusCode != 200) {
+        _logger.warning(
+          'PowerSync probe: token endpoint returned ${tokenResponse.statusCode}',
+        );
+        return false;
+      }
+      final body = json.decode(tokenResponse.body) as Map<String, dynamic>;
+      final providedUrl = body['powersync_url'] as String?;
+      final powerSyncUrl = await findLivePowerSyncUrl(
+        client: _client,
+        serverUrl: serverUrl,
+        provided: providedUrl,
+      );
+      if (powerSyncUrl == null) {
+        _logger.warning(
+          'PowerSync probe: no endpoint answered the liveness probe '
+          '(server-provided powersync_url: "$providedUrl")',
+        );
+        return false;
+      }
+      if (powerSyncUrl != providedUrl) {
+        _logger.warning(
+          'PowerSync probe: server-provided powersync_url "$providedUrl" is '
+          'unreachable, using $powerSyncUrl instead',
+        );
+      }
+      await _storage.markEverSynced();
+      return true;
+    } on Exception catch (e, s) {
+      _logger.warning('PowerSync probe failed: $e', e, s);
+      return false;
+    }
+  }
+
+  /// Fetches the server's reported version, or null when it can't be read
+  /// (non-200, unparseable body, or network error). Null is handled leniently
+  /// by [serverUpdateRequired], so a transient blip doesn't gate the user out.
+  Future<String?> fetchServerVersion(String serverUrl) async {
+    try {
+      final response = await _client.get(makeUri(serverUrl, _SERVER_VERSION_PATH));
+      if (response.statusCode != 200) {
+        _logger.warning('fetchServerVersion: status ${response.statusCode}, skipping check');
+        return null;
+      }
+      final decoded = json.decode(response.body);
+      return decoded is String ? decoded : null;
+    } on Exception catch (e, s) {
+      _logger.warning('fetchServerVersion failed: $e', e, s);
+      return null;
+    }
+  }
+
+  /// Whether the server requires a newer app build. Lenient: on a non-200,
+  /// unparseable body, or network error the check is skipped (returns false),
+  /// so a transient blip doesn't lock the user out.
+  Future<bool> applicationUpdateRequired(String serverUrl, String appVersion) async {
+    try {
+      final response = await _client.get(makeUri(serverUrl, _MIN_APP_VERSION_PATH));
+      if (response.statusCode != 200) {
+        _logger.warning(
+          'applicationUpdateRequired: status ${response.statusCode}, skipping check',
+        );
+        return false;
+      }
+      final decoded = json.decode(response.body);
+      if (decoded is! String) {
+        _logger.warning('applicationUpdateRequired: unexpected body, skipping check');
+        return false;
+      }
+      final current = Version.parse(appVersion);
+      final required = Version.parse(decoded);
+      final needUpdate = required > current;
+      if (needUpdate) {
+        _logger.fine('Application update required: $required > $current');
+      }
+      return needUpdate;
+    } on Exception catch (e, s) {
+      _logger.warning('applicationUpdateRequired failed: $e', e, s);
+      return false;
+    }
+  }
+}
+
+/// Rewrites a version as spelled by the Python backend into its semver
+/// equivalent so [Version] can parse it: '2.7.0a2' becomes '2.7.0-a2'.
+/// Without this a pre-release below the minimum fails to parse and gets
+/// waved through by the lenient fallback.
+///
+/// A post release carries everything its final release has, so that segment
+/// is removed rather than turned into a pre-release, which would sort it
+/// below the release it follows.
+String _toSemver(String rawVersion) {
+  final trimmed = rawVersion
+      .replaceFirst(RegExp(r'\s.*$'), '') // '2.7.0 (git-abc1234)'
+      .replaceFirst(RegExp(r'[.-]post\d*'), '');
+
+  final match = RegExp(r'^(\d+(?:\.\d+)*)(.*)$').firstMatch(trimmed);
+  if (match == null) {
+    return trimmed;
+  }
+
+  final release = match.group(1)!;
+  final suffix = match.group(2)!.replaceFirst(RegExp(r'^[.-]'), '');
+  return suffix.isEmpty ? release : '$release-$suffix';
+}
+
+/// Checks whether the connected server meets the minimum version required
+/// by this build of the app. A pre-release is below its release, so a server
+/// in the middle of the 2.8 cycle does not satisfy a minimum of 2.8.0. See
+/// [MIN_SERVER_VERSION] for how to spell the constant.
+///
+/// Returns false (lenient) when the version cannot be read or parsed, so
+/// users aren't locked out on unexpected server configurations.
+bool serverUpdateRequired(String? rawVersion) {
+  final logger = Logger('ServerGating');
+  if (rawVersion == null) {
+    logger.warning('serverUpdateRequired: serverVersion is null, skipping check');
+    return false;
+  }
+
+  final sanitized = _toSemver(rawVersion);
+
+  final Version current;
+  try {
+    current = Version.parse(sanitized);
+  } on FormatException {
+    logger.warning(
+      'serverUpdateRequired: could not parse server version "$rawVersion" '
+      '(sanitized: "$sanitized"), skipping check',
+    );
+    return false;
+  }
+  final required = Version.parse(MIN_SERVER_VERSION);
+  final needUpdate = current < required;
+  if (needUpdate) {
+    logger.fine('Server update required: server $current < minimum $required');
+  }
+  return needUpdate;
+}
+
+/// Provider over the singleton gating service. Uses the raw HTTP client
+/// from [authHttpClientProvider] (probes are unauthenticated or carry the
+/// credential explicitly, so the auth-injecting wrapper is the wrong
+/// dependency here).
+final serverGatingProvider = Provider<ServerGating>(
+  (ref) => ServerGating(
+    ref.read(authHttpClientProvider),
+    ref.read(authCredentialsStorageProvider),
+  ),
+);

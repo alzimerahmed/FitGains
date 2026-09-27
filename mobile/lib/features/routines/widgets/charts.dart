@@ -1,0 +1,177 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:fitgains/core/charts.dart';
+import 'package:fitgains/core/colors.dart';
+import 'package:fitgains/core/formatting/formatting.dart';
+import 'package:fitgains/core/misc.dart';
+import 'package:fitgains/features/routines/models/log.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:material_ui/material_ui.dart';
+
+class LogChartWidgetFl extends StatefulWidget {
+  final Map<num, List<Log>> _data;
+
+  const LogChartWidgetFl(this._data);
+
+  @override
+  State<LogChartWidgetFl> createState() => _LogChartWidgetFlState();
+}
+
+class _LogChartWidgetFlState extends State<LogChartWidgetFl> {
+  @override
+  Widget build(BuildContext context) {
+    // Exercises whose logs all lack repetitions or a weight are grouped into an
+    // empty map, and a single group can be empty on its own; there is nothing
+    // to plot either way
+    if (widget._data.values.every((logs) => logs.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+
+    return AspectRatio(
+      aspectRatio: 1.70,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24, bottom: 12),
+        child: LineChart(mainData()),
+      ),
+    );
+  }
+
+  LineTouchData tooltipData() {
+    return LineTouchData(
+      touchTooltipData: LineTouchTooltipData(
+        getTooltipItems: (touchedSpots) {
+          return touchedSpots.map((touchedSpot) {
+            // Retrieve the repetitions (bit ugly, but it works)
+            final List<num> keys = widget._data.keys.toList();
+            final mapKey = keys[touchedSpot.barIndex];
+            final reps = widget._data[mapKey]?.first.repetitions;
+
+            return LineTooltipItem(
+              '${formatNum(reps!)} × ${touchedSpot.y} kg',
+              const TextStyle(color: Colors.white),
+            );
+          }).toList();
+        },
+      ),
+    );
+  }
+
+  LineChartData mainData() {
+    // Every date that is plotted, in order. The map is keyed by repetitions,
+    // so its first and last group are unrelated series whose dates can sit
+    // anywhere in the range; an interval taken from those two is far smaller
+    // than the axis fl_chart actually draws, and it then builds one label per
+    // step across the whole span until the heap gives out.
+    final dates = [
+      for (final logs in widget._data.values)
+        for (final log in logs) log.date,
+    ]..sort();
+
+    final colors = generateChartColors(
+      widget._data.keys.length,
+      Theme.of(context).colorScheme,
+    ).iterator;
+
+    return LineChartData(
+      lineTouchData: tooltipData(),
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(color: Theme.of(context).colorScheme.outlineVariant, strokeWidth: 1);
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(color: Theme.of(context).colorScheme.outlineVariant, strokeWidth: 1);
+        },
+      ),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              // Don't show the first and last entries, otherwise they'll overlap with the
+              // calculated interval
+              if (value == meta.min || value == meta.max) {
+                return const Text('');
+              }
+
+              final DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+              return Text(
+                localizedDate(context).format(date),
+              );
+            },
+            interval: chartGetInterval(dates.first, dates.last),
+          ),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 70,
+            getTitlesWidget: (value, meta) {
+              return Text('$value ${AppLocalizations.of(context).kg}');
+            },
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      lineBarsData: [
+        ...widget._data.keys.map((reps) {
+          colors.moveNext();
+          // Captured: getDotPainter runs while painting, when the shared
+          // iterator has already moved on to the last series.
+          final color = colors.current;
+
+          return LineChartBarData(
+            spots: [
+              ...widget._data[reps]!.map(
+                (entry) => FlSpot(
+                  entry.date.millisecondsSinceEpoch.toDouble(),
+                  entry.weight!.toDouble(),
+                ),
+              ),
+            ],
+            isCurved: true,
+            color: color,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
+                radius: 2,
+                color: color,
+                strokeWidth: 0,
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}

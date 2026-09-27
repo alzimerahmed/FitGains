@@ -1,0 +1,215 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * Riverpod notifier for measurement entries backed by Drift.
+ */
+
+import 'package:fitgains/core/network/auth_credentials_storage.dart';
+import 'package:fitgains/features/measurements/models/measurement_bucket.dart';
+import 'package:fitgains/features/measurements/models/measurement_category.dart';
+import 'package:fitgains/features/measurements/models/measurement_entry.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import 'measurement_repository.dart';
+
+part 'measurement_notifier.g.dart';
+
+/// All categories with their children.
+///
+/// The one place the screens read categories from. What they draw on top of
+/// them comes from the aggregated queries and the paged lists below, never
+/// from a category itself, which is why none of these carries entries.
+@riverpod
+Stream<List<MeasurementCategory>> measurementCategories(Ref ref) {
+  return ref.read(measurementRepositoryProvider).watchAllWithoutEntries();
+}
+
+/// One page of a category's entries, newest first.
+@riverpod
+Stream<List<MeasurementEntry>> measurementEntriesPage(Ref ref, String categoryId, int limit) {
+  return ref.read(measurementRepositoryProvider).watchEntries(categoryId, limit: limit);
+}
+
+/// One page of the entries of a group's components, newest first, out of which
+/// the readings are paired.
+@riverpod
+Stream<List<MeasurementEntry>> measurementGroupEntriesPage(Ref ref, String parentId, int limit) {
+  return ref.read(measurementRepositoryProvider).watchGroupEntries(parentId, limit: limit);
+}
+
+/// The newest entry of every category, keyed by category id.
+///
+/// For the rows that show a last known value next to a chart of a shorter
+/// range: widening the chart's range to reach the value would materialise
+/// every entry in between.
+@riverpod
+Stream<Map<String, MeasurementEntry>> latestMeasurementEntries(Ref ref) {
+  return ref.read(measurementRepositoryProvider).watchLatestEntries();
+}
+
+/// The chart points of one category, condensed by SQLite.
+///
+/// Kept apart from the category streams, which hand over the entries
+/// themselves. [level] is what the chart in question needs, see
+/// `chartBucketLevel`; [until] is exclusive and bounds a chart that shows a
+/// closed period rather than everything up to today.
+@riverpod
+Stream<List<MeasurementBucket>> measurementChartBuckets(
+  Ref ref,
+  String categoryId,
+  DateTime? since,
+  DateTime? until,
+  MeasurementBucketLevel level,
+) {
+  return ref
+      .read(measurementRepositoryProvider)
+      .watchEntryBuckets(categoryId, since: since, until: until, level: level);
+}
+
+/// The chart points of a group's components, keyed by component id.
+///
+/// One query for the whole group, and one calendar unit: a component condensed
+/// on its own would put the halves of a reading in different buckets.
+@riverpod
+Stream<Map<String, List<MeasurementBucket>>> measurementGroupBuckets(
+  Ref ref,
+  String parentId,
+  DateTime? since,
+  MeasurementBucketLevel level,
+) {
+  return ref
+      .read(measurementRepositoryProvider)
+      .watchGroupBuckets(parentId, since: since, level: level);
+}
+
+/// One point per day and category, keyed by category id.
+///
+/// For the calendar, which marks the days something was measured on rather
+/// than the single readings.
+@riverpod
+Stream<Map<String, List<MeasurementBucket>>> measurementDailyBuckets(Ref ref) {
+  return ref.read(measurementRepositoryProvider).watchDailyBuckets();
+}
+
+/// How often each value of a category occurred, for the histogram.
+@riverpod
+Stream<List<MeasurementValueCount>> measurementValueCounts(
+  Ref ref,
+  String categoryId,
+  DateTime? since,
+  bool summedPerDay,
+) {
+  return ref
+      .read(measurementRepositoryProvider)
+      .watchValueCounts(categoryId, since: since, summedPerDay: summedPerDay);
+}
+
+/// One category with its children, null while it does not exist (or no longer
+/// does).
+@riverpod
+Stream<MeasurementCategory?> measurementCategory(Ref ref, String id) {
+  return ref.read(measurementRepositoryProvider).watchCategoryWithoutEntries(id);
+}
+
+/// Writing side of the measurements: what the screens read is watched through
+/// the providers above, which this only changes the data of.
+@riverpod
+final class MeasurementNotifier extends _$MeasurementNotifier {
+  late MeasurementRepository _repo;
+
+  @override
+  void build() {
+    _repo = ref.read(measurementRepositoryProvider);
+  }
+
+  Future<void> deleteEntry(String id) async {
+    await _repo.deleteLocalDrift(id);
+  }
+
+  Future<void> updateEntry(MeasurementEntry entry) async {
+    await _repo.updateLocalDrift(entry);
+  }
+
+  Future<void> addEntry(MeasurementEntry entry) async {
+    await _repo.addLocalDrift(entry);
+  }
+
+  /// Adds one reading of a multi-value group (one entry per component,
+  /// persisted atomically).
+  Future<void> addGroupEntries(List<MeasurementEntry> entries) async {
+    await _repo.addLocalDriftGroupEntries(entries);
+  }
+
+  // --- MeasurementCategory operations (delegated to repository) ---
+  Future<void> deleteCategory(String id) async {
+    await _repo.deleteLocalDriftCategory(id);
+  }
+
+  Future<void> updateCategory(MeasurementCategory category) async {
+    await _repo.updateLocalDriftCategory(category);
+  }
+
+  /// Adds a category, and its components when it is a group. Returns the id it
+  /// was created under, null for a free-form one, where the database assigns it.
+  ///
+  /// A typed category takes the id derived from user and metric type (see
+  /// [deterministicCategoryId]) instead of a random one, so that a category
+  /// created here and the same one created on another device converge on one
+  /// row rather than colliding with the server's uniqueness constraint.
+  Future<String?> addCategory(MeasurementCategory category) async {
+    final userId = await ref.read(authCredentialsStorageProvider).dbOwnerUserId();
+    if (userId == null || !category.metricType.hasDeterministicId) {
+      await _repo.addLocalDriftCategory(category);
+      return category.id;
+    }
+
+    final parent = category.copyWith(
+      id: category.id ?? deterministicCategoryId(userId, category.metricType),
+    );
+
+    // A group is a container, its readings live in one child per component.
+    // The server creates them as well, on the same ids, so whichever side
+    // gets there first wins and the other is acknowledged as a no-op
+    await _repo.addLocalDriftCategoryGroup([
+      parent,
+      for (final (order, metricType) in parent.metricType.components.indexed)
+        MeasurementCategory.forMetricType(userId, metricType, parentId: parent.id, order: order),
+    ]);
+    return parent.id;
+  }
+
+  /// Moves the category at [oldIndex] of [categories] to [newIndex] and
+  /// persists the resulting order.
+  ///
+  /// The list is passed in rather than derived here, so the indices are the
+  /// ones of the list the user dragged in. It holds the top-level categories
+  /// only: children of multi-value groups keep their in-group order, and the
+  /// official body weight category is hidden from the sort screen.
+  Future<void> setCategoryOrder(
+    List<MeasurementCategory> categories,
+    int oldIndex,
+    int newIndex,
+  ) async {
+    final reordered = [...categories];
+    final moved = reordered.removeAt(oldIndex);
+    reordered.insert(newIndex, moved);
+
+    await _repo.reorderCategories([for (final c in reordered) c.id!]);
+  }
+}

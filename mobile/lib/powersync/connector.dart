@@ -1,0 +1,438 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c) 2020 - 2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// This file performs setup of the PowerSync database
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:fitgains/core/error_dialogs.dart';
+import 'package:fitgains/core/errors.dart';
+import 'package:fitgains/core/exceptions/http_exception.dart';
+import 'package:fitgains/core/helpers.dart';
+import 'package:fitgains/core/network/jwt.dart';
+import 'package:fitgains/powersync/api_client.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
+import 'package:powersync/powersync.dart';
+
+final logger = Logger('powersync-django');
+
+/// Thrown for an upload status that should be retried, not discarded such as
+/// HTTP status codes 5xx, 408, 429, or an unrecovered 401/403. Throwing leaves
+/// the transaction queued for PowerSync to retry. Carries table/op/status for
+/// logging and tests.
+class RetryableUploadException implements Exception {
+  final String table;
+  final UpdateType op;
+  final int statusCode;
+
+  RetryableUploadException({
+    required this.table,
+    required this.op,
+    required this.statusCode,
+  });
+
+  @override
+  String toString() => 'Upload of $op on $table deferred: retryable status $statusCode';
+}
+
+/// Thrown when the wger backend answers but no live PowerSync endpoint can
+/// be resolved: a down or misconfigured sync service, not an offline device
+/// and not an authentication problem.
+class NoPowerSyncEndpointException implements Exception {
+  @override
+  String toString() => 'No live PowerSync endpoint found';
+}
+
+/// Stand-in for an unexpected upload error, carrying nothing but text.
+///
+/// An error object that cannot be sent between isolates never reaches the
+/// sync isolate and wedges the upload queue for the rest of the process
+/// (powersync-ja/powersync.dart#452), so nothing foreign is ever rethrown.
+class UploadFailedException implements Exception {
+  final String details;
+
+  UploadFailedException(this.details);
+
+  @override
+  String toString() => 'Upload failed: $details';
+}
+
+/// What the transaction loop does with one upload response.
+enum _UploadOutcome {
+  /// Accepted: complete the transaction once all ops are ok.
+  ok,
+
+  /// Permanently refused: surface it but still complete, so one bad op can't
+  /// block the queue.
+  reject,
+
+  /// Retryable: throw so PowerSync retries the queued transaction later.
+  retry,
+}
+
+class DjangoConnector extends PowerSyncBackendConnector {
+  final String baseUrl;
+  final ApiClient apiClient;
+
+  /// Client for the endpoint liveness probes in [fetchCredentials].
+  final http.Client _probeClient;
+
+  /// Refusals that already triggered a user-facing dialog this session, as
+  /// table, operation and the backend's answer.
+  ///
+  /// Keyed by the refusal rather than by the row it happened on: a category
+  /// the backend rejects orphans every measurement pointing at it, and one
+  /// dialog per orphan is thousands of them, each one re-popping as the user
+  /// dismisses the last. Resets on app restart.
+  final Set<String> _reportedRejections = {};
+
+  /// Ceiling for one token fetch. On token expiry the SDK awaits the fetch
+  /// inline in its sync loop, so a request that never answers would freeze
+  /// sync, disconnect() included, until the process restarts.
+  static const credentialFetchTimeout = Duration(seconds: 30);
+
+  /// Spacing between repeated "backend unreachable" log lines while the
+  /// credential fetch keeps failing, so PowerSync's retry loop doesn't
+  /// flood the app logs during a longer outage.
+  static const unreachableLogInterval = Duration(minutes: 5);
+
+  /// When the current outage was last logged; null while the backend is
+  /// reachable.
+  DateTime? _lastUnreachableLogAt;
+
+  /// Endpoint last announced in the logs. [fetchCredentials] runs on every
+  /// token refresh, so the endpoint is only logged when it changes.
+  String? _lastLoggedEndpoint;
+
+  /// When "no live PowerSync endpoint" was last logged; null while an
+  /// endpoint resolves. Throttled like [_logUnreachable], since PowerSync
+  /// re-drives [fetchCredentials] on its retry schedule.
+  DateTime? _lastNoEndpointLogAt;
+
+  /// The `powersync_url` from the last token response and the endpoint it
+  /// resolved to. While the server keeps advertising the same URL, the cached
+  /// resolution is reused instead of re-probing on every token refresh (a dead
+  /// advertised URL would otherwise cost a probe timeout each time). A failed
+  /// resolution is never cached, so retries keep probing. Cleared on app
+  /// restart with the connector.
+  String? _lastProvidedUrl;
+  String? _lastResolvedEndpoint;
+
+  DjangoConnector({required this.baseUrl, required this.apiClient, http.Client? client})
+    : _probeClient = client ?? http.Client();
+
+  /// Get a token to authenticate against the PowerSync instance.
+  @override
+  Future<PowerSyncCredentials?> fetchCredentials() async {
+    // See the auth docs here:
+    // https://docs.powersync.com/usage/installation/authentication-setup/custom
+    final Map<String, dynamic> session;
+    try {
+      session = await apiClient.getPowersyncToken().timeout(credentialFetchTimeout);
+    } on http.ClientException catch (e) {
+      // Backend unreachable. Null would mean "not logged in" to the SDK and
+      // surface as a CredentialsException; rethrowing keeps it a connection
+      // error. PowerSync retries on its own schedule either way.
+      _logUnreachable(e.message);
+      rethrow;
+    } on SocketException catch (e) {
+      _logUnreachable(e.message);
+      rethrow;
+    } on TimeoutException {
+      _logUnreachable('token fetch timed out after ${credentialFetchTimeout.inSeconds}s');
+      rethrow;
+    }
+    _logReachableAgain();
+
+    final token = session['token'] as String;
+    final payload = decodeJwtPayload(token);
+    final provided = session['powersync_url'] as String?;
+    String? endpoint;
+    if (provided == _lastProvidedUrl && _lastResolvedEndpoint != null) {
+      endpoint = _lastResolvedEndpoint;
+    } else {
+      endpoint = await findLivePowerSyncUrl(
+        client: _probeClient,
+        serverUrl: baseUrl,
+        provided: provided,
+      );
+      if (endpoint != null) {
+        _lastProvidedUrl = provided;
+        _lastResolvedEndpoint = endpoint;
+      }
+    }
+    if (endpoint == null) {
+      // The wger backend answered (the token fetch above succeeded). Null
+      // would mean "not logged in" to the SDK; the typed error keeps the
+      // meaning. PowerSync retries on its own schedule either way.
+      _logNoEndpoint();
+      throw NoPowerSyncEndpointException();
+    }
+    _lastNoEndpointLogAt = null;
+    if (endpoint != _lastLoggedEndpoint) {
+      logger.info('Connecting to PowerSync endpoint $endpoint');
+      _lastLoggedEndpoint = endpoint;
+    }
+    return PowerSyncCredentials(
+      endpoint: endpoint,
+      token: token,
+      userId: payload?['sub']?.toString(),
+      expiresAt: jwtExpOnLocalClock(payload),
+    );
+  }
+
+  /// Logs a skipped credential fetch at INFO, throttled to once per [unreachableLogInterval]
+  /// per outage.
+  void _logUnreachable(String message) {
+    final now = DateTime.now();
+    final last = _lastUnreachableLogAt;
+    if (last == null || now.difference(last) >= unreachableLogInterval) {
+      logger.info('PowerSync credential fetch skipped, backend unreachable: $message');
+      _lastUnreachableLogAt = now;
+    }
+  }
+
+  /// Logs an unresolved PowerSync endpoint at WARNING, throttled to once per
+  /// [unreachableLogInterval] per outage.
+  void _logNoEndpoint() {
+    final now = DateTime.now();
+    final last = _lastNoEndpointLogAt;
+    if (last == null || now.difference(last) >= unreachableLogInterval) {
+      logger.warning('No PowerSync endpoint answered its liveness probe, skipping credentials');
+      _lastNoEndpointLogAt = now;
+    }
+  }
+
+  /// Closes an outage announced by [_logUnreachable], if any.
+  void _logReachableAgain() {
+    if (_lastUnreachableLogAt != null) {
+      logger.info('Backend reachable again, PowerSync credential fetch succeeded');
+      _lastUnreachableLogAt = null;
+    }
+  }
+
+  /// Date-only fields per table.
+  ///
+  /// PowerSync serialises every SQLite `DateTime` column as an ISO-8601 timestamp
+  /// (e.g. `2024-11-01T00:00:00.000Z`), but Django's `DateField` only accepts
+  /// `YYYY-MM-DD`. For these columns we strip the time component before uploading.
+  ///
+  /// Keep in sync with `models.DateField` columns in the Django side.
+  /// `auto_now_add=True` fields (e.g. `nutrition_nutritionplan.creation_date`)
+  /// are read-only on the serializer and therefore safe to leave out.
+  static const Map<String, Set<String>> _dateOnlyFields = {
+    'manager_routine': {'start', 'end'},
+    'nutrition_nutritionplan': {'start', 'end'},
+    'gallery_image': {'date'},
+  };
+
+  /// Transform a record before sending it to the backend.
+  ///
+  /// Note that PowerSync hands us `op.opData` as native SQLite primitives only
+  /// (`null`, `int`, `double`, `String`, `Uint8List`).
+  ///
+  ///   * inject the row [id] (PowerSync stores it separately from the
+  ///     payload),
+  ///   * strip the `_id` suffix from foreign-key column names so the
+  ///     Django serializers see `category` / `routine` / etc,
+  ///   * trim the time component from date-only fields (see
+  ///     [_dateOnlyFields]).
+  @visibleForTesting
+  Map<String, dynamic> genericTransform(
+    String table,
+    Map<String, dynamic>? src,
+    String id,
+  ) => _genericTransform(table, src, id);
+
+  Map<String, dynamic> _genericTransform(
+    String table,
+    Map<String, dynamic>? src,
+    String id,
+  ) {
+    final out = <String, dynamic>{'id': id};
+    if (src == null) {
+      return out;
+    }
+
+    final dateFields = _dateOnlyFields[table] ?? const <String>{};
+
+    src.forEach((k, v) {
+      if (k == 'id') {
+        return;
+      }
+      // Trailing `_id` marks a foreign key, which Django exposes without the
+      // suffix (`category_id` -> `category`). `external_id` is a plain value
+      // column, not an FK, so it keeps its name.
+      final key = (k.endsWith('_id') && k != 'external_id') ? k.substring(0, k.length - 3) : k;
+      out[key] = (dateFields.contains(key) && v is String && v.length >= 10)
+          ? v.substring(0, 10)
+          : v;
+    });
+    return out;
+  }
+
+  // Upload pending changes to Postgres via Django backend
+  // this is generic. on the django side we inspect the request and do model-specific operations
+  // would it make sense to do api calls here specific to the relevant model? (e.g. put to a todo-specific endpoint)
+  @override
+  Future<void> uploadData(PowerSyncDatabase database) async {
+    final transaction = await database.getNextCrudTransaction();
+
+    if (transaction == null) {
+      return;
+    }
+
+    await processTransaction(transaction);
+  }
+
+  /// Uploads every op in [transaction] and decides its fate: all accepted
+  /// completes it; a permanent refusal is surfaced but still completes (so one
+  /// bad op can't block the queue); a transient status (5xx, 408, 429, 401,
+  /// 403) or an unreachable backend throws, leaving it queued for retry.
+  ///
+  /// A retry re-sends the whole transaction (at-least-once), so backend handlers
+  /// must be idempotent. Anything unexpected is rethrown as an
+  /// [UploadFailedException], never as the original object.
+  @visibleForTesting
+  Future<void> processTransaction(CrudTransaction transaction) async {
+    try {
+      for (final op in transaction.crud) {
+        final record = {
+          'table': op.table,
+          'data': _genericTransform(op.table, op.opData, op.id),
+        };
+
+        // logger.finer('Uploading record $record to server with operation ${op.op}');
+
+        final http.Response response;
+        switch (op.op) {
+          case UpdateType.put:
+            response = await apiClient.upsert(record);
+            break;
+          case UpdateType.patch:
+            response = await apiClient.update(record);
+            break;
+          case UpdateType.delete:
+            response = await apiClient.delete(record);
+            break;
+        }
+
+        switch (_classifyResponse(response)) {
+          case _UploadOutcome.ok:
+            break;
+          case _UploadOutcome.reject:
+            _reportRejection(op, response);
+            break;
+          case _UploadOutcome.retry:
+            throw RetryableUploadException(
+              table: op.table,
+              op: op.op,
+              statusCode: response.statusCode,
+            );
+        }
+      }
+      await transaction.complete();
+    } on RetryableUploadException catch (e) {
+      // Stays queued for PowerSync to retry. Below severe: a brief server blip
+      // is expected to clear on its own.
+      logger.warning('Upload deferred: $e');
+      rethrow;
+    } catch (e, s) {
+      if (isNetworkError(e)) {
+        // Backend unreachable (offline or down). The transaction stays queued;
+        // rethrowing lets PowerSync retry it once the backend is reachable.
+        logger.fine('Upload deferred, backend unreachable: $e');
+        rethrow;
+      }
+      // Deliberately bare: Errors (TypeError, JsonUnsupportedObjectError...)
+      // must not cross the isolate boundary as objects either. Throwing here
+      // causes PowerSync to retry this transaction after a delay. The text
+      // stands in for the original: see [UploadFailedException].
+      logger.severe('Error uploading data', e, s);
+      throw UploadFailedException(e.toString());
+    }
+  }
+
+  /// Classifies a single upload [response] into a [_UploadOutcome].
+  _UploadOutcome _classifyResponse(http.Response response) {
+    final status = response.statusCode;
+
+    // 2xx is success, unless the backend encoded a permanent rejection as
+    // 200 + `{error}` (its anti-retry-storm contract).
+    if (status >= 200 && status < 300) {
+      return _isErrorBody(response) ? _UploadOutcome.reject : _UploadOutcome.ok;
+    }
+
+    // Transient or retryable. 401 and 403 only ever mean "not authenticated"
+    // here (a refused row comes as 200 + `{error}`), so the op waits for a
+    // working session instead of being dropped.
+    if (status >= 500 || status == 408 || status == 429 || status == 401 || status == 403) {
+      return _UploadOutcome.retry;
+    }
+
+    // Any other 4xx is permanent (retry won't help). Expected refusals come as
+    // 200 + `{error}`, so a non-200 4xx is genuinely unexpected.
+    return _UploadOutcome.reject;
+  }
+
+  /// Surfaces a permanently refused op via the global error dialog, once per
+  /// refusal per session, see [_reportedRejections].
+  void _reportRejection(CrudEntry op, http.Response response) {
+    final exception = WgerHttpException(
+      response,
+      source: ExceptionSource.powersync,
+      context: {'table': op.table, 'op': op.op.name},
+    );
+    final ctx = '${op.op.name} ${op.table}';
+
+    if (!_reportedRejections.add('$ctx|${response.body}')) {
+      // Below the exportable log level: the repeats say nothing the first line
+      // did not, and thousands of them would push everything else out of it
+      logger.fine('Backend rejected $ctx again: $exception');
+      return;
+    }
+    // 200 + {error} is the expected contract (warning); other statuses are
+    // unexpected (severe).
+    if (response.statusCode == 200) {
+      logger.warning('Backend rejected $ctx', exception);
+    } else {
+      logger.severe('Unexpected permanent upload failure: $ctx', exception);
+    }
+    // Route through the app's central error handler (same entry point as the
+    // global FlutterError/PlatformDispatcher handlers).
+    handleError(exception, StackTrace.current);
+  }
+
+  /// Whether [response]'s body is a JSON object carrying an `{error}` key, the
+  /// backend's contract for a permanent rejection on a 200.
+  bool _isErrorBody(http.Response response) {
+    if (response.body.isEmpty) {
+      return false;
+    }
+    try {
+      final decoded = json.decode(response.body);
+      return decoded is Map<String, dynamic> && decoded.containsKey('error');
+    } on FormatException {
+      // Non-JSON body, not a structured rejection.
+      return false;
+    }
+  }
+}

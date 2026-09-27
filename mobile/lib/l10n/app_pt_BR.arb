@@ -1,0 +1,1255 @@
+{
+    "nutritionalPlan": "Plano nutricional",
+    "weight": "Peso",
+    "@weight": {
+        "description": "The weight of a workout log or body weight entry"
+    },
+    "date": "Data",
+    "@date": {
+        "description": "The date of a workout log or body weight entry"
+    },
+    "value": "Valor",
+    "@value": {
+        "description": "The value of a measurement entry"
+    },
+    "unit": "Unidade",
+    "@unit": {
+        "description": "The unit used for a repetition (kg, time, etc.)"
+    },
+    "edit": "Editar",
+    "delete": "Excluir",
+    "login": "Entrar",
+    "@login": {
+        "description": "Text for login button"
+    },
+    "userProfile": "Seu perfil",
+    "logout": "Sair",
+    "@logout": {
+        "description": "Text for logout button"
+    },
+    "notes": "Comentários",
+    "@notes": {
+        "description": "Personal notes, e.g. for a workout session"
+    },
+    "description": "Descrição",
+    "register": "Inscrever-se",
+    "@register": {
+        "description": "Text for registration button"
+    },
+    "useDefaultServer": "Usar servidor padrão",
+    "@useDefaultServer": {
+        "description": "Toggle button allowing users to switch between the default and a custom wger server"
+    },
+    "reset": "Redefinir",
+    "@reset": {
+        "description": "Button text allowing the user to reset the entered values to the default"
+    },
+    "password": "Senha",
+    "invalidUsername": "Por favor insira um nome de usuário válido",
+    "@invalidUsername": {
+        "description": "Error message when the user enters an invalid username"
+    },
+    "passwordTooShort": "A senha é muito curta",
+    "@passwordTooShort": {
+        "description": "Error message when the user a password that is too short"
+    },
+    "email": "Endereço de email",
+    "username": "Usuário",
+    "customServerHint": "Digite o endereço do seu próprio servidor, caso contrário o padrão será usado",
+    "@customServerHint": {
+        "description": "Hint text for the form where the users can enter their own wger instance"
+    },
+    "useCustomServer": "Usar servidor customizado",
+    "@useCustomServer": {
+        "description": "Toggle button allowing users to switch between the default and a custom wger server"
+    },
+    "registerInstead": "Não tem uma conta? Registrar agora",
+    "usernameValidChars": "Um usuário deve apenas conter letras, digitos e os caracteres @, +, ., -, ou _",
+    "@usernameValidChars": {
+        "description": "Error message when the user tries to register a username with forbidden characters"
+    },
+    "invalidUrl": "Por favor, digite uma URL válida",
+    "@invalidUrl": {
+        "description": "Error message when the user enters an invalid URL, e.g. in the login form"
+    },
+    "customServerUrl": "URL da instância wger",
+    "@customServerUrl": {
+        "description": "Label in the form where the users can enter their own wger instance"
+    },
+    "passwordsDontMatch": "As senhas não coincidem",
+    "@passwordsDontMatch": {
+        "description": "Error message when the user enters two different passwords during registration"
+    },
+    "invalidEmail": "Por favor insira um endereço de e-mail válido",
+    "@invalidEmail": {
+        "description": "Error message when the user enters an invalid email"
+    },
+    "confirmPassword": "Confirme sua senha",
+    "comment": "Comentário",
+    "@comment": {
+        "description": "Comment, additional information"
+    },
+    "logIngredient": "Salvar ingrediente no diário nutricional",
+    "equipment": "Equipamento",
+    "@equipment": {
+        "description": "Equipment needed to perform an exercise"
+    },
+    "saturatedFat": "Gordura saturada",
+    "mealLogged": "Refeição registrada no diário",
+    "images": "Imagens",
+    "close": "Fechar",
+    "@close": {
+        "description": "Translation for close"
+    },
+    "successfullyDeleted": "Excluído com sucesso.",
+    "@successfullyDeleted": {
+        "description": "Message when an item was successfully deleted"
+    },
+    "save": "Salvar",
+    "goToToday": "Vá para hoje",
+    "@goToToday": {
+        "description": "Label on button to jump back to 'today' in the calendar widget"
+    },
+    "set": "Série",
+    "@set": {
+        "description": "A set in a workout plan"
+    },
+    "noMeasurementEntries": "Você não tem entradas de medição",
+    "impression": "Impressão",
+    "@impression": {
+        "description": "General impression (e.g. for a workout session) such as good, bad, etc."
+    },
+    "plateCalculator": "Pratos",
+    "@plateCalculator": {
+        "description": "Label used for the plate calculator in the gym mode"
+    },
+    "newNutritionalPlan": "Novo plano nutricional",
+    "setNr": "Definir {nr}",
+    "@setNr": {
+        "description": "Header in form indicating the number of the current set. Can also be translated as something like 'Set Nr. xy'.",
+        "type": "text",
+        "placeholders": {
+            "nr": {
+                "type": "String"
+            }
+        }
+    },
+    "fat": "Gordura",
+    "timeStartAhead": "O horário de início não pode ser anterior ao horário de término",
+    "carbohydrates": "Carboidratos",
+    "muscles": "Músculos",
+    "@muscles": {
+        "description": "(main) muscles trained by an exercise"
+    },
+    "total": "Total",
+    "@total": {
+        "description": "Label used for total sums of e.g. calories or similar"
+    },
+    "dayDescriptionHelp": "Uma descrição do que é feito neste dia (por exemplo, 'dia de puxar') ou quais partes do corpo são treinadas (por exemplo, 'peito e ombros')",
+    "gymMode": "Modo Gym",
+    "@gymMode": {
+        "description": "Label when starting the gym mode"
+    },
+    "logged": "Desconectar",
+    "@logged": {
+        "description": "Header for the column of 'logged' nutritional values, i.e. what was eaten"
+    },
+    "amount": "Quantia",
+    "@amount": {
+        "description": "The amount (e.g. in grams) of an ingredient in a meal"
+    },
+    "loginInstead": "Já tem uma conta ? Entre",
+    "pause": "Pausar",
+    "@pause": {
+        "description": "Noun, not an imperative! Label used for the pause when using the gym mode"
+    },
+    "success": "Concluído com Sucesso",
+    "@success": {
+        "description": "Message when an action completed successfully, usually used as a heading"
+    },
+    "repetitionUnit": "Unidade de repetição",
+    "weightUnit": "Unidade de peso",
+    "searchIngredient": "Pesquisar Ingrediente",
+    "@searchIngredient": {
+        "description": "Label on ingredient search form"
+    },
+    "anErrorOccurred": "Ocorreu um erro!",
+    "enterValue": "por favor insira um valor",
+    "@enterValue": {
+        "description": "Error message when the user hasn't entered a value on a required field"
+    },
+    "logMeal": "Registrar refeição para diário de nutrição",
+    "newEntry": "Nova entrada",
+    "@newEntry": {
+        "description": "Title when adding a new entry such as a weight or log entry"
+    },
+    "addSet": "Adicionar séries",
+    "@addSet": {
+        "description": "Label for the button that adds a set (to a workout day)"
+    },
+    "energyShort": "E",
+    "@energyShort": {
+        "description": "The first letter or short name of the word 'Energy', used in overviews"
+    },
+    "name": "Nome",
+    "@name": {
+        "description": "Name for a workout or nutritional plan"
+    },
+    "percentEnergy": "Porcentagem de energia",
+    "searchNamesInEnglish": "Procure também nomes em inglês",
+    "exercise": "Exercício",
+    "@exercise": {
+        "description": "An exercise for a workout"
+    },
+    "addIngredient": "Adicionar ingrediente",
+    "fatShort": "G",
+    "@fatShort": {
+        "description": "The first letter or short name of the word 'Fat', used in overviews"
+    },
+    "start": "Começar",
+    "@start": {
+        "description": "Label on button to start the gym mode (i.e., an imperative)"
+    },
+    "jumpTo": "Pule para",
+    "@jumpTo": {
+        "description": "Imperative. Label used in popup allowing the user to jump to a specific exercise while in the gym mode"
+    },
+    "difference": "Diferença",
+    "fiber": "Fibra",
+    "aboutDescription": "Obrigado por usar o Wger! Wger é um projeto colaborativo de código aberto, feito por entusiastas do fitness de todo o mundo.",
+    "@aboutDescription": {
+        "description": "Text in the about dialog"
+    },
+    "timeStart": "Hora de início",
+    "@timeStart": {
+        "description": "The starting time of a workout"
+    },
+    "searchExercise": "Exercício de pesquisa para adicionar",
+    "@searchExercise": {
+        "description": "Label on set form. Selected exercises are added to the set"
+    },
+    "moreMeasurementEntries": "Adicionar nova medição",
+    "@moreMeasurementEntries": {
+        "description": "Message shown when the user wants to add new measurement"
+    },
+    "loadingText": "Carregando...",
+    "@loadingText": {
+        "description": "Text to show when entries are being loaded in the background: Loading..."
+    },
+    "selectExercises": "Se quiser fazer um superséries você pode procurar vários exercícios, eles estarão agrupados",
+    "nutritionalDiary": "Diário nutricional",
+    "protein": "Proteína",
+    "proteinShort": "P",
+    "@proteinShort": {
+        "description": "The first letter or short name of the word 'Protein', used in overviews"
+    },
+    "noWeightEntries": "Você não tem entradas de peso",
+    "@noWeightEntries": {
+        "description": "Message shown when the user has no logged weight entries"
+    },
+    "noNutritionalPlans": "Você não tem planos nutricionais",
+    "@noNutritionalPlans": {
+        "description": "Message shown when the user has no nutritional plans"
+    },
+    "goToDetailPage": "Ir para a página de detalhes",
+    "labelWorkoutLogs": "Registros de treinos",
+    "@labelWorkoutLogs": {
+        "description": "(Workout) logs"
+    },
+    "ingredient": "Ingrediente",
+    "measurementCategoriesHelpText": "Categoria de medição, como 'bíceps' ou 'gordura corporal'",
+    "rirNotUsed": "RiR não usado",
+    "@rirNotUsed": {
+        "description": "Label used in RiR slider when the RiR value is not used/saved for the current setting or log"
+    },
+    "todaysWorkout": "Seu treino hoje",
+    "kJ": "kJ",
+    "@kJ": {
+        "description": "Energy in a meal in kilo joules, kJ"
+    },
+    "sodium": "Sódio",
+    "translation": "Tradução",
+    "successfullySaved": "Salvo",
+    "@successfullySaved": {
+        "description": "Message when an item was successfully saved"
+    },
+    "exerciseList": "Lista de exercícios",
+    "energy": "Energia",
+    "@energy": {
+        "description": "Energy in a meal, ingredient etc. e.g. in kJ"
+    },
+    "newDay": "Novo dia",
+    "toggleDetails": "Alterar detalhes",
+    "@toggleDetails": {
+        "description": "Switch to toggle detail / overview"
+    },
+    "musclesSecondary": "Músculos secundários",
+    "@musclesSecondary": {
+        "description": "secondary muscles trained by an exercise"
+    },
+    "labelDashboard": "Painel",
+    "@labelDashboard": {
+        "description": "Title for screen dashboard"
+    },
+    "timeEnd": "Fim do tempo",
+    "@timeEnd": {
+        "description": "The end time of a workout"
+    },
+    "planned": "Planejado",
+    "@planned": {
+        "description": "Header for the column of 'planned' nutritional values, i.e. what should be eaten"
+    },
+    "logHelpEntries": "Se em um mesmo dia houver mais de uma inscrição com o mesmo número de repetições, mas pesos diferentes, apenas a inscrição com maior peso será mostrada no diagrama.",
+    "exerciseName": "Nome do exercício",
+    "@exerciseName": {
+        "description": "Label for the name of a workout exercise"
+    },
+    "labelBottomNavNutrition": "Nutrição",
+    "@labelBottomNavNutrition": {
+        "description": "Label used in bottom navigation, use a short word"
+    },
+    "language": "Linguagem",
+    "nutritionalPlans": "Planos nutricionais",
+    "kcal": "kcal",
+    "@kcal": {
+        "description": "Energy in a meal in kilocalories, kcal"
+    },
+    "g": "g",
+    "@g": {
+        "description": "Abbreviation for gram"
+    },
+    "addMeal": "Adicionar refeição",
+    "sameRepetitions": "Se você fizer as mesmas repetições e peso para todas as séries, poderá preencher apenas uma linha. Por exemplo, para 4 séries basta inserir 10 para as repetições, isso automaticamente se torna \"4 x 10\".",
+    "measurementEntriesHelpText": "A unidade usada para medir a categoria, como 'cm' ou '%'",
+    "sugars": "Açúcar",
+    "carbohydratesShort": "C",
+    "@carbohydratesShort": {
+        "description": "The first letter or short name of the word 'Carbohydrates', used in overviews"
+    },
+    "measurements": "Medidas",
+    "@measurements": {
+        "description": "Categories for the measurements such as biceps size, body fat, etc."
+    },
+    "macronutrients": "Macronutrientes",
+    "plateCalculatorNotDivisible": "Não é possível atingir o peso com os pratos disponíveis",
+    "@plateCalculatorNotDivisible": {
+        "description": "Error message when the current weight is not reachable with plates (e.g. 33.1 kg)"
+    },
+    "confirmDelete": "Tem certeza de que deseja excluir '{toDelete}'?",
+    "@confirmDelete": {
+        "description": "Confirmation text before the user deletes an object",
+        "type": "text",
+        "placeholders": {
+            "toDelete": {
+                "type": "String"
+            }
+        }
+    },
+    "gPerBodyKg": "g por kg corporal",
+    "@gPerBodyKg": {
+        "description": "Label used for total sums of e.g. calories or similar in grams per Kg of body weight"
+    },
+    "weekAverage": "Média de 7 dias",
+    "@weekAverage": {
+        "description": "Header for the column of '7 day average' nutritional values, i.e. what was logged last week"
+    },
+    "labelWorkoutPlan": "Plano de treino",
+    "@labelWorkoutPlan": {
+        "description": "Title for screen workout plan"
+    },
+    "category": "Categoria",
+    "@category": {
+        "description": "Category for an exercise, ingredient, etc."
+    },
+    "exercises": "Exercícios",
+    "@exercises": {
+        "description": "Multiple exercises for a workout"
+    },
+    "time": "Tempo",
+    "@time": {
+        "description": "The time of a meal or workout"
+    },
+    "calendar": "Calendário",
+    "verify": "Verificar",
+    "workoutSession": "Sessão de treino",
+    "@workoutSession": {
+        "description": "A (logged) workout session"
+    },
+    "logHelpEntriesUnits": "Observe que apenas as entradas com uma unidade de peso (kg ou lb) e repetições são registradas; outras combinações, como tempo ou até a falha, são ignoradas aqui.",
+    "measurement": "Medição",
+    "nrOfSets": "Séries por exercício: {nrOfSets}",
+    "@nrOfSets": {
+        "description": "Label shown on the slider where the user selects the nr of sets",
+        "type": "text",
+        "placeholders": {
+            "nrOfSets": {
+                "type": "String"
+            }
+        }
+    },
+    "useMetric": "Use unidades métricas para peso corporal",
+    "aboutMastodonTitle": "Mastodon",
+    "selectEntry": "Por favor, selecione uma entrada",
+    "noMatchingExerciseFound": "Sem exercícios correspondentes encontrados",
+    "@noMatchingExerciseFound": {
+        "description": "Message returned if no exercises match the searched string"
+    },
+    "selectExercise": "Por favor, selecione um exercício",
+    "@selectExercise": {
+        "description": "Error message when the user hasn't selected an exercise in the form"
+    },
+    "enterValidNumber": "Por favor, insira um número válido",
+    "@enterValidNumber": {
+        "description": "Error message when the user has submitted an invalid number (e.g. '3,.,.,.')"
+    },
+    "baseNameEnglish": "Todos os exercícios necessitam de um nome base em inglês",
+    "labelBottomNavWorkout": "Treino",
+    "@labelBottomNavWorkout": {
+        "description": "Label used in bottom navigation, use a short word"
+    },
+    "reps": "Repetições",
+    "@reps": {
+        "description": "Shorthand for repetitions, used when space constraints are tighter"
+    },
+    "rir": "ReR",
+    "@rir": {
+        "description": "Shorthand for Repetitions In Reserve"
+    },
+    "setUnitsAndRir": "Definir unidades e RiR",
+    "@setUnitsAndRir": {
+        "description": "Label shown on the slider where the user can toggle showing units and RiR",
+        "type": "text"
+    },
+    "aboutDonateTitle": "Faça uma doação",
+    "aboutDonateText": "Enquanto o aplicativo e serviço é de graça, desenvolvê-lo não é. O desenvolvimento tomar tempo e recursos de voluntários. Sua contribuição pode ajudar a tornar o aplicativo melhor e a manter o serviço rodando por mais tempo.",
+    "enterCharacters": "Por favor, utilize entre {min} e {max} caracteres",
+    "@enterCharacters": {
+        "description": "Error message when the user hasn't entered the correct number of characters in a form",
+        "type": "text",
+        "placeholders": {
+            "min": {
+                "type": "String"
+            },
+            "max": {
+                "type": "String"
+            }
+        }
+    },
+    "enterMinCharacters": "Por favor, utilize pelo menos {min} caracteres",
+    "@enterMinCharacters": {
+        "description": "Error message when the user hasn't entered the minimum amount characters in a form",
+        "type": "text",
+        "placeholders": {
+            "min": {
+                "type": "String"
+            }
+        }
+    },
+    "gallery": "Galeria",
+    "alsoKnownAs": "Também conhecido como:{aliases}",
+    "@alsoKnownAs": {
+        "placeholders": {
+            "aliases": {
+                "type": "String"
+            }
+        },
+        "description": "List of alternative names for an exercise"
+    },
+    "recentlyUsedIngredients": "Ingredientes adicionados recentemente",
+    "@recentlyUsedIngredients": {
+        "description": "A message when a user adds a new ingredient to a meal."
+    },
+    "addImage": "Adicionar imagem",
+    "scanBarcode": "Escaneie o código de barras",
+    "@scanBarcode": {
+        "description": "Label for scan barcode button"
+    },
+    "dataCopied": "Dados copiados para o novo registro",
+    "@dataCopied": {
+        "description": "Snackbar message to show on copying data to a new log entry"
+    },
+    "appUpdateContent": "Esta versão do aplicativo não é compatível com o servidor, por favor atualize o aplicativo.",
+    "productFound": "Produto encontrado",
+    "@productFound": {
+        "description": "Header label for dialog when product is found with barcode"
+    },
+    "appUpdateTitle": "Atualização necessária",
+    "takePicture": "Tire uma foto",
+    "selectIngredient": "Por favor, selecione um ingrediente",
+    "@selectIngredient": {
+        "description": "Error message when the user hasn't selected an ingredient from the autocompleter"
+    },
+    "selectImage": "Por favor, selecione uma imagem",
+    "@selectImage": {
+        "description": "Label and error message when the user hasn't selected an image to save"
+    },
+    "optionsLabel": "Opções",
+    "@optionsLabel": {
+        "description": "Label for the popup with general app options"
+    },
+    "productNotFound": "Produto não encontrado",
+    "@productNotFound": {
+        "description": "Header label for dialog when product is not found with barcode"
+    },
+    "variations": "Variações",
+    "@variations": {
+        "description": "Variations of one exercise (e.g. benchpress and benchpress narrow)"
+    },
+    "verifiedEmail": "Email verificado",
+    "chooseFromLibrary": "Escolher na galeria",
+    "unVerifiedEmail": "Email não verificado",
+    "add_exercise_image_license": "As imagens devem ser compatíveis com a licença CC BY SA. Em caso de dúvida, faça upload apenas de fotos que você mesmo tenha tirado.",
+    "next": "Próximo",
+    "settingsCacheTitle": "Cache",
+    "settingsExerciseCacheDescription": "Cache do exercício",
+    "settingsCacheDeletedSnackbar": "Cache limpa com sucesso",
+    "translateExercise": "Traduza este exercício agora",
+    "contributeExerciseWarning": "Você só pode contribuir com exercícios se sua conta tiver mais de {days} dias e se você tiver verificado seu e-mail",
+    "@contributeExerciseWarning": {
+        "description": "Number of days before which a person can add exercise",
+        "placeholders": {
+            "days": {
+                "type": "String",
+                "example": "14"
+            }
+        }
+    },
+    "whatVariationsExist": "Quais variações deste exercício existem, se houver?",
+    "previous": "Anterior",
+    "addExercise": "Adicionar exercício",
+    "verifiedEmailInfo": "Um e-mail foi enviado para {email}",
+    "@verifiedEmailInfo": {
+        "placeholders": {
+            "email": {
+                "type": "String"
+            }
+        }
+    },
+    "verifiedEmailReason": "Você precisa verificar seu e-mail para contribuir com exercícios",
+    "alternativeNames": "Nomes alternativos",
+    "baseData": "Fundamentos em inglês",
+    "@baseData": {
+        "description": "The base data for an exercise such as category, trained muscles, etc."
+    },
+    "aboutPageTitle": "Sobre o nós & Suporte",
+    "productFoundDescription": "O código de barras corresponde a este produto: {productName}. Deseja continuar?",
+    "@productFoundDescription": {
+        "description": "Dialog info when product is found with barcode",
+        "type": "text",
+        "placeholders": {
+            "productName": {
+                "type": "String"
+            }
+        }
+    },
+    "productNotFoundDescription": "O produto com o código de barras escaneado {barcode} não foi encontrado no banco de dados da wger",
+    "@productNotFoundDescription": {
+        "description": "Dialog info when product is not found with barcode",
+        "type": "text",
+        "placeholders": {
+            "barcode": {
+                "type": "String"
+            }
+        }
+    },
+    "contributeExercise": "Contribuir com um exercício",
+    "oneNamePerLine": "Um nome por linha",
+    "settingsTitle": "Configurações",
+    "onlyLogging": "Apenas acompanhe calorias",
+    "ingredientLogged": "Ingrediente registrado no diário",
+    "noIngredientsDefined": "Nenhum ingrediente definido ainda",
+    "bench": "Banco",
+    "@bench": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "goalFiber": "Meta de fibras",
+    "overallChangeWeight": "Mudança geral",
+    "@overallChangeWeight": {
+        "description": "Overall change in weight, added for localization"
+    },
+    "goalTypeMeals": "De refeições",
+    "@goalTypeMeals": {
+        "description": "added for localization of Class GoalType's filed meals"
+    },
+    "goalTypeBasic": "Básico",
+    "@goalTypeBasic": {
+        "description": "added for localization of Class GoalType's filed basic"
+    },
+    "goalTypeAdvanced": "Avançado",
+    "@goalTypeAdvanced": {
+        "description": "added for localization of Class GoalType's filed advanced"
+    },
+    "indicatorRaw": "bruto",
+    "@indicatorRaw": {
+        "description": "added for localization of Class Indicator's field text"
+    },
+    "indicatorAvg": "média",
+    "@indicatorAvg": {
+        "description": "added for localization of Class Indicator's field text"
+    },
+    "seconds": "Segundos",
+    "@seconds": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "textPromptTitle": "Pronto para iniciar?",
+    "textPromptSubheading": "Aperte o botão de ação para começar",
+    "chest": "Peito",
+    "@chest": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "max_reps": "Repetições Máximas",
+    "@max_reps": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "pull_up_bar": "Barra de Pull-up",
+    "@pull_up_bar": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "quads": "Quadríceps",
+    "@quads": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "goalFat": "Meta de gordura",
+    "body_weight": "Peso Corporal",
+    "@body_weight": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "kilometers": "Quilômetros",
+    "@kilometers": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "kilometers_per_hour": "Quilômetros por hora",
+    "@kilometers_per_hour": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "miles_per_hour": "Milhas por hora",
+    "@miles_per_hour": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "minutes": "Minutos",
+    "@minutes": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "sz_bar": "Barra Curvada",
+    "@sz_bar": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "goalProtein": "Meta de proteína",
+    "goalEnergy": "Meta energética",
+    "today": "Hoje",
+    "arms": "Braços",
+    "@arms": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "calves": "Panturrilha",
+    "@calves": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "triceps": "Tríceps",
+    "@triceps": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "goalCarbohydrates": "Meta de carbohidratos",
+    "onlyLoggingHelpText": "Marque a caixa se você apenas quiser registrar suas calorias e não quer configurar um plano nutricional detalhado com refeições específicas",
+    "kcalValue": "{value} kcal",
+    "@kcalValue": {
+        "description": "A value in kcal, e.g. 500 kcal",
+        "type": "text",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "percentValue": "{value} %",
+    "@percentValue": {
+        "description": "A value in percent, e.g. 10 %",
+        "type": "text",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "goalMacro": "Macro Objetivos",
+    "@goalMacro": {
+        "description": "The goal for macronutrients"
+    },
+    "selectMealToLog": "Selecione uma refeição para registrar no diário",
+    "loggedToday": "Registrado hoje",
+    "surplus": "excedente",
+    "@surplus": {
+        "description": "Caloric surplus (either planned or unplanned)"
+    },
+    "deficit": "déficit",
+    "@deficit": {
+        "description": "Caloric deficit (either planned or unplanned)"
+    },
+    "gValue": "{value} g",
+    "@gValue": {
+        "description": "A value in grams, e.g. 5 g",
+        "type": "text",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "abs": "Abdômen",
+    "@abs": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "back": "Costas",
+    "@back": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "barbell": "Barra",
+    "@barbell": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "cardio": "Cardio",
+    "@cardio": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "dumbbell": "Haltere",
+    "@dumbbell": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "glutes": "Glúteos",
+    "@glutes": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "gym_mat": "Tapete",
+    "@gym_mat": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "hamstrings": "Tendões",
+    "@hamstrings": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "kettlebell": "Kettlebell",
+    "@kettlebell": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "lats": "Dorsal",
+    "@lats": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "legs": "Pernas",
+    "@legs": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "lower_back": "Lombar",
+    "@lower_back": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "plates": "Anilhas",
+    "@plates": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "repetitions": "Repetições",
+    "@repetitions": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "shoulders": "Ombros",
+    "@shoulders": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "until_failure": "Até a falha",
+    "@until_failure": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "kg": "kg",
+    "@kg": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "none__bodyweight_exercise_": "nenhum (exercício com peso corporal)",
+    "@none__bodyweight_exercise_": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "lb": "lb",
+    "@lb": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "settingsIngredientCacheDescription": "Cache de Ingredientes",
+    "cacheWarning": "Devido ao cache pode demorar algum tempo até que mudanças estejam visíveis na aplicação.",
+    "swiss_ball": "Bola Suíça",
+    "@swiss_ball": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "log": "Registro",
+    "@log": {
+        "description": "Log a specific meal (imperative form)"
+    },
+    "done": "Feito",
+    "incline_bench": "Banco inclinado",
+    "@incline_bench": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "miles": "Milhas",
+    "@miles": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "biceps": "Bíceps",
+    "@biceps": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "useApiToken": "Usar Token API",
+    "useUsernameAndPassword": "Usar usuário e senha",
+    "apiToken": "Token API",
+    "invalidApiToken": "Por favor, entre com a API key válida",
+    "@invalidApiToken": {
+        "description": "Error message when the user enters an invalid API key"
+    },
+    "apiTokenValidChars": "A chave API deve ter apenas letras a-f, números 0-9 e ter exatamente 40 caracteres",
+    "@apiTokenValidChars": {
+        "description": "Error message when the user tries to input a API key with forbidden characters"
+    },
+    "routines": "Rotinas",
+    "newRoutine": "Nova rotina",
+    "noRoutines": "Não tens rotinas",
+    "restTime": "Tempo de descanso",
+    "sets": "Séries",
+    "@sets": {
+        "description": "The number of sets to be done for one exercise"
+    },
+    "exerciseNr": "Exercício {nr}",
+    "@exerciseNr": {
+        "description": "Header in form indicating the number of the current exercise. Can also be translated as something like 'Set Nr. xy'.",
+        "type": "text",
+        "placeholders": {
+            "nr": {
+                "type": "String"
+            }
+        }
+    },
+    "supersetNr": "Supersérie {nr}",
+    "@supersetNr": {
+        "description": "Header in form indicating the number of the current exercise. Can also be translated as something like 'Superset Nr. xy'.",
+        "type": "text",
+        "placeholders": {
+            "nr": {
+                "type": "String"
+            }
+        }
+    },
+    "restDay": "Dia de descanso",
+    "isRestDay": "É dia de descanso",
+    "isRestDayHelp": "Por favor, note que todos as séries e exercícios serão removidos quando marcar um dia como um dia de descanso.",
+    "needsLogsToAdvance": "Precisa de logs para avançar",
+    "selectAvailablePlates": "Selecione os pesos disponíveis",
+    "barWeight": "Peso da barra",
+    "useColors": "Use cores",
+    "needsLogsToAdvanceHelp": "Selecione se deseja que a rotina de treino avance para o próximo dia agendado somente se você cadastrou o dia de treino",
+    "routineDays": "Dias de treino",
+    "resultingRoutine": "Treino resultante",
+    "yourCurrentNutritionPlanHasNoMealsDefinedYet": "Seu plano nutricional não tem refeições definidas",
+    "@yourCurrentNutritionPlanHasNoMealsDefinedYet": {
+        "description": "Message shown when a nutrition plan doesn't have any meals"
+    },
+    "toAddMealsToThePlanGoToNutritionalPlanDetails": "Para adicionar refeições para o planejamento, vá para Detalhes de Plano Nutricional",
+    "@toAddMealsToThePlanGoToNutritionalPlanDetails": {
+        "description": "Message shown to guide users to the nutritional plan details page to add meals"
+    },
+    "errorInfoDescription": "Algo de errado aconteceu. Você pode nos ajudar a concertar esse problema reportando o problema no Github.",
+    "errorInfoDescription2": "Você pode continuar usando o applicativo, mas algumas funcionalidades não estarão disponíveis.",
+    "errorViewDetails": "Detalhes técnicos",
+    "errorCouldNotConnectToServer": "Não foi possível conectar ao servidor",
+    "copyToClipboard": "Copiar ao clipboard",
+    "min": "Min",
+    "max": "Max",
+    "aboutWhySupportTitle": "Código aberto e de uso gratuito ❤️",
+    "aboutContributeTitle": "Contribua",
+    "aboutContributeText": "Todos os tipos de contribuidores são bem vindos. Se você é um desenvolvedor, tradutor ou alguém apaixonado pelo fitness, toda ajuda é bem vinda!",
+    "aboutBugsListTitle": "Reportar um problema ou sugerir uma funcionalidade",
+    "aboutTranslationListTitle": "Traduzir a aplicação",
+    "aboutSourceListTitle": "Ver o código fonte",
+    "aboutJoinCommunityTitle": "Entre para a comunidade",
+    "aboutDiscordTitle": "Discord",
+    "others": "Outros",
+    "fitInWeek": "Cronograma semanal fixo",
+    "fitInWeekHelp": "Se ligado, os dias vão se repetir semanalmente, caso contrário os dias seguirão sequencialmente se considerar o começo de uma nova semana.",
+    "addSuperset": "Adicionar superséries",
+    "setHasProgression": "Treino tem prograssão",
+    "setHasProgressionWarning": "Observe que, no momento, não é possível editar todas as configurações de um séries no aplicativo móvel nem configurar a progressão automática. Por enquanto, use o aplicativo web.",
+    "setHasNoExercises": "Este séries ainda não tem exercícios!",
+    "simpleMode": "Modo simples",
+    "simpleModeHelp": "Esconder informações avançadas enquanto estiver editando exercicio",
+    "progressionRules": "Este exercício tem regras de progressão e não pode ser editado no aplicativo móvel. Use o aplicativo web para editá-lo.",
+    "resistance_band": "Banda de resistência",
+    "@resistance_band": {
+        "description": "Generated entry for translation for server strings"
+    },
+    "themeMode": "Tema",
+    "darkMode": "Sempre modo escuro",
+    "lightMode": "Sempre modo claro",
+    "systemMode": "Configurações do sistema",
+    "endDate": "Data final",
+    "@endDate": {
+        "description": "The End date of a nutritional plan"
+    },
+    "startDate": "Data inicial",
+    "dayTypeCustom": "Personalizado",
+    "dayTypeHiit": "Treinamento intervalado de alta intensidade",
+    "dayTypeTabata": "Método Tabata",
+    "impressionGood": "Boa",
+    "impressionNeutral": "Neutra",
+    "impressionBad": "Ruim",
+    "gymModeShowExercises": "Mostrar páginas de visão geral dos exercícios",
+    "gymModeShowTimer": "Mostrar cronômetro entre séries",
+    "gymModeTimerType": "Tipo de temporizador",
+    "gymModeTimerTypeHelText": "Se uma série tiver tempo de pausa, sempre será usada uma contagem regressiva.",
+    "countdown": "Contagem regressiva",
+    "stopwatch": "cronômetro",
+    "gymModeDefaultCountdownTime": "Tempo de contagem regressiva padrão, em segundos",
+    "gymModeNotifyOnCountdownFinish": "Notificar no final da contagem regressiva",
+    "duration": "Duração",
+    "durationHoursMinutes": "{hours}h {minutes}m",
+    "@durationHoursMinutes": {
+        "description": "A duration, in hours and minutes",
+        "type": "text",
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            },
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "volume": "Volume",
+    "@volume": {
+        "description": "The volume of a workout or set, i.e. weight x reps"
+    },
+    "workoutCompleted": "Treino concluído",
+    "dayTypeEnom": "Cada minuto a minuto",
+    "dayTypeAmrap": "Tantas rodadas quanto possível",
+    "dayTypeEdt": "Treinamento de densidade crescente",
+    "dayTypeRft": "Rodadas para ganhar tempo",
+    "dayTypeAfap": "O mais rápido possível",
+    "slotEntryTypeNormal": "Normal",
+    "slotEntryTypePartial": "Parcial",
+    "slotEntryTypeForced": "Forçado",
+    "slotEntryTypeTut": "Tempo Sob Tensão",
+    "slotEntryTypeIso": "Fixação isométrica",
+    "slotEntryTypeJump": "Pular",
+    "applicationLogs": "Registros de aplicativos",
+    "openEnded": "Aberto",
+    "@openEnded": {
+        "description": "When a nutrition plan has no pre-defined end date"
+    },
+    "overview": "visão global",
+    "formMinMaxValues": "Insira um valor entre {min} e {max}",
+    "@formMinMaxValues": {
+        "description": "Error message when the user needs to enter a value between min and max",
+        "type": "text",
+        "placeholders": {
+            "min": {
+                "type": "int"
+            },
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "checkInformationBeforeSubmitting": "Verifique se as informações inseridas estão corretas antes de enviar o exercício",
+    "imageDetailsTitle": "Detalhes da imagem",
+    "@imageDetailsTitle": {
+        "description": "Title for image details form"
+    },
+    "imageDetailsLicenseTitle": "Titulo",
+    "@imageDetailsLicenseTitle": {
+        "description": "Label for image title field"
+    },
+    "imageDetailsLicenseTitleHint": "Insira o título da imagem",
+    "@imageDetailsLicenseTitleHint": {
+        "description": "Hint text for image title field"
+    },
+    "imageDetailsSourceLink": "Link para o site de origem",
+    "@imageDetailsSourceLink": {
+        "description": "Label for source link field"
+    },
+    "author": "Autor(s)",
+    "authorHint": "Digite o nome do autor",
+    "@authorHint": {
+        "description": "Hint text for author field"
+    },
+    "imageDetailsAuthorLink": "Link para o site ou perfil do autor",
+    "@imageDetailsAuthorLink": {
+        "description": "Label for author link field"
+    },
+    "imageDetailsDerivativeSource": "Link para a fonte original, se este for um trabalho derivado",
+    "@imageDetailsDerivativeSource": {
+        "description": "Label for derivative source field"
+    },
+    "imageDetailsDerivativeHelp": "Um trabalho derivado é baseado em um trabalho anterior, mas contém conteúdo novo e criativo suficiente para ter direito aos seus próprios direitos autorais.",
+    "@imageDetailsDerivativeHelp": {
+        "description": "Helper text explaining derivative works"
+    },
+    "imageDetailsImageType": "Tipo de imagem",
+    "@imageDetailsImageType": {
+        "description": "Label for image type selector"
+    },
+    "imageDetailsLicenseNotice": "Ao enviar esta imagem, você concorda em liberá-la sob CC-BY-SA-4. A imagem deve ser de sua autoria ou o autor deve tê-la divulgado sob uma licença compatível com ela.",
+    "imageDetailsLicenseNoticeLinkToLicense": "Consulte o texto da licença.",
+    "imageFormatNotSupported": "{imageFormat} não compatível",
+    "@imageFormatNotSupported": {
+        "description": "Label shown on the error container when image format is not supported",
+        "type": "text",
+        "placeholders": {
+            "imageFormat": {
+                "type": "String"
+            }
+        }
+    },
+    "add": "adicionar",
+    "@add": {
+        "description": "Add button text"
+    },
+    "enterTextInLanguage": "Por favor, insira o texto no idioma correto!",
+    "endWorkout": "Terminar treino",
+    "@endWorkout": {
+        "description": "Use the imperative, label on button to finish the current workout in gym mode"
+    },
+    "slotEntryTypeMyo": "Myo",
+    "slotEntryTypeDropset": "Drop set",
+    "trophies": "Troféus",
+    "noTrophies": "Você ainda não possui troféus",
+    "dashboardWidgets": "Widgets do painel de controle",
+    "personalRecords": "Registros pessoais",
+    "serverUpdateTitle": "Atualização do servidor necessária",
+    "serverUpdateContent": "O servidor conectado é muito antigo para esta versão do aplicativo. Peça ao administrador do servidor para atualizá-lo para pelo menos a versão {minVersion}.",
+    "@serverUpdateContent": {
+        "description": "Message shown when the server version is too old. minVersion is the minimum required server version string.",
+        "type": "text",
+        "placeholders": {
+            "minVersion": {
+                "type": "String"
+            }
+        }
+    },
+    "productNotFoundOpenFoodFacts": "Você pode adicionar este produto ao Open Food Facts para ajudar a comunidade!",
+    "@productNotFoundOpenFoodFacts": {
+        "description": "Label shown when product is not found to encourage users to go on Open Food Facts and add it themselves"
+    },
+    "addToOpenFoodFacts": "Adicionar ao Open Food Facts",
+    "@addToOpenFoodFacts": {
+        "description": "Label shown as the clickable link to go on Open Food Facts"
+    },
+    "isVegan": "Vegano",
+    "@isVegan": {
+        "description": "Label for vegan toggle"
+    },
+    "isVegetarian": "Vegetariano",
+    "@isVegetarian": {
+        "description": "Label for vegetarian toggle"
+    },
+    "filter": "Filtro",
+    "@filter": {
+        "description": "Label for filter button"
+    },
+    "searchLanguageCurrent": "Somente no idioma atual ({lang})",
+    "@searchLanguageCurrent": {
+        "type": "text",
+        "placeholders": {
+            "lang": {
+                "type": "String"
+            }
+        }
+    },
+    "searchLanguageEnglish": "Idioma atual ({lang}) e inglês",
+    "@searchLanguageEnglish": {
+        "type": "text",
+        "placeholders": {
+            "lang": {
+                "type": "String"
+            }
+        }
+    },
+    "searchLanguageAll": "Todos os idiomas",
+    "topSet": "Série principal: {value}",
+    "@topSet": {
+        "description": "Value is a representation of the set, like '10 x 80kg'",
+        "type": "text",
+        "placeholders": {
+            "value": {
+                "type": "String"
+            }
+        }
+    },
+    "preview": "Pré-visualização",
+    "slotEntryTypeWarmup": "Aquecimento",
+    "useBasicMarkdown": "Você pode usar Markdown básico para formatar o texto",
+    "editorBold": "Audacioso",
+    "@editorBold": {
+        "description": "Label for bold formatting"
+    },
+    "editorItalic": "Itálico",
+    "editorList": "Lista",
+    "filterNutriscore": "Filtro Nutri-Score",
+    "@filterNutriscore": {
+        "description": "Heading for the Nutri-Score slider in the ingredient search filter dialog"
+    },
+    "off": "Desligado",
+    "@off": {
+        "description": "Generic label for the option that switches something off, e.g. a filter or a line of a chart"
+    },
+    "filterNutriscoreNoFilter": "Sem filtro",
+    "@filterNutriscoreNoFilter": {
+        "description": "Helper text shown under the Nutri-Score slider when it is at the Off position"
+    },
+    "filterNutriscoreOrBetter": "{grade} ou melhor",
+    "@filterNutriscoreOrBetter": {
+        "description": "Helper text shown under the Nutri-Score slider when a grade is selected (e.g. 'C or better')",
+        "placeholders": {
+            "grade": {
+                "type": "String",
+                "example": "C"
+            }
+        }
+    },
+    "exerciseSearchMode": "Modo de pesquisa",
+    "@exerciseSearchMode": {
+        "description": "Heading above the segmented control that lets the user pick between fuzzy and exact name matching"
+    },
+    "searchModeFuzzy": "Busca aproximada",
+    "@searchModeFuzzy": {
+        "description": "Label for the search mode that performs a fuzzy/substring search on exercise names"
+    },
+    "searchModeExact": "Busca exata",
+    "@searchModeExact": {
+        "description": "Label for the search mode that only matches exercises with this exact name"
+    },
+    "serverConfigIssueTitle": "Problema de configuração do servidor",
+    "@serverConfigIssueTitle": {
+        "description": "Title of the dialog shown when server misconfiguration is detected"
+    },
+    "serverConfigIssueMessage": "Foi detectada uma configuração incorreta do servidor; os cabeçalhos não estão sendo transmitidos corretamente. Consulte a documentação.",
+    "@serverConfigIssueMessage": {
+        "description": "Message explaining server misconfiguration and linking to documentation"
+    },
+    "understand": "Eu entendo",
+    "@understand": {
+        "description": "Button label to acknowledge and dismiss the server configuration warning"
+    },
+    "viewDocumentation": "Ver documentação",
+    "@viewDocumentation": {
+        "description": "Button label to open the documentation about server configuration"
+    },
+    "appLanguage": "Idioma do aplicativo",
+    "@appLanguage": {
+        "description": "Label for the in-app language selector in settings"
+    },
+    "appLanguageSystem": "Padrão do sistema",
+    "@appLanguageSystem": {
+        "description": "Dropdown entry that follows the device system language"
+    },
+    "refreshToken": "Token de atualização",
+    "invalidRefreshToken": "Por favor, insira um token de atualização válido",
+    "@invalidRefreshToken": {
+        "description": "Error message when the user enters an invalid refresh token"
+    },
+    "refreshTokenValidChars": "Um token de atualização possui três segmentos separados por pontos (cabeçalho.carga útil.assinatura), cada um composto por letras, dígitos, '-' e '_'",
+    "@refreshTokenValidChars": {
+        "description": "Error message when the user pastes a string that does not match the JWT shape"
+    },
+    "refreshTokenHelperText": "Gere um token de atualização JWT no site da wger e cole-o aqui. Isso é útil quando seu servidor está atrás de um proxy de autenticação ou quando você deseja ignorar o fluxo de login normal.",
+    "@refreshTokenHelperText": {
+        "description": "Helper text on the refresh-token paste field"
+    },
+    "mfaChallengeTitle": "Autenticação de dois fatores",
+    "@mfaChallengeTitle": {
+        "description": "App bar title on the 2FA challenge screen"
+    },
+    "mfaChallengeTotpPrompt": "Insira o código de 6 dígitos do seu aplicativo autenticador",
+    "@mfaChallengeTotpPrompt": {
+        "description": "Helper text above the TOTP input field"
+    },
+    "mfaChallengeRecoveryPrompt": "Digite um dos seus códigos de recuperação",
+    "@mfaChallengeRecoveryPrompt": {
+        "description": "Helper text above the recovery-code input field"
+    },
+    "mfaCodeLabel": "Código",
+    "@mfaCodeLabel": {
+        "description": "Label on the 2FA code input field"
+    },
+    "mfaInvalidCode": "Por favor, insira um código",
+    "@mfaInvalidCode": {
+        "description": "Validation error when the 2FA code field is empty"
+    },
+    "mfaUseRecoveryCode": "Use um código de recuperação em vez disso",
+    "@mfaUseRecoveryCode": {
+        "description": "Button that switches the 2FA challenge to recovery-code mode"
+    },
+    "mfaUseTotpCode": "Use um código de aplicativo autenticador",
+    "@mfaUseTotpCode": {
+        "description": "Button that switches the 2FA challenge back to TOTP mode"
+    },
+    "mfaSubmit": "Verificar",
+    "@mfaSubmit": {
+        "description": "Submit button on the 2FA challenge screen"
+    },
+    "mfaUnsupportedFactor": "Sua conta está configurada com um segundo fator que este aplicativo ainda não suporta. Por favor faça login no site.",
+    "@mfaUnsupportedFactor": {
+        "description": "Shown when the server reports only factor types the app cannot handle (e.g. webauthn)"
+    },
+    "manageAccountOnWeb": "Gerenciar conta na web",
+    "@manageAccountOnWeb": {
+        "description": "Label on a button that opens the user's preferences page on the wger website"
+    },
+    "manageAccountOnWebSubtitle": "Altere sua senha, configure a autenticação de dois fatores, gerencie tokens de API ou exclua sua conta.",
+    "@manageAccountOnWebSubtitle": {
+        "description": "Helper text below the 'Manage account on the web' button listing what is configurable there"
+    },
+    "advanced": "Avançado",
+    "advancedSubtitle": "Opções de servidor e autenticação",
+    "serverSectionLabel": "Servidor",
+    "signInMethodSectionLabel": "Método de login",
+    "serverOptionDefaultDetail": "O servidor oficial",
+    "serverOptionSelfHostedTitle": "Autohospedado",
+    "serverOptionSelfHostedDetail": "Conecte-se à sua própria instância",
+    "authOptionPasswordTitle": "Nome de usuário e senha",
+    "signInWithToken": "Entrar com token",
+    "tokenSubtitle": "Gere um no site wger",
+    "newToWger": "É novo no wger?",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "tokenLabel": "Token",
+    "webHandoffLinkLabel": "Outras opções de login",
+    "webHandoffLinkSubtitle": "Login social, senha ou SSO",
+    "clearSearchTerm": "Limpar termo de pesquisa (texto)",
+    "@clearSearchTerm": {
+        "description": "Tooltip for the icon-button that clears the ingredient search text field"
+    },
+    "ingredients": "Ingredientes",
+    "@ingredients": {
+        "description": "Plural title for the ingredients overview screen"
+    },
+    "planDateRange": "De {startDate} a {endDate}",
+    "@planDateRange": {
+        "description": "Label for the start and end date range of a plan",
+        "placeholders": {
+            "startDate": {
+                "type": "String"
+            },
+            "endDate": {
+                "type": "String"
+            }
+        }
+    },
+    "planStartDate": "A partir de {startDate}",
+    "@planStartDate": {
+        "description": "Label for the start date of a plan",
+        "placeholders": {
+            "startDate": {
+                "type": "String"
+            }
+        }
+    },
+    "otherLogs": "Outros registros",
+    "@otherLogs": {
+        "description": "Other unassigned logs. Label for the pseudo-meal section that groups all nutritional diary entries not assigned to a specific meal"
+    },
+    "endBeforeStart": "O valor final não pode ser anterior ao inicial",
+    "minLengthRoutine": "A rotina precisa durar pelo menos {number} semanas",
+    "maxLengthRoutine": "A rotina pode durar no máximo {number} semanas"
+}

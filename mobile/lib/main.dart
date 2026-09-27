@@ -1,0 +1,317 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c) 2020 - 2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'dart:async';
+
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:fitgains/core/app_link_router.dart';
+import 'package:fitgains/core/app_settings_notifier.dart';
+import 'package:fitgains/core/consts.dart';
+import 'package:fitgains/core/dashboard.dart';
+import 'package:fitgains/core/error_dialogs.dart';
+import 'package:fitgains/core/errors.dart';
+import 'package:fitgains/core/form_screen.dart';
+import 'package:fitgains/core/home_tabs_screen.dart';
+import 'package:fitgains/core/http_overrides.dart';
+import 'package:fitgains/core/keys.dart';
+import 'package:fitgains/core/locale.dart';
+import 'package:fitgains/core/log_file_store.dart';
+import 'package:fitgains/core/logs.dart';
+import 'package:fitgains/core/network/auth_notifier.dart';
+import 'package:fitgains/core/network/auth_state.dart';
+import 'package:fitgains/core/powersync_unreachable_screen.dart';
+import 'package:fitgains/core/settings_dashboard_widgets_screen.dart';
+import 'package:fitgains/core/shared_preferences.dart';
+import 'package:fitgains/core/splash_screen.dart';
+import 'package:fitgains/core/update_app_screen.dart';
+import 'package:fitgains/core/update_server_screen.dart';
+import 'package:fitgains/core/widgets/about.dart';
+import 'package:fitgains/core/widgets/legacy_material_scope.dart';
+import 'package:fitgains/core/widgets/log_overview.dart';
+import 'package:fitgains/core/widgets/scroll_behavior.dart';
+import 'package:fitgains/features/account/widgets/settings.dart';
+import 'package:fitgains/features/auth/screens/auth_screen.dart';
+import 'package:fitgains/features/auth/screens/auto_login_error_screen.dart';
+import 'package:fitgains/features/exercises/screens/add_exercise_screen.dart';
+import 'package:fitgains/features/exercises/screens/exercise_screen.dart';
+import 'package:fitgains/features/exercises/screens/exercises_screen.dart';
+import 'package:fitgains/features/gallery/screens/gallery_screen.dart';
+import 'package:fitgains/features/measurements/screens/measurement_categories_screen.dart';
+import 'package:fitgains/features/measurements/screens/measurement_category_sort_screen.dart';
+import 'package:fitgains/features/measurements/screens/measurement_entries_screen.dart';
+import 'package:fitgains/features/measurements/screens/weight_screen.dart';
+import 'package:fitgains/features/nutrition/screens/ingredient_detail_screen.dart';
+import 'package:fitgains/features/nutrition/screens/ingredients_screen.dart';
+import 'package:fitgains/features/nutrition/screens/log_meal_screen.dart';
+import 'package:fitgains/features/nutrition/screens/log_meals_screen.dart';
+import 'package:fitgains/features/nutrition/screens/nutritional_diary_screen.dart';
+import 'package:fitgains/features/nutrition/screens/nutritional_plan_screen.dart';
+import 'package:fitgains/features/nutrition/screens/nutritional_plans_screen.dart';
+import 'package:fitgains/features/routines/screens/gym_mode.dart';
+import 'package:fitgains/features/routines/screens/routine_edit_screen.dart';
+import 'package:fitgains/features/routines/screens/routine_list_screen.dart';
+import 'package:fitgains/features/routines/screens/routine_logs_screen.dart';
+import 'package:fitgains/features/routines/screens/routine_screen.dart';
+import 'package:fitgains/features/routines/screens/settings_plates_screen.dart';
+import 'package:fitgains/features/trophies/screens/trophy_screen.dart';
+import 'package:fitgains/l10n/generated/app_localizations.dart';
+import 'package:fitgains/l10n/localizations_delegates.dart';
+import 'package:fitgains/theme/dynamic_color.dart';
+import 'package:fitgains/theme/theme.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
+
+void _setupLogging() {
+  applyVerboseLogging(false);
+  Logger.root.onRecord.listen((record) {
+    // ignore: avoid_print
+    print('${record.level.name}: ${record.time} [${record.loggerName}] ${record.message}');
+
+    // Network errors are expected in, and PowerSync logs one on every retry
+    // against an unreachable backend. Skip the error object and stack trace so
+    // they don't flood the console.
+    final isTransientNetwork = record.error != null && isNetworkError(record.error!);
+
+    // The Logger API has dedicated error / stackTrace fields that can be populated
+    if (record.error != null && !isTransientNetwork) {
+      // ignore: avoid_print
+      print('  error: ${record.error}');
+    }
+    if (record.stackTrace != null && !isTransientNetwork) {
+      // ignore: avoid_print
+      print(record.stackTrace);
+    }
+
+    InMemoryLogStore().add(record);
+    PersistentLogStore().add(record);
+  });
+}
+
+void main() async {
+  // Needs to be called before runApp
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Has to happen before anything creates an HttpClient: dart:io only reads
+  // HttpOverrides.current in the client constructor, never again.
+  installHttpOverrides();
+
+  // Logger
+  _setupLogging();
+
+  // Timezone database, needed to cut calendar days in the profile zone
+  tzdata.initializeTimeZones();
+
+  final logger = Logger('main');
+
+  // SharedPreferences to SharedPreferencesAsync migration function
+  await PreferenceHelper.instance.migrationSupportFunctionForSharedPreferences();
+
+  // Seed the log level from the prefs, the phase right after a cold start is
+  // the interesting one; AppSettingsNotifier keeps it in sync from here on.
+  applyVerboseLogging(
+    await PreferenceHelper.asyncPref.getBool(PREFS_VERBOSE_LOGGING) ?? VERBOSE_LOGGING_DEFAULT,
+  );
+
+  // Picks up the entries of the previous run and starts a new file for this
+  // one. The records logged until here are buffered and land in it as well.
+  await initPersistentLogs();
+
+  // Seed the certificate opt-in from the prefs so the auto-login probe already
+  // honours it; AppSettingsNotifier keeps it in sync from here on.
+  WgerHttpOverrides.allowSelfSignedCerts =
+      await PreferenceHelper.asyncPref.getBool(PREFS_ALLOW_SELF_SIGNED_CERTS) ??
+      ALLOW_SELF_SIGNED_CERTS_DEFAULT;
+  WgerHttpOverrides.trustServer(await AuthNotifier.getServerUrlFromPrefs());
+
+  // Catch errors from Flutter itself (widget build, layout, paint, etc.)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    final stack = details.stack ?? StackTrace.empty;
+    logger.severe('Error caught by FlutterError.onError: ${details.exception}');
+    FlutterError.dumpErrorToConsole(details);
+    handleError(details.exception, stack);
+  };
+
+  // Catch errors that happen outside of the Flutter framework (e.g., in async operations)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    // Skip the StackFrame assertion error from the stack_trace package.
+    // This is a known Flutter framework issue where async gap markers in stack
+    // traces cause an assertion failure in StackFrame.fromStackTraceLine.
+    if (error is AssertionError && error.toString().contains('asynchronous gap')) {
+      logger.warning('Suppressed StackFrame assertion error (known Flutter issue)');
+      return true;
+    }
+
+    logger.severe('Error caught by PlatformDispatcher.instance.onError: $error');
+    logger.severe('Stack trace: $stack');
+
+    handleError(error, stack);
+
+    // Return true to indicate that the error has been handled.
+    return true;
+  };
+
+  // Sweep image-cache entries older than ~3 months. Fire-and-forget so we
+  // don't delay startup; failures are non-fatal. extended_image otherwise
+  // never evicts on its own, without this the cache only shrinks under
+  // OS storage pressure or via manual clearing in Settings.
+  unawaited(
+    clearDiskCachedImages(duration: const Duration(days: 90))
+        .then((_) => logger.fine('Image cache sweep done'))
+        .catchError((Object e) => logger.warning('Image cache sweep failed: $e')),
+  );
+
+  // Application
+  runApp(const ProviderScope(child: MainApp()));
+}
+
+class MainApp extends ConsumerWidget {
+  const MainApp();
+
+  Widget _getHomeScreen(AuthState auth) {
+    switch (auth.status) {
+      case AuthStatus.loggedIn:
+        return const HomeTabsScreen();
+      case AuthStatus.appUpdateRequired:
+        return const UpdateAppScreen();
+      case AuthStatus.serverUpdateRequired:
+        return const UpdateServerScreen();
+      case AuthStatus.powerSyncUnreachable:
+        return const PowerSyncUnreachableScreen();
+      case AuthStatus.loggedOut:
+        return const AuthScreen();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authAsync = ref.watch(authProvider);
+    // Instantiates the singleton on first build; the provider subscribes to
+    // incoming deep links as a side effect of being read.
+    ref.watch(appLinkRouterProvider);
+
+    // Read before the builder below: its callback runs during the child's
+    // build, where ref.watch would be out of phase.
+    final themeMode = ref.watch(
+      appSettingsProvider.select((s) => s.value?.themeMode ?? ThemeMode.system),
+    );
+    final userLocale = ref.watch(
+      appSettingsProvider.select((s) => s.value?.userLocale),
+    );
+    final useDynamicColor = ref.watch(
+      appSettingsProvider.select((s) => s.value?.useDynamicColor ?? USE_DYNAMIC_COLOR_DEFAULT),
+    );
+
+    // Above the auth switch so the platform call is already in flight while the
+    // splash screen is up. Below it, the first frame after login renders the
+    // fixed palette and then repaints.
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        final seed = appThemeSeed(
+          useDynamicColor: useDynamicColor,
+          lightDynamic: lightDynamic,
+          darkDynamic: darkDynamic,
+        );
+        final light = seed == null ? wgerLightTheme : wgerThemeFromSeed(seed, Brightness.light);
+        final dark = seed == null ? wgerDarkTheme : wgerThemeFromSeed(seed, Brightness.dark);
+        // The OS accessibility setting swaps to these, so they follow the seed
+        // too rather than dropping back to the fixed palette.
+        final lightHc = seed == null
+            ? wgerLightThemeHc
+            : wgerThemeFromSeed(seed, Brightness.light, highContrast: true);
+        final darkHc = seed == null
+            ? wgerDarkThemeHc
+            : wgerThemeFromSeed(seed, Brightness.dark, highContrast: true);
+
+        return authAsync.when(
+          loading: () => MaterialApp(
+            scrollBehavior: const WgerScrollBehavior(),
+            theme: light,
+            darkTheme: dark,
+            themeMode: themeMode,
+            home: const SplashScreen(),
+          ),
+          error: (error, stack) => MaterialApp(
+            scrollBehavior: const WgerScrollBehavior(),
+            theme: light,
+            darkTheme: dark,
+            themeMode: themeMode,
+            localizationsDelegates: appLocalizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: AutoLoginErrorScreen(error: error),
+          ),
+          data: (authState) {
+            return MaterialApp(
+              title: 'wger',
+              navigatorKey: navigatorKey,
+              scaffoldMessengerKey: scaffoldMessengerKey,
+              scrollBehavior: const WgerScrollBehavior(),
+              theme: light,
+              darkTheme: dark,
+              highContrastTheme: lightHc,
+              highContrastDarkTheme: darkHc,
+              themeMode: themeMode,
+              locale: userLocale,
+              builder: (context, child) => LegacyMaterialScope(ink: false, child: child!),
+              home: _getHomeScreen(authState),
+              routes: {
+                DashboardScreen.routeName: (ctx) => const DashboardScreen(),
+                FormScreen.routeName: (ctx) => const FormScreen(),
+                GalleryScreen.routeName: (ctx) => const GalleryScreen(),
+                GymModeScreen.routeName: (ctx) => const GymModeScreen(),
+                HomeTabsScreen.routeName: (ctx) => const HomeTabsScreen(),
+                MeasurementCategoriesScreen.routeName: (ctx) => const MeasurementCategoriesScreen(),
+                MeasurementCategorySortScreen.routeName: (ctx) =>
+                    const MeasurementCategorySortScreen(),
+                MeasurementEntriesScreen.routeName: (ctx) => const MeasurementEntriesScreen(),
+                NutritionalPlansScreen.routeName: (ctx) => const NutritionalPlansScreen(),
+                NutritionalDiaryScreen.routeName: (ctx) => const NutritionalDiaryScreen(),
+                NutritionalPlanScreen.routeName: (ctx) => const NutritionalPlanScreen(),
+                IngredientDetailScreen.routeName: (ctx) => const IngredientDetailScreen(),
+                IngredientsScreen.routeName: (ctx) => const IngredientsScreen(),
+                LogMealsScreen.routeName: (ctx) => const LogMealsScreen(),
+                LogMealScreen.routeName: (ctx) => const LogMealScreen(),
+                WeightScreen.routeName: (ctx) => const WeightScreen(),
+                RoutineScreen.routeName: (ctx) => const RoutineScreen(),
+                RoutineEditScreen.routeName: (ctx) => const RoutineEditScreen(),
+                WorkoutLogsScreen.routeName: (ctx) => const WorkoutLogsScreen(),
+                RoutineListScreen.routeName: (ctx) => const RoutineListScreen(),
+                ExercisesScreen.routeName: (ctx) => const ExercisesScreen(),
+                ExerciseDetailScreen.routeName: (ctx) => const ExerciseDetailScreen(),
+                AddExerciseScreen.routeName: (ctx) => const AddExerciseScreen(),
+                AboutPage.routeName: (ctx) => const AboutPage(),
+                SettingsPage.routeName: (ctx) => const SettingsPage(),
+                LogOverviewPage.routeName: (ctx) => const LogOverviewPage(),
+                ConfigurePlatesScreen.routeName: (ctx) => const ConfigurePlatesScreen(),
+                ConfigureDashboardWidgetsScreen.routeName: (ctx) =>
+                    const ConfigureDashboardWidgetsScreen(),
+                TrophyScreen.routeName: (ctx) => const TrophyScreen(),
+              },
+              localeListResolutionCallback: resolveLocale,
+              localizationsDelegates: appLocalizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+            );
+          },
+        );
+      },
+    );
+  }
+}
