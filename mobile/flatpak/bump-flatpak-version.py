@@ -28,15 +28,18 @@ Usage:
     uv run bump-flatpak-version.py x.y.z
 """
 
+# Standard Library
 import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Tuple
 
+# Third Party
 import markdown
 import requests
 
-REPO = "wger-project/flutter"
+
+REPO = 'wger-project/flutter'
 
 
 def get_github_release_info(repo: str, version: str) -> Tuple[str, str]:
@@ -58,11 +61,11 @@ def get_github_release_info(repo: str, version: str) -> Tuple[str, str]:
 
 
 def add_release_to_metainfo(
-        repo: str,
-        xml_filename: str,
-        version: str,
-        date: str | None = None,
-        description: str | None = None
+    repo: str,
+    xml_filename: str,
+    version: str,
+    date: str | None = None,
+    description: str | None = None,
 ) -> None:
     """
     Adds a <release> element with the specified version and date to the <releases>
@@ -95,8 +98,8 @@ def add_release_to_metainfo(
     url_elem.text = f'https://github.com/{repo}/releases/tag/{version}'
 
     releases.insert(0, new_release)
-    ET.indent(tree, space="    ", level=0)
-    tree.write(xml_filename, encoding="utf-8", xml_declaration=True)
+    ET.indent(tree, space='    ', level=0)
+    tree.write(xml_filename, encoding='utf-8', xml_declaration=True)
 
 
 if __name__ == '__main__':
@@ -129,7 +132,7 @@ if __name__ == '__main__':
         xml_filename='de.wger.flutter.metainfo.xml',
         version=version,
         date=None,  # published_at,
-        description=None  # description
+        description=None,  # description
     )
 
-    print(f'Finished!')
+    print('Finished!')
