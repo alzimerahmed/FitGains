@@ -334,7 +334,7 @@ void main() {
       // Probe succeeds but the server is older than MIN_SERVER_VERSION. The
       // revalidation must surface the gate so the user sees the recovery
       // screen the next time the route observes auth state.
-      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"1.0.0"', 200));
+      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"0.9.0"', 200));
 
       final container = makeContainer();
       await container.read(authProvider.future);
@@ -342,7 +342,7 @@ void main() {
       await container.read(authProvider.notifier).revalidationDone;
 
       expect(container.read(authProvider).value?.status, AuthStatus.serverUpdateRequired);
-      expect(container.read(authProvider).value?.serverVersion, '1.0.0');
+      expect(container.read(authProvider).value?.serverVersion, '0.9.0');
     });
 
     test('app version too old → state moves to appUpdateRequired', () async {
@@ -734,13 +734,13 @@ void main() {
       // Never-synced path runs the full gating chain. A server below
       // MIN_SERVER_VERSION must route the user to the update screen
       // instead of completing the login.
-      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"1.0.0"', 200));
+      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"0.9.0"', 200));
 
       final container = makeContainer();
       final state = await container.read(authProvider.future);
 
       expect(state.status, AuthStatus.serverUpdateRequired);
-      expect(state.serverVersion, '1.0.0');
+      expect(state.serverVersion, '0.9.0');
       // PowerSync probe is gated behind the version checks.
       verifyNever(mockClient.get(tPowerSyncToken, headers: anyNamed('headers')));
     });

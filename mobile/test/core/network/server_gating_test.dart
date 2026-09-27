@@ -47,7 +47,11 @@ void main() {
     final minVersion = Version.parse(MIN_SERVER_VERSION);
     final aboveMin = Version(minVersion.major, minVersion.minor + 1, 0).toString();
     const atMin = MIN_SERVER_VERSION;
-    final belowMin = Version(minVersion.major, minVersion.minor - 1, 0).toString();
+    // A pre-release of the minimum sorts below it; Version(0, …) is invalid
+    // so a below-minimum example cannot go a full major down from 1.0
+    final belowMin = minVersion.minor > 0
+        ? Version(minVersion.major, minVersion.minor - 1, 0).toString()
+        : '$atMin.0-dev.1';
 
     test('server version greater than min, no update needed', () {
       expect(serverUpdateRequired(aboveMin), false);

@@ -292,7 +292,7 @@ void main() {
       // A server older than MIN_SERVER_VERSION has no allauth.headless login
       // endpoint, so a POST there would 404 with HTML. The pre-flight version
       // check must catch this first.
-      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"2.5.0"', 200));
+      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"0.9.0"', 200));
 
       final container = makeContainer();
       await container.read(authProvider.future);
@@ -304,7 +304,7 @@ void main() {
       expect(result, LoginActions.update);
       final state = container.read(authProvider).value!;
       expect(state.status, AuthStatus.serverUpdateRequired);
-      expect(state.serverVersion, '2.5.0');
+      expect(state.serverVersion, '0.9.0');
 
       // The headless login endpoint must never have been contacted.
       verifyNever(
@@ -313,7 +313,7 @@ void main() {
     });
 
     test('register is gated the same way', () async {
-      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"2.5.0"', 200));
+      when(mockClient.get(tVersion)).thenAnswer((_) async => Response('"0.9.0"', 200));
 
       final container = makeContainer();
       await container.read(authProvider.future);
