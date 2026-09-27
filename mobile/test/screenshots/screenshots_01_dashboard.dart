@@ -1,0 +1,167 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:wger/core/home_tabs_screen.dart';
+import 'package:wger/core/network/auth_notifier.dart';
+import 'package:wger/core/network/auth_state.dart';
+import 'package:wger/core/network/network_provider.dart';
+import 'package:wger/database/powersync/database.dart';
+import 'package:wger/database/powersync/powersync.dart';
+import 'package:wger/features/account/providers/user_profile_repository.dart';
+import 'package:wger/features/exercises/providers/exercise_repository.dart';
+import 'package:wger/features/gallery/providers/gallery_repository.dart';
+import 'package:wger/features/health/providers/health_repository.dart';
+import 'package:wger/features/measurements/providers/measurement_repository.dart';
+import 'package:wger/features/nutrition/providers/ingredient_repository.dart';
+import 'package:wger/features/nutrition/providers/nutrition_notifier.dart';
+import 'package:wger/features/nutrition/providers/nutrition_repository.dart';
+import 'package:wger/features/routines/providers/routines_repository.dart';
+import 'package:wger/features/routines/providers/workout_session_repository.dart';
+import 'package:wger/features/trophies/providers/trophy_repository.dart';
+import 'package:wger/l10n/generated/app_localizations.dart';
+import 'package:wger/l10n/localizations_delegates.dart';
+import 'package:wger/theme/theme.dart';
+
+import '../../test_data/body_weight.dart';
+import '../../test_data/gallery.dart';
+import '../../test_data/profile.dart';
+import '../../test_data/screenshots/measurements.dart';
+import '../../test_data/screenshots/nutrition.dart';
+import '../../test_data/screenshots/routines.dart';
+import '../../test_data/screenshots/weight.dart';
+import '../../test_data/trophies.dart';
+import '../helpers/fake_auth_notifier.dart';
+import '../helpers/measurement_repository_stubs.dart';
+import '../helpers/sync_status.dart';
+import 'screenshots_01_dashboard.mocks.dart';
+
+@GenerateMocks([
+  GalleryRepository,
+  NutritionRepository,
+  IngredientRepository,
+  MeasurementRepository,
+  UserProfileRepository,
+  RoutinesRepository,
+  TrophyRepository,
+  // The dashboard builds these too, they just have nothing to answer here
+  ExerciseRepository,
+  HealthRepository,
+  WorkoutSessionRepository,
+])
+Widget createDashboardScreen({Locale? locale}) {
+  locale ??= const Locale('en');
+
+  final mockGalleryRepo = MockGalleryRepository();
+  when(mockGalleryRepo.watchAllDrift()).thenAnswer((_) => Stream.value(getTestImages()));
+
+  final mockNutritionRepo = MockNutritionRepository();
+  final mockIngredientRepo = MockIngredientRepository();
+  when(mockIngredientRepo.getById(any)).thenAnswer((_) async => null);
+
+  final mockMeasurementRepo = MockMeasurementRepository();
+  final measurements = getScreenshotMeasurements();
+  stubMeasurementReads(
+    mockMeasurementRepo,
+    [getBodyWeightCategory(), ...measurements.categories],
+    {...getScreenshotBodyWeightEntries(), ...measurements.entries},
+  );
+
+  final mockUserProfileRepo = MockUserProfileRepository();
+  when(
+    mockUserProfileRepo.watchDrift(),
+  ).thenAnswer((_) => Stream.value(tUserProfile1));
+
+  final mockRoutinesRepo = MockRoutinesRepository();
+  when(
+    mockRoutinesRepo.watchAllDrift(),
+  ).thenAnswer((_) => Stream.value([getScreenshotRoutine()]));
+
+  final mockTrophyRepo = MockTrophyRepository();
+  when(
+    mockTrophyRepo.fetchUserTrophies(
+      filterQuery: anyNamed('filterQuery'),
+      language: anyNamed('language'),
+    ),
+  ).thenAnswer((_) async => getScreenshotUserTrophies());
+  when(
+    mockTrophyRepo.fetchTrophies(language: anyNamed('language')),
+  ).thenAnswer((_) async => []);
+  when(
+    mockTrophyRepo.fetchProgression(
+      filterQuery: anyNamed('filterQuery'),
+      language: anyNamed('language'),
+    ),
+  ).thenAnswer((_) async => []);
+
+  const loggedInAuth = AuthState(
+    status: AuthStatus.loggedIn,
+    credential: JwtCredential(accessToken: 'test-token'),
+    serverUrl: 'http://localhost',
+  );
+  final container = ProviderContainer.test(
+    overrides: [
+      // Backstop for repositories that are not mocked: they all read the
+      // database, and none of them should reach the real PowerSync file
+      driftPowerSyncDatabase.overrideWithValue(DriftPowersyncDatabase(NativeDatabase.memory())),
+      syncStatus.overrideWithValue(buildUninitializedSyncStatus()),
+      measurementRepositoryProvider.overrideWithValue(mockMeasurementRepo),
+      authProvider.overrideWith(() => FakeAuthNotifier(loggedInAuth)),
+      userProfileRepositoryProvider.overrideWithValue(mockUserProfileRepo),
+      nutritionRepositoryProvider.overrideWithValue(mockNutritionRepo),
+      ingredientRepositoryProvider.overrideWithValue(mockIngredientRepo),
+      galleryRepositoryProvider.overrideWithValue(mockGalleryRepo),
+      // Present the app as online for the screenshots.
+      networkStatusProvider.overrideWithValue(true),
+      routinesRepositoryProvider.overrideWithValue(mockRoutinesRepo),
+      trophyRepositoryProvider.overrideWithValue(mockTrophyRepo),
+      exerciseRepositoryProvider.overrideWithValue(MockExerciseRepository()),
+      healthRepositoryProvider.overrideWithValue(MockHealthRepository()),
+      workoutSessionRepositoryProvider.overrideWithValue(MockWorkoutSessionRepository()),
+    ],
+  );
+
+  // Seed the nutrition notifier with the screenshot plan so the dashboard can
+  // show it without going through the server.
+  container.read(nutritionProvider.notifier).state = AsyncData(
+    NutritionState(plans: [getNutritionalPlanScreenshot()]),
+  );
+
+  return MediaQuery(
+    data: MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).copyWith(
+      padding: EdgeInsets.zero,
+      viewPadding: EdgeInsets.zero,
+      viewInsets: EdgeInsets.zero,
+    ),
+    child: UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        locale: locale,
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: wgerLightTheme,
+        home: const HomeTabsScreen(),
+      ),
+    ),
+  );
+}

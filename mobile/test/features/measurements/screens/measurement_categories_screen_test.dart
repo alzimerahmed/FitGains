@@ -1,0 +1,89 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mockito/annotations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:wger/core/app_settings_notifier.dart';
+import 'package:wger/features/measurements/providers/measurement_notifier.dart';
+import 'package:wger/features/measurements/providers/measurement_repository.dart';
+import 'package:wger/features/measurements/screens/measurement_categories_screen.dart';
+import 'package:wger/features/measurements/widgets/measurement_fab.dart';
+import 'package:wger/features/measurements/widgets/measurement_tile.dart';
+import 'package:wger/l10n/generated/app_localizations.dart';
+import 'package:wger/l10n/localizations_delegates.dart';
+
+import '../../../../test_data/measurements.dart';
+import '../../../helpers/measurement_chart_buckets.dart';
+import '../../../helpers/measurement_repository_stubs.dart';
+import 'measurement_categories_screen_test.mocks.dart';
+
+@GenerateMocks([MeasurementRepository])
+void main() {
+  setUp(() {
+    // The shared chart range hydrates from SharedPreferences on first read
+    SharedPreferencesAsyncPlatform.instance = InMemorySharedPreferencesAsync.empty();
+  });
+
+  Widget createMeasurementScreen({locale = 'en'}) {
+    final categories = [...getMeasurementCategories(), ...getBloodPressureGroup()];
+    final entries = {...getMeasurementEntries(), ...getBloodPressureEntries()};
+    final mockRepo = MockMeasurementRepository();
+    stubMeasurementReads(mockRepo, categories, entries);
+
+    return ProviderScope(
+      overrides: [
+        measurementRepositoryProvider.overrideWithValue(mockRepo),
+        // A fresh accessor per test: the app-wide singleton keeps the
+        // in-memory store of the first test alive across the file
+        appSettingsPrefsProvider.overrideWithValue(SharedPreferencesAsync()),
+        // The charts read their points from the aggregated query
+        measurementChartBucketsProvider.overrideWith(chartBucketsFrom(entries)),
+        measurementGroupBucketsProvider.overrideWith(groupBucketsFrom(categories, entries)),
+      ],
+      child: MaterialApp(
+        locale: Locale(locale),
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const MeasurementCategoriesScreen(),
+      ),
+    );
+  }
+
+  testWidgets('Test the widgets on the measurement category screen', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800, 2200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(createMeasurementScreen());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Body'), findsOneWidget);
+    // One tile per top-level category; the components live behind the group's.
+    // hitTestable: the closed FAB menu holds the same names, invisibly.
+    expect(find.byType(MeasurementTile), findsNWidgets(3));
+    expect(find.text('Body fat').hitTestable(), findsOneWidget);
+    expect(find.text('Biceps').hitTestable(), findsOneWidget);
+    expect(find.text('Blood pressure').hitTestable(), findsOneWidget);
+    expect(find.byType(MeasurementsFab), findsOneWidget);
+  });
+}

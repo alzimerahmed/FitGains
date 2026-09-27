@@ -1,0 +1,84 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:wger/features/routines/models/routine.dart';
+import 'package:wger/features/routines/providers/routines_notifier.dart';
+import 'package:wger/features/routines/screens/routine_edit_screen.dart';
+import 'package:wger/l10n/generated/app_localizations.dart';
+import 'package:wger/l10n/localizations_delegates.dart';
+
+import '../../../../test_data/routines.dart';
+import '../../../helpers/fake_connectivity.dart';
+
+class _StubRoutinesRiverpod extends RoutinesRiverpod {
+  _StubRoutinesRiverpod(this._routines);
+  final List<Routine> _routines;
+
+  @override
+  Stream<RoutinesState> build() => Stream.value(RoutinesState(routines: _routines));
+}
+
+void main() {
+  // The widget tree reaches networkStatusProvider; without the fake the
+  // deferred init probe does a real DNS lookup with a pending timer.
+  installFakeConnectivity();
+
+  final key = GlobalKey<NavigatorState>();
+
+  testWidgets('RoutineEditScreen smoke test', (WidgetTester tester) async {
+    final container = ProviderContainer.test(
+      overrides: [
+        routinesRiverpodProvider.overrideWith(
+          () => _StubRoutinesRiverpod([getTestRoutine()]),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          navigatorKey: key,
+          home: TextButton(
+            onPressed: () => key.currentState!.push(
+              MaterialPageRoute<void>(
+                settings: const RouteSettings(arguments: 1),
+                builder: (_) => const RoutineEditScreen(),
+              ),
+            ),
+            child: const SizedBox(),
+          ),
+        ),
+      ),
+    );
+
+    // Navigate to RoutineEditScreen with the correct arguments
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(TextButton));
+    await tester.pumpAndSettle();
+
+    // Verify the title is correct
+    expect(find.text('3 day workout'), findsNWidgets(2));
+  });
+}

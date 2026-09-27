@@ -1,0 +1,215 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c) 2026 - 2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:wger/core/widgets/datetime_input.dart';
+import 'package:wger/l10n/generated/app_localizations.dart';
+import 'package:wger/l10n/localizations_delegates.dart';
+
+void main() {
+  Widget wrap(Widget child, {String locale = 'en'}) {
+    return MaterialApp(
+      locale: Locale(locale),
+      localizationsDelegates: appLocalizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(body: child),
+    );
+  }
+
+  group('TimeInputWidget', () {
+    testWidgets('renders the value in a 12-hour locale', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        wrap(
+          TimeInputWidget(
+            value: const TimeOfDay(hour: 15, minute: 30),
+            labelText: 'Time',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('3:30 PM'), findsOneWidget);
+    });
+
+    testWidgets('renders the value in a 24-hour locale', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        wrap(
+          TimeInputWidget(
+            value: const TimeOfDay(hour: 15, minute: 30),
+            labelText: 'Time',
+            onChanged: (_) {},
+          ),
+          locale: 'de',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('15:30'), findsOneWidget);
+    });
+
+    testWidgets('shows nothing when the value is null', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        wrap(TimeInputWidget(value: null, labelText: 'Time', onChanged: (_) {})),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.clear), findsNothing);
+    });
+
+    testWidgets('clear button invokes onCleared and clears the display', (
+      WidgetTester tester,
+    ) async {
+      var cleared = false;
+      await tester.pumpWidget(
+        wrap(
+          TimeInputWidget(
+            value: const TimeOfDay(hour: 15, minute: 30),
+            labelText: 'Time',
+            onChanged: (_) {},
+            onCleared: () => cleared = true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('3:30 PM'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.clear));
+      await tester.pumpAndSettle();
+
+      expect(cleared, isTrue);
+      expect(find.text('3:30 PM'), findsNothing);
+    });
+
+    testWidgets('does not rebuild the enclosing Form during build when the value '
+        'changes from the parent (regression: issue #2401)', (WidgetTester tester) async {
+      final notifier = ValueNotifier<TimeOfDay?>(null);
+      await tester.pumpWidget(
+        wrap(
+          Form(
+            child: ValueListenableBuilder<TimeOfDay?>(
+              valueListenable: notifier,
+              builder: (context, value, _) =>
+                  TimeInputWidget(value: value, labelText: 'Time', onChanged: (_) {}),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      notifier.value = const TimeOfDay(hour: 15, minute: 30);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('3:30 PM'), findsOneWidget);
+    });
+  });
+
+  group('DateInputWidget', () {
+    testWidgets('renders the value localized', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        wrap(
+          DateInputWidget(
+            value: DateTime(2021, 1, 5),
+            labelText: 'Date',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('1/5/2021'), findsOneWidget);
+    });
+
+    testWidgets('renders the value localized for a comma-decimal locale', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          DateInputWidget(
+            value: DateTime(2021, 1, 5),
+            labelText: 'Date',
+            onChanged: (_) {},
+          ),
+          locale: 'de',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('5.1.2021'), findsOneWidget);
+    });
+
+    testWidgets('does not rebuild the enclosing Form during build when the value '
+        'changes from the parent (regression: issue #2401)', (WidgetTester tester) async {
+      final notifier = ValueNotifier<DateTime?>(null);
+      await tester.pumpWidget(
+        wrap(
+          Form(
+            child: ValueListenableBuilder<DateTime?>(
+              valueListenable: notifier,
+              builder: (context, value, _) =>
+                  DateInputWidget(value: value, labelText: 'Date', onChanged: (_) {}),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      notifier.value = DateTime(2021, 1, 5);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('1/5/2021'), findsOneWidget);
+    });
+  });
+
+  group('DateTimeInputWidget', () {
+    testWidgets('reports the whole moment, keeping the half picked before', (
+      WidgetTester tester,
+    ) async {
+      // The forms collect what they are told without rebuilding, so the
+      // second pick must not be applied to the moment they started with
+      DateTime? reported;
+      await tester.pumpWidget(
+        wrap(
+          DateTimeInputWidget(
+            value: DateTime(2021, 1, 1, 15, 30),
+            onChanged: (value) => reported = value,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Straight through the two halves, whose own pickers are covered above
+      tester.widget<DateInputWidget>(find.byType(DateInputWidget)).onChanged(DateTime(2021, 1, 5));
+      await tester.pumpAndSettle();
+      expect(reported, DateTime(2021, 1, 5, 15, 30));
+
+      tester
+          .widget<TimeInputWidget>(find.byType(TimeInputWidget))
+          .onChanged(const TimeOfDay(hour: 9, minute: 45));
+      await tester.pumpAndSettle();
+
+      // The day of the first pick, the time of the second
+      expect(reported, DateTime(2021, 1, 5, 9, 45));
+      expect(find.text('1/5/2021'), findsOneWidget);
+      expect(find.text('9:45 AM'), findsOneWidget);
+    });
+  });
+}

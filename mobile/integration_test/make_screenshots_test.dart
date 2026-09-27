@@ -1,0 +1,211 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// ignore_for_file: avoid_print
+
+import 'dart:io';
+
+import 'package:drift/drift.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../test/screenshots/screenshots_01_dashboard.dart';
+import '../test/screenshots/screenshots_02_workout.dart';
+import '../test/screenshots/screenshots_03_gym_mode.dart';
+import '../test/screenshots/screenshots_04_measurements.dart';
+import '../test/screenshots/screenshots_05_nutritional_plan.dart';
+
+/// Type of device
+///
+/// For Apple: https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications
+/// For Android: https://support.google.com/googleplay/android-developer/answer/9866151#zippy=%2Cscreenshots
+enum DeviceType {
+  androidPhone('phoneScreenshots'),
+  androidTabletSmall('sevenInchScreenshots'),
+  androidTabletBig('tenInchScreenshots'),
+  androidTv('tvScreenshots'),
+  androidWear('wearScreenshots'),
+
+  // Apple only needs the largest size per device family, the smaller ones are
+  // scaled down automatically
+  iOSPhoneBig('iPhone 6.9', isAndroid: false),
+  iOSTabletBig('iPad 13', isAndroid: false);
+
+  final String folderName;
+  final bool isAndroid;
+
+  const DeviceType(this.folderName, {this.isAndroid = true});
+
+  String fastlanePath(String language, String name) {
+    final os = isAndroid ? 'android' : 'ios';
+
+    return 'fastlane/metadata/$os/$language/images/$folderName/$name.png';
+  }
+}
+
+const _deviceArg = String.fromEnvironment('DEVICE_TYPE', defaultValue: 'androidPhone');
+
+// Determine the destination device type based on the provided argument
+final DeviceType destination = DeviceType.values.firstWhere(
+  (d) => d.name == _deviceArg,
+  orElse: () {
+    print('***** Unknown DEVICE_TYPE="$_deviceArg", defaulting to androidPhone *****');
+    return DeviceType.androidPhone;
+  },
+);
+
+Future<void> takeScreenshot(
+  WidgetTester tester,
+  IntegrationTestWidgetsFlutterBinding binding,
+  String language,
+  String name,
+) async {
+  if (Platform.isAndroid) {
+    await tester.pumpAndSettle();
+    await binding.convertFlutterSurfaceToImage();
+    await tester.pumpAndSettle();
+  }
+
+  final filename = destination.fastlanePath(language, name);
+  await binding.takeScreenshot(filename);
+}
+
+// Available languages in weblate for the fastlane/metadata/android folder (not necessarily
+// those for which the application is translated)
+const allLanguages = [
+  'ar',
+  'ca',
+  'cs-CZ',
+  'de-DE',
+  'el-GR',
+  'en-US',
+  'es-ES',
+
+  'fa-IR',
+  'fr-FR',
+  'hi-IN',
+  'hr',
+  'it-IT',
+  'iw-IL',
+  'ko-KR',
+  'nb-NO',
+
+  'pl-PL',
+  'pt-BR',
+  'pt-PT',
+  'ru-RU',
+  'sr',
+  'ta-IN',
+  'tr-TR',
+  'uk',
+  'zh-CN',
+  'zh-TW',
+];
+
+/// Languages to generate: `de-DE,en-US`, or `2/5` for the second of five equal
+/// blocks. Empty means all of them, which the hand-over rarely survives.
+const _languagesArg = String.fromEnvironment('LANGUAGES');
+
+List<String> _selectedLanguages() {
+  if (_languagesArg.isEmpty) {
+    return allLanguages;
+  }
+  if (!_languagesArg.contains('/')) {
+    return _languagesArg.split(',').map((language) => language.trim()).toList();
+  }
+
+  final [index, count] = _languagesArg.split('/').map(int.parse).toList();
+  final size = (allLanguages.length / count).ceil();
+  return allLanguages.skip((index - 1) * size).take(size).toList();
+}
+
+final languages = _selectedLanguages();
+
+void main() {
+  final unknown = languages.where((language) => !allLanguages.contains(language)).toList();
+  if (unknown.isNotEmpty) {
+    throw ArgumentError('Not in allLanguages: ${unknown.join(', ')}');
+  }
+
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+
+  group('Generate screenshots', () {
+    setUpAll(() async {
+      // Suppress warnings about multiple database instances, it's ok during testing
+      driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+    });
+
+    for (final language in languages) {
+      final split = language.split('-');
+      final languageCode = split.first;
+      final countryCode = split.length > 1 ? split.last : null;
+
+      final locale = Locale(languageCode, countryCode);
+
+      testWidgets('dashboard screen - $language', (WidgetTester tester) async {
+        await tester.pumpWidget(createDashboardScreen(locale: locale));
+        await tester.pumpAndSettle();
+
+        // The cards render their shell before their data, so a screenshot of
+        // an empty dashboard looks like a finished one
+        expect(find.text('3 day split'), findsOneWidget);
+        await takeScreenshot(tester, binding, language, '01 - dashboard');
+      });
+
+      testWidgets('workout detail screen - $language', (WidgetTester tester) async {
+        await tester.pumpWidget(createWorkoutDetailScreen(locale: locale));
+        await tester.tap(find.byType(TextButton));
+        await tester.pumpAndSettle();
+        await takeScreenshot(tester, binding, language, '02 - workout detail');
+      });
+
+      // testWidgets('gym mode screen - $language', (WidgetTester tester) async {
+      //   await tester.pumpWidget(createGymModeScreen(locale: locale));
+      //   await tester.tap(find.byType(TextButton));
+      //   await tester.pumpAndSettle();
+      //   await tester.tap(find.byKey(const ValueKey('gym-mode-options-tile')));
+      //   await tester.pumpAndSettle();
+      //   await tester.tap(find.byKey(const ValueKey('gym-mode-option-show-exercises')));
+      //   await tester.pumpAndSettle();
+      //   await takeScreenshot(tester, binding, language, '03 - gym mode');
+      // });
+
+      testWidgets('gym mode stats screen - $language', (WidgetTester tester) async {
+        await tester.pumpWidget(createGymModeResultsScreen(locale: locale));
+        await tester.pumpAndSettle();
+        await takeScreenshot(tester, binding, language, '03 - gym mode');
+      });
+
+      testWidgets('measurement screen - $language', (WidgetTester tester) async {
+        await tester.pumpWidget(createMeasurementScreen(locale: locale));
+        await tester.pumpAndSettle();
+        await takeScreenshot(tester, binding, language, '04 - measurements');
+      });
+
+      testWidgets('nutritional plan detail - $language', (WidgetTester tester) async {
+        await tester.pumpWidget(createNutritionalPlanScreen(locale: locale));
+        await tester.tap(find.byType(TextButton));
+        await tester.pumpAndSettle();
+        await takeScreenshot(tester, binding, language, '05 - nutritional plan');
+      });
+    }
+  });
+}

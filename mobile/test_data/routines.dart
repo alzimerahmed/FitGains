@@ -1,0 +1,485 @@
+/*
+ * This file is part of wger Workout Manager <https://github.com/wger-project>.
+ * Copyright (c)  2026 wger Team
+ *
+ * wger Workout Manager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import 'package:wger/features/exercises/models/exercise.dart';
+import 'package:wger/features/routines/models/base_config.dart';
+import 'package:wger/features/routines/models/day.dart';
+import 'package:wger/features/routines/models/day_data.dart';
+import 'package:wger/features/routines/models/log.dart';
+import 'package:wger/features/routines/models/repetition_unit.dart';
+import 'package:wger/features/routines/models/routine.dart';
+import 'package:wger/features/routines/models/session.dart';
+import 'package:wger/features/routines/models/set_config_data.dart';
+import 'package:wger/features/routines/models/slot.dart';
+import 'package:wger/features/routines/models/slot_data.dart';
+import 'package:wger/features/routines/models/slot_entry.dart';
+import 'package:wger/features/routines/models/weight_unit.dart';
+
+import './exercises.dart';
+
+const testWeightUnit1 = WeightUnit(id: 1, name: 'kg');
+const testWeightUnit2 = WeightUnit(id: 2, name: 'metric tonnes');
+const testWeightUnits = [testWeightUnit1, testWeightUnit2];
+
+const RepetitionUnit testRepetitionUnit1 = RepetitionUnit(id: 1, name: 'Repetitions');
+const RepetitionUnit testRepetitionUnit2 = RepetitionUnit(id: 2, name: 'Hours');
+const testRepetitionUnits = [testRepetitionUnit1, testRepetitionUnit2];
+
+Routine getTestRoutine({List<Exercise>? exercises}) {
+  final testExercises = exercises ?? getTestExercises();
+
+  final log1 = Log(
+    id: '1',
+    exerciseId: 1,
+    iteration: 2,
+    slotEntryId: 3,
+    weight: 10,
+    rir: 1.5,
+    date: DateTime(2021, 5, 1),
+    repetitions: 10,
+    routineId: 1,
+  );
+  log1.exercise = testExercises[0];
+  log1.weightUnit = testWeightUnit1;
+  log1.repetitionUnit = testRepetitionUnit1;
+
+  final log2 = Log(
+    id: '2',
+    exerciseId: 1,
+    iteration: 4,
+    slotEntryId: 1,
+    weight: 10,
+    rir: 2,
+    date: DateTime(2021, 5, 1),
+    repetitions: 12,
+    routineId: 1,
+  );
+  log2.exercise = testExercises[0];
+  log2.weightUnit = testWeightUnit1;
+  log2.repetitionUnit = testRepetitionUnit1;
+
+  final log3 = Log(
+    id: '3',
+    exerciseId: 2,
+    iteration: 5,
+    slotEntryId: 1,
+    weight: 50,
+    rir: null,
+    date: DateTime(2021, 5, 2),
+    repetitions: 8,
+    routineId: 1,
+  );
+  log3.exercise = testExercises[1];
+  log3.weightUnit = testWeightUnit1;
+  log3.repetitionUnit = testRepetitionUnit1;
+
+  final session1 = WorkoutSession(
+    id: '1',
+    routineId: 1,
+    impression: WorkoutImpression.good,
+    notes: 'This is a note',
+    datetimeStart: DateTime(2021, 5, 1, 10, 0),
+    datetimeEnd: DateTime(2021, 5, 1, 12, 34),
+    logs: [log1, log2],
+  );
+
+  final session2 = WorkoutSession(
+    id: '2',
+    routineId: 1,
+    impression: WorkoutImpression.bad,
+    notes: 'This is a note',
+    datetimeStart: DateTime(2021, 5, 2, 6, 12),
+    datetimeEnd: DateTime(2021, 5, 2, 8, 1),
+    logs: [log3],
+  );
+
+  final slotEntryBenchPress = SlotEntry(
+    slotId: 1,
+    type: SlotEntryType.normal,
+    order: 1,
+    exerciseId: 1,
+    repetitionUnitId: 1,
+    repetitionRounding: 1,
+    weightUnitId: 1,
+    weightRounding: 1.25,
+    comment: 'ddd',
+    repetitionUnit: testRepetitionUnit1,
+    weightUnit: testWeightUnit1,
+    exercise: testExercises[0],
+    nrOfSetsConfigs: [BaseConfig.firstIteration(4, 1)],
+    repetitionsConfigs: [BaseConfig.firstIteration(3, 1)],
+    weightConfigs: [
+      BaseConfig.firstIteration(100, 1),
+      BaseConfig(
+        id: 1,
+        slotEntryId: 1,
+        iteration: 2,
+        value: 5,
+        operation: '+',
+        step: 'abs',
+        requirements: null,
+        repeat: true,
+      ),
+    ],
+  );
+
+  final slotBenchPress = Slot.withData(id: 1, day: 1, order: 1, comment: 'Make sure to warm up');
+  slotBenchPress.addExerciseBase(testExercises[0]);
+  slotBenchPress.entries.add(slotEntryBenchPress);
+
+  final slotEntrySquat = SlotEntry(
+    slotId: 2,
+    type: SlotEntryType.normal,
+    order: 1,
+    exerciseId: testExercises[4].id,
+    repetitionUnitId: 1,
+    repetitionRounding: 0.25,
+    weightUnitId: 1,
+    weightRounding: 0.25,
+    comment: 'ddd',
+    repetitionUnit: testRepetitionUnit1,
+    weightUnit: testWeightUnit1,
+    exercise: testExercises[4],
+    weightConfigs: [BaseConfig.firstIteration(80, 1)],
+    repetitionsConfigs: [BaseConfig.firstIteration(5, 1)],
+    nrOfSetsConfigs: [BaseConfig.firstIteration(3, 1)],
+  );
+
+  final slotSquat = Slot.withData(id: 2, day: 1, order: 1);
+  slotSquat.addExerciseBase(testExercises[4]);
+  slotSquat.entries.add(slotEntrySquat);
+
+  final slotEntrySideRaises = SlotEntry(
+    slotId: 2,
+    type: SlotEntryType.normal,
+    order: 1,
+    exerciseId: testExercises[5].id,
+    repetitionUnitId: 1,
+    repetitionRounding: 0.25,
+    weightUnitId: 1,
+    weightRounding: 0.25,
+    comment: 'ddd',
+    repetitionUnit: testRepetitionUnit1,
+    weightUnit: testWeightUnit1,
+    exercise: testExercises[5],
+    nrOfSetsConfigs: [BaseConfig.firstIteration(4, 1)],
+    repetitionsConfigs: [BaseConfig.firstIteration(12, 1)],
+    weightConfigs: [BaseConfig.firstIteration(10, 1)],
+  );
+  // settingSideRaises.weight = 6;
+
+  final slotSideRaises = Slot.withData(id: 3, day: 1, order: 1);
+  slotSideRaises.addExerciseBase(testExercises[5]);
+  slotSideRaises.entries.add(slotEntrySideRaises);
+
+  final dayChestShoulders = Day(
+    id: 1,
+    routineId: 1,
+    name: 'first day',
+    description: 'chest, shoulders',
+    slots: [slotBenchPress, slotSideRaises],
+  );
+
+  final dayLegs = Day(
+    id: 2,
+    routineId: 1,
+    name: 'second day',
+    description: 'legs',
+    slots: [slotSquat],
+  );
+
+  final List<DayData> dayDataGym = [
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 01),
+      label: '',
+      day: dayChestShoulders,
+      slots: [
+        SlotData(
+          comment: 'Make sure to warm up',
+          isSuperset: false,
+          exerciseIds: [testExercises[0].id],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: 1,
+              exercise: testExercises[0],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[0].id,
+              exercise: testExercises[0],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[0].id,
+              exercise: testExercises[0],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+          ],
+        ),
+        SlotData(
+          comment: 'Side rises',
+          isSuperset: false,
+          exerciseIds: [testExercises[5].id],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: testExercises[5].id,
+              exercise: testExercises[5],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 12,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 10,
+              weightUnit: testWeightUnit1,
+              restTime: null,
+              rir: null,
+              rpe: null,
+              textRepr: '12x10kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[5].id,
+              exercise: testExercises[5],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 12,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 10,
+              weightUnit: testWeightUnit1,
+              restTime: null,
+              rir: null,
+              rpe: null,
+              textRepr: '12x10kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[5].id,
+              exercise: testExercises[5],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 12,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 10,
+              weightUnit: testWeightUnit1,
+              restTime: null,
+              rir: null,
+              rpe: null,
+              textRepr: '12x10kg',
+            ),
+          ],
+        ),
+      ],
+    ),
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 02),
+      label: '',
+      day: dayLegs,
+      slots: [
+        SlotData(
+          comment: 'Squats',
+          isSuperset: false,
+          exerciseIds: [testExercises[4].id],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: testExercises[4].id,
+              exercise: testExercises[4],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[4].id,
+              exercise: testExercises[4],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+            SetConfigData(
+              exerciseId: testExercises[4].id,
+              exercise: testExercises[4],
+              slotEntryId: 1,
+              nrOfSets: 1,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '3x100kg',
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
+
+  final List<DayData> dayDataDisplay = [
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 01),
+      label: '',
+      day: dayChestShoulders,
+      slots: [
+        SlotData(
+          comment: '',
+          isSuperset: false,
+          exerciseIds: [1],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: 1,
+              exercise: testExercises[0],
+              slotEntryId: 1,
+              nrOfSets: 4,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '4 sets 3x100kg',
+            ),
+          ],
+        ),
+        SlotData(
+          comment: '',
+          isSuperset: false,
+          exerciseIds: [6],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: 6,
+              exercise: testExercises[5],
+              slotEntryId: 1,
+              nrOfSets: 4,
+              repetitions: 12,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 10,
+              weightUnit: testWeightUnit1,
+              restTime: 60,
+              rir: null,
+              rpe: null,
+              textRepr: '4 sets 12x10kg',
+            ),
+          ],
+        ),
+      ],
+    ),
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 02),
+      label: '',
+      day: dayLegs,
+      slots: [
+        SlotData(
+          comment: 'Make sure to go deep. Slow down, and push through your heels',
+          isSuperset: false,
+          exerciseIds: [testExercises[4].id],
+          setConfigs: [
+            SetConfigData(
+              exerciseId: testExercises[4].id,
+              exercise: testExercises[4],
+              slotEntryId: 1,
+              nrOfSets: 4,
+              repetitions: 3,
+              repetitionsUnit: testRepetitionUnit1,
+              weight: 100,
+              weightUnit: testWeightUnit1,
+              restTime: 120,
+              rir: 1.5,
+              rpe: 8,
+              textRepr: '4 sets 3x100kg',
+            ),
+          ],
+        ),
+      ],
+    ),
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 02),
+      label: 'null day (filled because of fitInWeek flag)',
+      day: null,
+      slots: [],
+    ),
+    DayData(
+      iteration: 1,
+      date: DateTime(2024, 11, 02),
+      label: 'null day (filled because of fitInWeek flag)',
+      day: null,
+      slots: [],
+    ),
+  ];
+
+  final routine = Routine(
+    id: 1,
+    created: DateTime(2021, 01, 01),
+    name: '3 day workout',
+    description:
+        'This is a sample routine, it focuses on X, Y and Z and is the first '
+        'step to give you a good base to build on',
+    start: DateTime(2024, 11, 01),
+    end: DateTime(2024, 12, 01),
+    days: [dayChestShoulders, dayLegs],
+    sessions: [session1, session2],
+    dayData: dayDataDisplay,
+    dayDataGym: dayDataGym,
+    isHydrated: true,
+  );
+
+  return routine;
+}
